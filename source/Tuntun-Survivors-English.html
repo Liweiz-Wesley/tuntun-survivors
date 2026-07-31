@@ -961,7 +961,7 @@ function update(dt){
   enemies.forEach(e=>{
     e.orbitHit=Math.max(0,e.orbitHit-dt);e.hitFlash=Math.max(0,e.hitFlash-dt);
     if(!e.boss&&e.type!=="bat"){const rx=e.x-player.x,ry=e.y-player.y,farX=W/cameraZoom*.82,farY=H/cameraZoom*.82;if(Math.abs(rx)>farX||Math.abs(ry)>farY){const a=Math.atan2(ry,rx)+Math.PI+(Math.random()-.5)*.3,d=Math.max(W,H)/cameraZoom*.57+90;e.x=player.x+Math.cos(a)*d;e.y=player.y+Math.sin(a)*d;e.kx=e.ky=0;}}
-    if(e.finalBoss)updateFinalBoss(e,dt);else if(e.type==="bat"){e.kx=e.kx||0;e.ky=e.ky||0;e.flyLife-=dt;if(freezeTimer<=0){e.x+=(e.flyVx+e.kx)*dt;e.y+=e.ky*dt;}e.kx*=Math.pow(.05,dt);e.ky*=Math.pow(.05,dt);if(e.flyLife<=0)e.dead=true;}else{const a=Math.atan2(player.y-e.y,player.x-e.x);e.kx=e.kx||0;e.ky=e.ky||0;const ex=e.x,ey=e.y;if(freezeTimer<=0){e.x+=(Math.cos(a)*e.speed+e.kx)*dt;e.y+=(Math.sin(a)*e.speed+e.ky)*dt;if(!e.boss&&isOnScreen(e.x,e.y,220))resolveWorldCollision(e,ex,ey);}e.kx*=Math.pow(.035,dt);e.ky*=Math.pow(.035,dt);}
+    if(e.finalBoss)updateFinalBoss(e,dt);else if(e.boss)updateAnimalBoss(e,dt);else if(e.type==="bat"){e.kx=e.kx||0;e.ky=e.ky||0;e.flyLife-=dt;if(freezeTimer<=0){e.x+=(e.flyVx+e.kx)*dt;e.y+=e.ky*dt;}e.kx*=Math.pow(.05,dt);e.ky*=Math.pow(.05,dt);if(e.flyLife<=0)e.dead=true;}else{const a=Math.atan2(player.y-e.y,player.x-e.x);e.kx=e.kx||0;e.ky=e.ky||0;const ex=e.x,ey=e.y;if(freezeTimer<=0){e.x+=(Math.cos(a)*e.speed+e.kx)*dt;e.y+=(Math.sin(a)*e.speed+e.ky)*dt;if(!e.boss&&isOnScreen(e.x,e.y,220))resolveWorldCollision(e,ex,ey);}e.kx*=Math.pow(.035,dt);e.ky*=Math.pow(.035,dt);}
     if(!e.dead&&dist(e.x,e.y,player.x,player.y)<e.r+player.r*.7)hurtPlayer(e.damage);
   });
   shots.forEach(s=>{s.age=(s.age||0)+dt;if(s.kind==="acorn"&&s.age>(evolved.acorn?.42:.58)){const a=Math.atan2(player.y-s.y,player.x-s.x),sp=evolved.acorn?440:355;s.vx=Math.cos(a)*sp;s.vy=Math.sin(a)*sp;if(s.age>.72&&dist(s.x,s.y,player.x,player.y)<player.r+14)s.dead=true;}if(s.kind==="bubble")s.r+=dt*(evolved.bubble?15:9);s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;s.rot+=dt*(s.kind==="seed"?2:10);s.trail=(s.trail||0)-dt;if((s.kind==="rocket"||s.kind==="seed"&&evolved.seed)&&s.trail<=0){s.trail=.045;particles.push({x:s.x-s.vx*.025,y:s.y-s.vy*.025,vx:-s.vx*.035+(Math.random()-.5)*25,vy:-s.vy*.035+(Math.random()-.5)*25,life:.28,r:s.kind==="rocket"?4:3,color:s.kind==="rocket"?(Math.random()>.5?"#ffb52e":"#ff6d38"):"#ffe56b"});}if(!isOnScreen(s.x,s.y,s.kind==="carrot"?190:120))s.dead=true;});
@@ -987,10 +987,8 @@ function update(dt){
 }
 
 function spawnEnemy(){
-  const roll=Math.random();
-  if(roll<.08){spawnBatSwarm();return;}
-  const type=roll<.13?"bombMouse":roll<.21?"bullyMouse":"mouse",a=Math.random()*Math.PI*2,rad=Math.max(W,H)/cameraZoom*.62+100;
-  pushScaledEnemy(type,player.x+Math.cos(a)*rad,player.y+Math.sin(a)*rad);
+  const minute=Math.min(19,Math.floor(elapsed/60)),waves=[["fork"],["fork","knife"],["knife","fork","bat"],["knife","pen","bomb"],["pen","bat","fork"],["bone","pen","bomb"],["bone","bat","knife"],["bully","fork","knife"],["bully","bomb","pen"],["bat","bone","bomb"],["bully","knife","pen"],["bomb","bone","bat"],["bully","bomb","fork"],["bat","pen","bone"],["bully","knife","bomb"],["bone","bully","bat"],["bomb","pen","bully"],["bat","knife","bone","bomb"],["bully","bomb","pen","bat"],["bully","bomb","bone","bat"]],pool=waves[minute],count=minute>0&&elapsed%60<7?2:1;
+  for(let i=0;i<count;i++){const token=pool[Math.floor(Math.random()*pool.length)];if(token==="bat"){spawnBatSwarm();continue;}const map={fork:0,knife:1,pen:2,bone:3},type=token==="bomb"?"bombMouse":token==="bully"?"bullyMouse":"mouse",a=Math.random()*Math.PI*2,rad=Math.max(W,H)/cameraZoom*.62+100;pushScaledEnemy(type,player.x+Math.cos(a)*rad,player.y+Math.sin(a)*rad,token in map?{weaponVariant:map[token]}:{});}
 }
 function pushScaledEnemy(type,x,y,extra={}){
   const stats={mouse:{r:20,hp:40,speed:56,damage:8,xp:9},bombMouse:{r:21,hp:46,speed:60,damage:9,xp:12},bullyMouse:{r:30,hp:190,speed:86,damage:20,xp:32},bat:{r:14,hp:24,speed:165,damage:9,xp:7}},data=stats[type],mid=Math.max(0,Math.min(1,(elapsed-240)/480)),scale=1+elapsed/520+mid*.24,elite=type==="mouse"&&Math.random()<Math.min(.3,.035+elapsed/1500),hp=data.hp*scale*(elite?2.05:1);
@@ -1003,8 +1001,20 @@ function spawnBatSwarm(){
 function spawnBoss(index){
   const a=Math.random()*Math.PI*2,rad=Math.max(W,H)/cameraZoom*.55+340,major=(index+1)%5===0||index===bossTimes.length-1,style=index%5,bossRadii=[144,192,244,144,192],bossRadius=Math.round(bossRadii[style]*(major?1.15:1));
   const hp=(major?1250:650)*(1+index*.38),name=major?`Giant ${bossNames[index%bossNames.length]}`:bossNames[index%bossNames.length];
-  enemies.push({type:"vacuum",boss:true,bossStyle:style,major,name,x:player.x+Math.cos(a)*rad,y:player.y+Math.sin(a)*rad,r:bossRadius,hp,maxHp:hp,speed:major?34:44+index*1.1,damage:major?24:18,xp:80+index*12,orbitHit:0,hitFlash:0,seed:Math.random()*10});
+  enemies.push({type:"vacuum",boss:true,bossStyle:style,major,name,x:player.x+Math.cos(a)*rad,y:player.y+Math.sin(a)*rad,r:bossRadius,hp,maxHp:hp,speed:major?34:44+index*1.1,damage:major?24:18,xp:80+index*12,orbitHit:0,hitFlash:0,seed:Math.random()*10,aiTimer:2.4,skillCycle:0,skillCharge:0,pendingSkill:-1,kx:0,ky:0});
   texts.push({x:player.x,y:player.y-90,text:`⚠ ${name} has appeared!`,color:"#c8504c",life:2.2});shake=8;sfx("boss");
+}
+function updateAnimalBoss(e,dt){
+  if(freezeTimer>0)return;const animal=["owl","weasel","fox","owl","weasel"][e.bossStyle||0],a=Math.atan2(player.y-e.y,player.x-e.x);e.kx=e.kx||0;e.ky=e.ky||0;
+  if(e.skillCharge>0){e.skillCharge-=dt;if(e.skillCharge<=0)executeAnimalBossSkill(e,animal,e.pendingSkill);return;}
+  e.aiTimer-=dt;e.x+=(Math.cos(a)*e.speed+e.kx)*dt;e.y+=(Math.sin(a)*e.speed+e.ky)*dt;e.kx*=Math.pow(.05,dt);e.ky*=Math.pow(.05,dt);
+  if(e.aiTimer<=0){e.pendingSkill=e.skillCycle++%3;e.skillCharge=.72;e.aiTimer=3.2+(e.major?-.35:0);const names={owl:["FEATHER FAN","WINGSTORM","MOON DIVE"],weasel:["BURROW AMBUSH","LONG DASH","SNACK STEAL"],fox:["FOX-FIRE FAN","NINE-TAIL SWEEP","ILLUSION RING"]};texts.push({x:e.x,y:e.y-e.r-24,text:`⚠ ${names[animal][e.pendingSkill]}`,color:"#df554b",life:1.1});particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.72,ring:true,r:8,maxR:e.r*1.35,color:animal==="owl"?"#a8dcff":animal==="weasel"?"#e1b05e":"#ff8668",duration:.72});}
+}
+function executeAnimalBossSkill(e,animal,skill){
+  const aim=Math.atan2(player.y-e.y,player.x-e.x);sfx("skill");shake=5;
+  if(animal==="owl"){if(skill===0)for(let i=-3;i<=3;i++){const a=aim+i*.16;enemyOrbs.push({x:e.x,y:e.y,vx:Math.cos(a)*190,vy:Math.sin(a)*190,r:9,life:6,phase:i,turn:0});}else if(skill===1){particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.7,ring:true,r:8,maxR:285,color:"#a8dcff",duration:.7});if(dist(e.x,e.y,player.x,player.y)<285)hurtPlayer(18);}else{e.kx=Math.cos(aim)*560;e.ky=Math.sin(aim)*560;bossTrails.push({x:e.x,y:e.y,life:.8,maxLife:.8,r:e.r*.65,color:"#7ea6d8",danger:true});}}
+  else if(animal==="weasel"){if(skill===0){e.x=player.x-Math.cos(aim)*180;e.y=player.y-Math.sin(aim)*180;particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.55,ring:true,r:5,maxR:110,color:"#d7a85b",duration:.55});}else if(skill===1){e.kx=Math.cos(aim)*650;e.ky=Math.sin(aim)*650;}else{e.hp=Math.min(e.maxHp,e.hp+e.maxHp*.08);for(let i=0;i<3;i++)pushScaledEnemy("mouse",e.x+(Math.random()-.5)*120,e.y+(Math.random()-.5)*120,{weaponVariant:i});texts.push({x:e.x,y:e.y-e.r,text:"+8%",color:"#68b85f",life:1});}}
+  else{if(skill===0)for(let i=-2;i<=2;i++){const a=aim+i*.22;enemyOrbs.push({x:e.x,y:e.y,vx:Math.cos(a)*175,vy:Math.sin(a)*175,r:12,life:7,phase:i,turn:i*.035});}else if(skill===1){particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.65,ring:true,r:10,maxR:250,color:"#ff8a68",duration:.65});if(dist(e.x,e.y,player.x,player.y)<250)hurtPlayer(24);}else for(let i=0;i<10;i++){const a=i*Math.PI/5;enemyOrbs.push({x:e.x,y:e.y,vx:Math.cos(a)*125,vy:Math.sin(a)*125,r:10,life:7,phase:i,turn:(i%2?1:-1)*.18});}}
 }
 function startFinalBattle(){
   finalPhase=true;elapsed=1200;
