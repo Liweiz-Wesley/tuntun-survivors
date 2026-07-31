@@ -272,14 +272,48 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
 :root { --pixel-ink:#392f32; --pixel-paper:#fff2ca; --pixel-green:#76b86d; --pixel-dark:#41664a; }
 #game { image-rendering:pixelated; image-rendering:crisp-edges; background:#84bd70; }
 .start {
-  background-color:#74b8e8;
+  justify-content:flex-start;
+  padding-left:clamp(34px,7vw,118px);
+  background-color:#092b2b;
   background-image:
-    linear-gradient(90deg,rgba(255,242,202,.97) 0%,rgba(255,242,202,.88) 24%,rgba(255,242,202,.48) 40%,transparent 59%),
-    url("assets/backgrounds/home-hero-v2.webp");
+    linear-gradient(90deg,rgba(3,34,35,.72) 0%,rgba(3,34,35,.38) 31%,transparent 52%),
+    url("assets/source/home-menu-pixel-v3.png");
   background-size:auto,cover;
   background-position:left top,center center;
   background-repeat:no-repeat;
+  image-rendering:pixelated;
 }
+.start .start-card {
+  width:min(410px,42vw); margin:0; padding:0;
+  border:0; border-radius:0; background:transparent;
+  box-shadow:none; backdrop-filter:none; color:#ffe8a6;
+  animation:rise .65s steps(6,end) both;
+}
+.start .eyebrow,.start .start-card>p { display:none; }
+.start h1 {
+  margin:0 0 clamp(28px,5vh,52px);
+  color:#ffd873; font-family:"STKaiti","KaiTi","FangSong",serif;
+  font-size:clamp(58px,7.2vw,112px); line-height:.78; letter-spacing:-.06em;
+  transform:rotate(-1deg); text-shadow:3px 0 #573b24,0 3px #573b24,5px 5px #172f2b;
+  image-rendering:pixelated;
+}
+.start h1 em { color:#ffd873; font-size:.72em; }
+.start .main-actions { width:min(300px,34vw); display:grid; gap:0; }
+.start .primary,.start .secondary {
+  width:100%; min-width:0; margin:0; padding:13px 10px 12px 30px;
+  border:0; border-bottom:3px solid rgba(255,220,128,.55); border-radius:0 !important;
+  color:#ffe8a6; background:transparent; box-shadow:none;
+  font:900 clamp(18px,2vw,27px) "STKaiti","KaiTi","FangSong",serif;
+  text-align:left; letter-spacing:.08em; text-shadow:2px 2px 0 #172f2b;
+}
+.start .primary { color:#ff8a32; padding-left:16px; font-size:clamp(21px,2.25vw,31px); }
+.start .primary span { float:right; margin:0; }
+.start .primary:hover,.start .secondary:hover { color:#fff5c9; background:rgba(255,209,104,.08); transform:translateX(6px); }
+.start .primary:active,.start .secondary:active { transform:translateX(9px); box-shadow:none; }
+.start .controls { margin-top:18px; display:block; color:rgba(255,232,166,.72); font-size:11px; line-height:1.8; text-shadow:1px 1px #172f2b; }
+.start .controls span { display:block; }
+.start .controls kbd { color:#ffe8a6; border:1px solid rgba(255,220,128,.5); border-radius:0; background:rgba(4,36,36,.58); box-shadow:none; }
+.start .version { color:rgba(255,232,166,.72); text-shadow:2px 2px #172f2b; }
 .start-card,.modal-card,.shop-book,.character-book,.codex-book {
   border:4px solid var(--pixel-ink); border-radius:3px; background:var(--pixel-paper);
   box-shadow:8px 8px 0 rgba(57,47,50,.28); backdrop-filter:none;
@@ -305,7 +339,14 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
 .snack-buffs { position:absolute; left:20px; top:120px; display:flex; gap:7px; }
 .snack-buffs span { min-width:54px; height:40px; display:flex; align-items:center; gap:3px; padding:3px 7px; border:3px solid var(--pixel-ink); background:#fff2ca; box-shadow:3px 3px 0 rgba(57,47,50,.3); color:#58483e; font-size:11px; font-weight:900; }
 .snack-buffs img { width:28px; height:28px; object-fit:contain; image-rendering:pixelated; }
-@media (max-width:720px) { .start { background-position:left top,62% center; } }
+@media (max-width:720px) {
+  .start { padding-left:24px; background-position:left top,58% center; }
+  .start .start-card { width:43vw; }
+  .start h1 { margin-bottom:18px; font-size:clamp(40px,8vw,64px); }
+  .start .main-actions { width:38vw; }
+  .start .primary,.start .secondary { padding:8px 7px 7px 14px; font-size:clamp(14px,2.7vw,20px); }
+  .start .controls,.start .version { display:none; }
+}
 </style>
 </head>
 <body>
@@ -337,9 +378,9 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
         <h1>豚豚<br><em>生存者</em></h1>
         <p>一只小荷兰猪，一座失控的花园。<br>用胡萝卜和尖叫守护今天的下午茶！</p>
         <div class="main-actions">
-          <button id="startBtn" class="primary">开始冒险 <span>→</span></button>
-          <button id="codexBtn" class="secondary">📖 图鉴</button>
-          <button id="shopBtn" class="secondary">🪙 永久升级</button>
+          <button id="startBtn" class="primary">开始游戏 <span>◆</span></button>
+          <button id="codexBtn" class="secondary">图鉴</button>
+          <button id="shopBtn" class="secondary">局外升级</button>
         </div>
         <div class="controls">
           <span><kbd>WASD</kbd> 移动 · <kbd>SPACE</kbd> 专属技能</span>
