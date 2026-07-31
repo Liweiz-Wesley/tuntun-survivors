@@ -372,7 +372,9 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
             <article><b>🧪 Veggie Juice Bottle</b><span>＋ 🏠 Cozy Nest</span><strong>🍇 Dreamy Veggie Garden</strong><p>Throws two bottles, creating a larger, longer-lasting garden.</p></article>
             <article><b>🌰 Boomerang Acorn</b><span>＋ 🍀 Lucky Clover</span><strong>👑 Golden Acorn Barrage</strong><p>Multiple acorns fly out and return, cutting through crowds twice.</p></article>
             <article><b>🧀 Moon Cheese</b><span>＋ 🔭 Stargazing Lens</span><strong>🌕 Full Moon Cheese Rain</strong><p>Calls down three giant cheese meteors for massive area damage.</p></article>
-            <article><b>🫧 Bubble Wand</b><span>＋ 🧣 Fluffy Scarf</span><strong>🌈 Rainbow Bubble Sea</strong><p>Releases more expanding rainbow bubbles that pierce enemy crowds.</p></article>
+            <article><b>🫧 Bubble Wand</b><span>＋ 🧣 Fluffy Scarf</span><strong>🌊 Deep-Sea Pearl Tide</strong><p>Releases cyan pearl bubbles with much stronger piercing.</p></article>
+            <article><b>📕 Bedtime Storybook</b><span>＋ 👑 Wisdom Crown</span><strong>📖 Endless Fairy Tale</strong><p>Continuously calls down a wide rain of paper stars.</p></article>
+            <article><b>🔔 Nap Bell</b><span>＋ 🛡️ Soft Shell Pad</span><strong>🔔 Dreamland Grand Bell</strong><p>Rapidly releases huge violet-gold waves around the hero.</p></article>
           </div>
           <h3>Passive Items</h3>
           <div class="mini-grid">
@@ -508,7 +510,7 @@ function drawPixelEnemy(e,facing){
 let W = innerWidth, H = innerHeight, dpr = 1;
 const cameraZoom = .78;
 let running = false, paused = false, last = 0, elapsed = 0, score = 0, level = 1, finalPhase = false;
-let xp = 0, xpNeed = 18, spawnClock = 0, shotClock = 0, hayClock = 0, seedClock = 0, laserClock = 0, bottleClock = 0, acornClock=0, meteorClock=0, bubbleClock=0, gemMergeClock=0, skillCooldown = 0, freezeTimer=0, flameTimer=0, flameClock=0, snackRateTimer=0, snackSpeedTimer=0, snackHealTimer=0, snackXpTimer=0, potRespawnClock=12, shake = 0, flash = 0;
+let xp = 0, xpNeed = 18, spawnClock = 0, shotClock = 0, hayClock = 0, seedClock = 0, laserClock = 0, bottleClock = 0, acornClock=0, meteorClock=0, bubbleClock=0, storyClock=0, bellClock=0, gemMergeClock=0, skillCooldown = 0, freezeTimer=0, flameTimer=0, flameClock=0, snackRateTimer=0, snackSpeedTimer=0, snackHealTimer=0, snackXpTimer=0, potRespawnClock=12, shake = 0, flash = 0, runBosses=0, runRewardGranted=false;
 let enemies = [], shots = [], swings = [], lasers = [], bottles = [], zones = [], gems = [], chests = [], obstacles=[], pots=[], pickups=[], enemyOrbs=[],bossWaves=[],bossTrails=[],particles = [], texts = [], bossWave = 0,mapAnchorX=0,mapAnchorY=0,mapChunkX=NaN,mapChunkY=NaN,rerollsLeft=0,banishesLeft=0,currentPicks=[],banishMode=false;
 let banishedUpgrades=new Set();
 let visitedFoodChunks=new Set();
@@ -516,7 +518,7 @@ const bossTimes = [120,240,360,480,600,720,840,960,1080];
 const bossNames = ["Rumbling Vacuum King","Duke of Dust","Clockwork Mouse Captain","Garden Sweeper","Nap Wrecker"];
 const keys = new Set();
 const pointer = { active:false, x:0, y:0, ox:0, oy:0 };
-const player = { x:0, y:0, r:20, speed:225, hp:130, maxHp:130, inv:0, damage:18, rate:.64, projectiles:1, magnet:105, size:1, regen:.12, facing:1, pierce:0, crit:0, area:1, cooldown:1 };
+const player = { x:0, y:0, r:20, speed:225, hp:130, maxHp:130, inv:0, damage:18, rate:.64, projectiles:1, magnet:105, size:1, regen:.12, facing:1, pierce:0, crit:0, area:1, cooldown:1, growth:1, armor:0, duration:1, revives:0 };
 const SAVE_KEY="tuntun-survivors-save-v2";
 let selectedCharacter="tuntun",skillMaxCooldown=10;
 const characterDefs=[
@@ -527,6 +529,13 @@ const characterDefs=[
 const metaDefs=[
   {id:"health",icon:"❤️",name:"HEARTY BUILD",desc:"+10 starting health per level",max:10,base:35},
   {id:"damage",icon:"🥕",name:"CARROT TRAINING",desc:"+6% starting damage per level",max:10,base:45},
+  {id:"armor",icon:"🛡️",name:"PADDED ARMOR",desc:"-1 incoming damage per level",max:5,base:80},
+  {id:"cooldown",icon:"⏱️",name:"QUICK PREP",desc:"-2% weapon cooldown per level",max:5,base:90},
+  {id:"area",icon:"🔭",name:"WIDE VIEW",desc:"+5% attack area per level",max:5,base:75},
+  {id:"growth",icon:"👑",name:"GROWTH TRAINING",desc:"+5% experience gained per level",max:10,base:55},
+  {id:"amount",icon:"➕",name:"EXTRA AMMO",desc:"+1 base projectile per level",max:2,base:260},
+  {id:"luck",icon:"🍀",name:"LUCKY STAR",desc:"+2% critical chance per level",max:5,base:85},
+  {id:"revival",icon:"💖",name:"SECOND WIND",desc:"Revive once with half health",max:1,base:650},
   {id:"speed",icon:"👟",name:"QUICK PAWS",desc:"+2.5% movement speed per level",max:8,base:30},
   {id:"magnet",icon:"🧲",name:"BEAN MAGNET",desc:"+12 pickup range per level",max:8,base:30},
   {id:"regen",icon:"🏠",name:"COZY RECOVERY",desc:"Adds a little health regeneration",max:8,base:55},
@@ -534,12 +543,12 @@ const metaDefs=[
   {id:"reroll",icon:"🎲",name:"REROLL TOKEN",desc:"+1 upgrade reroll per run",max:5,base:120},
   {id:"banish",icon:"✖",name:"BANISH TOKEN",desc:"+1 permanent option removal per run",max:5,base:165}
 ];
-function freshSave(){return {coins:0,earned:0,characters:{tuntun:true,rabbit:false,chinchilla:false},upgrades:{health:0,damage:0,speed:0,magnet:0,regen:0,fortune:0,reroll:0,banish:0}};}
+function freshSave(){return {coins:0,earned:0,characters:{tuntun:true,rabbit:false,chinchilla:false},upgrades:{health:0,damage:0,armor:0,cooldown:0,area:0,growth:0,amount:0,luck:0,revival:0,speed:0,magnet:0,regen:0,fortune:0,reroll:0,banish:0}};}
 function loadSave(){try{const raw=localStorage.getItem(SAVE_KEY),data=raw?JSON.parse(raw):freshSave();return {coins:+data.coins||0,earned:+data.earned||0,characters:{...freshSave().characters,...(data.characters||{})},upgrades:{...freshSave().upgrades,...(data.upgrades||{})}};}catch(e){return freshSave();}}
 let metaSave=loadSave();
 function persistSave(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(metaSave));}catch(e){}}
 function metaCost(d,l){return Math.floor(d.base*Math.pow(1.58,l));}
-function addCoins(n){const gain=Math.max(1,Math.round(n*(1+(metaSave.upgrades.fortune||0)*.08)));metaSave.coins+=gain;metaSave.earned+=gain;persistSave();updateCoinUI();return gain;}
+function addCoins(n){const gain=Math.max(0,Math.round(n*(1+(metaSave.upgrades.fortune||0)*.08)));metaSave.coins+=gain;metaSave.earned+=gain;persistSave();updateCoinUI();return gain;}
 function updateCoinUI(){if(ui.coinText)ui.coinText.textContent=metaSave.coins;const bank=document.querySelector("#shopCoins");if(bank)bank.textContent="🪙 "+metaSave.coins;const characterCoins=document.querySelector("#characterCoins");if(characterCoins)characterCoins.textContent="🪙 "+metaSave.coins;}
 function renderShop(){
   updateCoinUI();document.querySelector("#shopGrid").innerHTML=metaDefs.map(d=>{const lv=metaSave.upgrades[d.id]||0,cost=metaCost(d,lv),max=lv>=d.max;return `<article class="shop-item"><span class="shop-icon">${d.icon}</span><div><h3>${d.name}　LV.${lv}/${d.max}</h3><p>${d.desc}</p></div><button class="shop-buy" data-id="${d.id}" ${max||metaSave.coins<cost?"disabled":""}>${max?"MAXED":"🪙 "+cost}</button></article>`;}).join("");
@@ -557,9 +566,9 @@ function renderCharacterSelect(){
   document.querySelectorAll(".character-buy").forEach(b=>b.onclick=()=>{const c=characterDefs.find(x=>x.id===b.dataset.id);if(!c||metaSave.characters[c.id]||metaSave.coins<c.cost)return;metaSave.coins-=c.cost;metaSave.characters[c.id]=true;persistSave();sfx("chest");renderCharacterSelect();});
 }
 const MAX_WEAPONS=5,MAX_PASSIVES=5;
-const weapons = { carrot:1, dandelion:0, hay:0, seed:0, laser:0, bottle:0, acorn:0, meteor:0, bubble:0 };
-const passives = { speed:0, heart:0, magnet:0, regen:0, power:0, chew:0, luck:0, area:0, cooldown:0 };
-const evolved = { carrot:false, dandelion:false, hay:false, seed:false, laser:false, bottle:false, acorn:false, meteor:false, bubble:false };
+const weapons = { carrot:1, dandelion:0, hay:0, seed:0, laser:0, bottle:0, acorn:0, meteor:0, bubble:0, story:0, bell:0 };
+const passives = { speed:0, heart:0, magnet:0, regen:0, power:0, chew:0, luck:0, area:0, cooldown:0, growth:0, armor:0 };
+const evolved = { carrot:false, dandelion:false, hay:false, seed:false, laser:false, bottle:false, acorn:false, meteor:false, bubble:false, story:false, bell:false };
 const evolutionRecipes = [
   {weapon:"carrot",passive:"chew",name:"Carrot Rocket",icon:"🚀"},
   {weapon:"dandelion",passive:"power",name:"Crown Blossom Storm",icon:"🌸"},
@@ -569,7 +578,9 @@ const evolutionRecipes = [
   {weapon:"bottle",passive:"regen",name:"Dreamy Veggie Garden",icon:"🍇"},
   {weapon:"acorn",passive:"luck",name:"Golden Acorn Barrage",icon:"👑"},
   {weapon:"meteor",passive:"area",name:"Full Moon Cheese Rain",icon:"🌕"},
-  {weapon:"bubble",passive:"cooldown",name:"Rainbow Bubble Sea",icon:"🌈"}
+  {weapon:"bubble",passive:"cooldown",name:"Deep-Sea Pearl Tide",icon:"🌊"},
+  {weapon:"story",passive:"growth",name:"Endless Fairy Tale",icon:"📖"},
+  {weapon:"bell",passive:"armor",name:"Dreamland Grand Bell",icon:"🔔"}
 ];
 
 const upgrades = [
@@ -608,6 +619,8 @@ const upgrades = [
   { id:"acorn", icon:"🌰", name:"Boomerang Acorn", available(){return weapons.acorn<8;}, desc:"Flies out like a boomerang and returns, hitting enemies both ways.", preview(){return weapons.acorn?`LV.${weapons.acorn} → LV.${weapons.acorn+1}　More damage, acorns and piercing`:"Unlock weapon　A piercing acorn that returns";}, apply(){ weapons.acorn++; }},
   { id:"meteor", icon:"🧀", name:"Moon Cheese", available(){return weapons.meteor<8;}, desc:"Drops cheese meteors from the sky onto random enemy groups.", preview(){return weapons.meteor?`LV.${weapons.meteor} → LV.${weapons.meteor+1}　More meteor damage and area`:"Unlock weapon　A delayed large-area meteor";}, apply(){ weapons.meteor++; }},
   { id:"bubble", icon:"🫧", name:"Bubble Wand", available(){return weapons.bubble<8;}, desc:"Fires slow, expanding bubbles that pass through many enemies.", preview(){return weapons.bubble?`LV.${weapons.bubble} → LV.${weapons.bubble+1}　More bubbles, size and piercing`:"Unlock weapon　An expanding piercing bubble";}, apply(){ weapons.bubble++; }},
+  { id:"story", icon:"📕", name:"Bedtime Storybook", available(){return weapons.story<8;}, desc:"Calls paper stars down on scattered enemies.", preview(){return weapons.story?`LV.${weapons.story} → LV.${weapons.story+1}　More paper stars and damage`:"Unlock　Enemy-seeking paper star rain";}, apply(){ weapons.story++; }},
+  { id:"bell", icon:"🔔", name:"Nap Bell", available(){return weapons.bell<8;}, desc:"Periodically releases an expanding sound wave.", preview(){return weapons.bell?`LV.${weapons.bell} → LV.${weapons.bell+1}　Larger, stronger sound waves`:"Unlock　Close-range circular sound wave";}, apply(){ weapons.bell++; }},
   { id:"speed", icon:"👟", name:"Nimble Paws", available(){return passives.speed<5;}, desc:"Keep your distance and slip through enemy crowds.", preview(){return `LV.${passives.speed} → LV.${passives.speed+1}　Move speed ${fmt(player.speed)} → ${fmt(player.speed*1.1)}`;}, apply(){ passives.speed++;player.speed*=1.1; }},
   { id:"heart", icon:"🍎", name:"Apple Snack", available(){return passives.heart<5;}, desc:"Raises maximum health and heals immediately.", preview(){return `LV.${passives.heart} → LV.${passives.heart+1}　Max health +20　Heal 35`;}, apply(){ passives.heart++;player.maxHp+=20; player.hp=Math.min(player.maxHp,player.hp+35); }},
   { id:"magnet", icon:"🎒", name:"Hamster Backpack", available(){return passives.magnet<5;}, desc:"Collect growth beans from farther away.", preview(){return `LV.${passives.magnet} → LV.${passives.magnet+1}　Pickup range +45`;}, apply(){ passives.magnet++;player.magnet+=45; }},
@@ -617,6 +630,8 @@ const upgrades = [
   { id:"luck", icon:"🍀", name:"Lucky Clover", available(){return passives.luck<5;}, desc:"Gives every attack a chance to deal double critical damage.", preview(){return `LV.${passives.luck} → LV.${passives.luck+1}　Critical chance +5%`;}, apply(){ passives.luck++;player.crit+=.05; }},
   { id:"area", icon:"🔭", name:"Stargazing Lens", available(){return passives.area<5;}, desc:"Enlarges most area attacks and projectiles.", preview(){return `LV.${passives.area} → LV.${passives.area+1}　Attack area +10%`;}, apply(){ passives.area++;player.area*=1.1; }},
   { id:"cooldown", icon:"🧣", name:"Fluffy Scarf", available(){return passives.cooldown<5;}, desc:"Makes every automatic weapon attack again sooner.", preview(){return `LV.${passives.cooldown} → LV.${passives.cooldown+1}　Weapon cooldown -6%`;}, apply(){ passives.cooldown++;player.cooldown*=.94; }}
+  ,{ id:"growth", icon:"👑", name:"Wisdom Crown", available(){return passives.growth<5;}, desc:"Increases experience from every growth bean.", preview(){return `LV.${passives.growth} → LV.${passives.growth+1}　Experience gain +8%`;}, apply(){ passives.growth++;player.growth*=1.08; }}
+  ,{ id:"armor", icon:"🛡️", name:"Soft Shell Pad", available(){return passives.armor<5;}, desc:"Reduces damage from every collision.", preview(){return `LV.${passives.armor} → LV.${passives.armor+1}　Damage taken -1`;}, apply(){ passives.armor++;player.armor+=1; }}
 ];
 
 function resize(){
@@ -715,13 +730,13 @@ function startGame(){
   initAudio();musicStep=0;sfx("start");
   ui.hud.classList.remove("pause-visible");
   clearTimeout(chestRevealTimer);pendingChestReward=null;ui.chest.classList.add("hidden");ui.chest.classList.remove("revealed");
-  const m=metaSave.upgrades,char=characterDefs.find(c=>c.id===selectedCharacter)||characterDefs[0],maxHp=Math.round((105+(m.health||0)*10)*char.hp);skillMaxCooldown=char.cd;
+  const m=metaSave.upgrades,char=characterDefs.find(c=>c.id===selectedCharacter)||characterDefs[0],maxHp=Math.round((82+(m.health||0)*10)*char.hp);skillMaxCooldown=char.cd;
   rerollsLeft=m.reroll||0;banishesLeft=m.banish||0;banishedUpgrades=new Set();banishMode=false;currentPicks=[];
-  Object.assign(player,{x:0,y:0,r:20,hp:maxHp,maxHp,speed:205*(1+(m.speed||0)*.025)*char.speed,inv:0,damage:14*(1+(m.damage||0)*.06)*char.damage,rate:.7,projectiles:1,magnet:85+(m.magnet||0)*12,size:1,regen:(m.regen||0)*.05,facing:1,pierce:0,crit:0,area:1,cooldown:1});
+  Object.assign(player,{x:0,y:0,r:20,hp:maxHp,maxHp,speed:200*(1+(m.speed||0)*.025)*char.speed,inv:0,damage:11*(1+(m.damage||0)*.06)*char.damage,rate:.74,projectiles:1+(m.amount||0),magnet:80+(m.magnet||0)*12,size:1,regen:(m.regen||0)*.05,facing:1,pierce:0,crit:(m.luck||0)*.02,area:1+(m.area||0)*.05,cooldown:1-(m.cooldown||0)*.02,growth:1+(m.growth||0)*.05,armor:m.armor||0,duration:1,revives:m.revival||0});
   Object.keys(weapons).forEach(id=>weapons[id]=0);weapons[char.starter]=1;
-  Object.assign(passives,{speed:0,heart:0,magnet:0,regen:0,power:0,chew:0,luck:0,area:0,cooldown:0});
-  Object.assign(evolved,{carrot:false,dandelion:false,hay:false,seed:false,laser:false,bottle:false,acorn:false,meteor:false,bubble:false});
-  elapsed=score=xp=spawnClock=shotClock=hayClock=seedClock=laserClock=bottleClock=acornClock=meteorClock=bubbleClock=gemMergeClock=skillCooldown=freezeTimer=flameTimer=flameClock=snackRateTimer=snackSpeedTimer=snackHealTimer=snackXpTimer=0;potRespawnClock=12; level=1; xpNeed=18;visitedFoodChunks=new Set();
+  Object.assign(passives,{speed:0,heart:0,magnet:0,regen:0,power:0,chew:0,luck:0,area:0,cooldown:0,growth:0,armor:0});
+  Object.assign(evolved,{carrot:false,dandelion:false,hay:false,seed:false,laser:false,bottle:false,acorn:false,meteor:false,bubble:false,story:false,bell:false});
+  elapsed=score=xp=spawnClock=shotClock=hayClock=seedClock=laserClock=bottleClock=acornClock=meteorClock=bubbleClock=storyClock=bellClock=gemMergeClock=skillCooldown=freezeTimer=flameTimer=flameClock=snackRateTimer=snackSpeedTimer=snackHealTimer=snackXpTimer=0;runBosses=0;runRewardGranted=false;potRespawnClock=12; level=1; xpNeed=18;visitedFoodChunks=new Set();
   enemies=[];shots=[];swings=[];lasers=[];bottles=[];zones=[];gems=[];chests=[];obstacles=[];pots=[];pickups=[];enemyOrbs=[];bossWaves=[];bossTrails=[];particles=[];texts=[];bossWave=0;finalPhase=false;running=true;paused=false;last=performance.now();buildMap();
   ui.start.classList.add("hidden");ui.pause.classList.add("hidden");ui.codex.classList.add("hidden");ui.shop.classList.add("hidden");ui.end.classList.add("hidden");ui.level.classList.add("hidden");ui.hud.classList.remove("hidden");updateCoinUI();ui.skillName.textContent=char.skill;ui.skillBar.setAttribute("aria-label",char.skill);
   renderTray(); requestAnimationFrame(loop);
@@ -780,9 +795,10 @@ function collectPickup(p){
 }
 function hurtPlayer(dmg){
   if(player.inv>0||!running||paused)return;
-  player.hp-=dmg;player.inv=.72;shake=10;sfx("hurt");burst(player.x,player.y,"#ff8b82",14);
-  texts.push({x:player.x,y:player.y-35,text:"-"+dmg,color:"#e55752",life:1});
-  if(player.hp<=0)endGame(false);
+  const taken=Math.max(1,Math.round(dmg-player.armor));player.hp-=taken;player.inv=.72;shake=10;sfx("hurt");burst(player.x,player.y,"#ff8b82",14);
+  texts.push({x:player.x,y:player.y-35,text:"-"+taken,color:"#e55752",life:1});
+  if(player.hp<=0&&player.revives>0){player.revives--;player.hp=Math.ceil(player.maxHp*.5);player.inv=3;flash=.5;particles.push({x:player.x,y:player.y,vx:0,vy:0,life:1.2,ring:true,r:8,maxR:300,color:"#ffef9f",duration:1.2});texts.push({x:player.x,y:player.y-55,text:"SECOND WIND!",color:"#e8a928",life:1.8});}
+  else if(player.hp<=0)endGame(false);
 }
 function launchBossOrbs(e){
   const aim=Math.atan2(player.y-e.y,player.x-e.x);
@@ -847,8 +863,8 @@ function update(dt){
   if(flameTimer>0&&flameClock<=0){flameClock=.22;enemies.forEach(e=>{if(dist(e.x,e.y,player.x,player.y)<145+e.r)hitEnemy(e,18+player.damage*.35);});pots.forEach(p=>{if(!p.dead&&dist(p.x,p.y,player.x,player.y)<145+p.r)hitPot(p,22);});}
 
   spawnClock-=dt;
-  const midPressure=Math.max(0,Math.min(1,(elapsed-240)/420)),intensity=Math.min(5.4,1+elapsed/190+midPressure*1.05);
-  if(!finalPhase&&spawnClock<=0){if(enemies.length<230){spawnEnemy();if(midPressure>.35&&Math.random()<midPressure*.32)spawnEnemy();}spawnClock=Math.max(.13,.72/intensity);}
+  const midPressure=Math.max(0,Math.min(1,(elapsed-180)/360)),intensity=Math.min(6.4,1.2+elapsed/165+midPressure*1.35);
+  if(!finalPhase&&spawnClock<=0){if(enemies.length<245){spawnEnemy();if(midPressure>.22&&Math.random()<.12+midPressure*.38)spawnEnemy();}spawnClock=Math.max(.105,.66/intensity);}
   if(!finalPhase&&bossWave<bossTimes.length&&elapsed>=bossTimes[bossWave]){spawnBoss(bossWave);bossWave++;}
   if(!finalPhase&&elapsed>=1200){elapsed=1200;startFinalBattle();}
   shotClock-=dt;
@@ -860,6 +876,8 @@ function update(dt){
   if(weapons.acorn){acornClock-=dt;if(acornClock<=0){fireAcorns();acornClock=(evolved.acorn?1.15:Math.max(1.65,3.1-weapons.acorn*.2))*player.cooldown;}}
   if(weapons.meteor){meteorClock-=dt;if(meteorClock<=0){fireMeteor();meteorClock=(evolved.meteor?1.55:Math.max(2.35,5-weapons.meteor*.34))*player.cooldown;}}
   if(weapons.bubble){bubbleClock-=dt;if(bubbleClock<=0){fireBubbles();bubbleClock=(evolved.bubble?1.05:Math.max(1.55,3.2-weapons.bubble*.2))*player.cooldown;}}
+  if(weapons.story){storyClock-=dt;if(storyClock<=0){fireStorybook();storyClock=(evolved.story?1.35:Math.max(2.1,4.5-weapons.story*.3))*player.cooldown;}}
+  if(weapons.bell){bellClock-=dt;if(bellClock<=0){ringBell();bellClock=(evolved.bell?1.05:Math.max(1.8,3.8-weapons.bell*.24))*player.cooldown;}}
 
   const orbitCount=weapons.dandelion*2+(evolved.dandelion?8:0);
   if(orbitCount) enemies.forEach(e=>{
@@ -880,7 +898,7 @@ function update(dt){
   zones.forEach(z=>{z.life-=dt;z.tick-=dt;if(z.tick<=0){z.tick=.45;enemies.forEach(e=>{if(dist(e.x,e.y,z.x,z.y)<z.r+e.r)hitEnemy(e,5+weapons.bottle*2);});pots.forEach(p=>{if(!p.dead&&dist(p.x,p.y,z.x,z.y)<z.r+p.r)hitPot(p,5+weapons.bottle*2);});}});
   gems.forEach(g=>{let d=dist(g.x,g.y,player.x,player.y);if(g.vacuum){g.vacuumDelay-=dt;if(g.vacuumDelay<=0){const a=Math.atan2(player.y-g.y,player.x-g.x),pull=900+Math.min(1500,d*1.5);g.vx=(g.vx||0)*Math.pow(.08,dt)+Math.cos(a)*pull*dt;g.vy=(g.vy||0)*Math.pow(.08,dt)+Math.sin(a)*pull*dt;const sp=Math.hypot(g.vx,g.vy),cap=780;if(sp>cap){g.vx=g.vx/sp*cap;g.vy=g.vy/sp*cap;}g.x+=g.vx*dt;g.y+=g.vy*dt;d=dist(g.x,g.y,player.x,player.y);}}else if(d<player.magnet){const a=Math.atan2(player.y-g.y,player.x-g.x);const sp=240+(player.magnet-d)*3;g.x+=Math.cos(a)*sp*dt;g.y+=Math.sin(a)*sp*dt;}if(d<player.r+10){g.dead=true;sfx("pickup");gainXp(g.value);}});
   chests.forEach(c=>{c.bob+=dt;if(dist(c.x,c.y,player.x,player.y)<player.r+22){c.dead=true;openChest(c);}});
-  pickups.forEach(p=>{const d=dist(p.x,p.y,player.x,player.y);if(d<player.magnet*.8){const a=Math.atan2(player.y-p.y,player.x-p.x),sp=210+(player.magnet-d)*2;p.x+=Math.cos(a)*sp*dt;p.y+=Math.sin(a)*sp*dt;}if(d<player.r+15)collectPickup(p);});
+  pickups.forEach(p=>{let d=dist(p.x,p.y,player.x,player.y),range=p.type==="coin"?player.magnet:player.magnet*.8;if(d<range){const a=Math.atan2(player.y-p.y,player.x-p.x),sp=230+(range-d)*2.4;p.x+=Math.cos(a)*sp*dt;p.y+=Math.sin(a)*sp*dt;d=dist(p.x,p.y,player.x,player.y);}if(d<player.r+15)collectPickup(p);});
   enemyOrbs.forEach(o=>{const a=Math.atan2(o.vy,o.vx)+o.turn*dt,sp=Math.hypot(o.vx,o.vy);o.vx=Math.cos(a)*sp;o.vy=Math.sin(a)*sp;o.x+=o.vx*dt;o.y+=o.vy*dt;o.life-=dt;o.phase+=dt*7;if(dist(o.x,o.y,player.x,player.y)<o.r+player.r*.65){hurtPlayer(14);o.dead=true;}});
   bossTrails.forEach(t=>{t.life-=dt;if(t.danger&&t.life>.25&&dist(t.x,t.y,player.x,player.y)<t.r+player.r*.5)hurtPlayer(10);});
   bossWaves.forEach(w=>{w.life-=dt;w.hitCooldown=Math.max(0,(w.hitCooldown||0)-dt);if(w.charge>0){w.charge-=dt;}else{w.angle+=w.spin*dt;const len=1050,x2=w.x+Math.cos(w.angle)*len,y2=w.y+Math.sin(w.angle)*len;if(w.hitCooldown<=0&&pointSegmentDistance(player.x,player.y,w.x,w.y,x2,y2)<25+player.r*.45){hurtPlayer(22);w.hitCooldown=.9;}}});
@@ -978,6 +996,15 @@ function fireBubbles(){
   const targets=enemies.filter(e=>isOnScreen(e.x,e.y,20));if(!targets.length)return;const target=targets.sort((a,b)=>dist(a.x,a.y,player.x,player.y)-dist(b.x,b.y,player.x,player.y))[0],base=Math.atan2(target.y-player.y,target.x-player.x),count=1+Math.floor((weapons.bubble-1)/3)+(evolved.bubble?2:0);
   for(let i=0;i<count;i++){const a=base+(i-(count-1)/2)*.2,sp=evolved.bubble?205:165;shots.push({kind:"bubble",x:player.x,y:player.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:(11+weapons.bubble)*player.area*(evolved.bubble?1.35:1),damage:(10+weapons.bubble*5)*(evolved.bubble?1.45:1),life:evolved.bubble?4.5:3.6,rot:a,pierce:2+weapons.bubble+(evolved.bubble?5:0),hitIds:new Set(),age:0});}
 }
+function fireStorybook(){
+  const targets=enemies.filter(e=>isOnScreen(e.x,e.y,0));if(!targets.length)return;const count=1+Math.floor((weapons.story-1)/2)+(evolved.story?3:0);
+  [...targets].sort(()=>Math.random()-.5).slice(0,count).forEach((t,i)=>lasers.push({x:t.x,y:t.y,radius:(28+weapons.story*3)*(evolved.story?1.55:1)*player.area,damage:(22+weapons.story*8)*(evolved.story?1.7:1),life:.72+i*.06,maxLife:.72+i*.06,delay:.24+i*.04,hit:false,story:true}));
+}
+function ringBell(){
+  const radius=(90+weapons.bell*13)*(evolved.bell?1.55:1)*player.area,damage=(12+weapons.bell*5)*(evolved.bell?1.65:1);
+  particles.push({x:player.x,y:player.y,vx:0,vy:0,life:.65,ring:true,r:10,maxR:radius,color:evolved.bell?"#a98cff":"#f3c75b",duration:.65});
+  enemies.forEach(e=>{if(dist(e.x,e.y,player.x,player.y)<radius+e.r)hitEnemy(e,damage);});
+}
 function activateSkill(){
   if(!running||paused||skillCooldown>0)return;
   skillCooldown=skillMaxCooldown;flash=.16;shake=9;sfx("skill");
@@ -994,7 +1021,7 @@ function activateSkill(){
   enemies.forEach(e=>{const d=dist(e.x,e.y,player.x,player.y);if(d<radius){const a=Math.atan2(e.y-player.y,e.x-player.x),force=850*(1-d/radius*.35);e.kx=Math.cos(a)*force;e.ky=Math.sin(a)*force;hitEnemy(e,12);}});
   texts.push({x:player.x,y:player.y-42,text:"SQUEEEAK!",color:"#4f8b52",life:1});
 }
-function hitEnemy(e,dmg){const crit=player.crit>0&&Math.random()<player.crit;if(crit)dmg*=2;e.hp-=dmg;e.hitFlash=.11;sfx("hit");burst(e.x,e.y,crit?"#fff27a":"#fff0a8",crit?6:3);if(crit)texts.push({x:e.x,y:e.y-e.r,text:"CRIT!",color:"#f4ad32",life:.45});if(e.hp<=0&&!e.dead){e.dead=true;score++;sfx(e.boss?"boss":"kill");shake=Math.max(shake,e.type==="vacuum"?7:2.5);if(!e.finalBoss)gems.push({x:e.x,y:e.y,value:e.xp,dead:false,bob:Math.random()*6});if(e.boss&&!e.finalBoss){chests.push({x:e.x,y:e.y,bob:0,dead:false});pickups.push({x:e.x+24,y:e.y,type:"coin",value:18,dead:false,bob:0});}else if(!e.finalBoss&&Math.random()<.16)pickups.push({x:e.x,y:e.y,type:"coin",value:1+Math.floor(Math.random()*3),dead:false,bob:0});splatter(e);if(e.finalBoss)endGame(true);}}
+function hitEnemy(e,dmg){const crit=player.crit>0&&Math.random()<player.crit;if(crit)dmg*=2;e.hp-=dmg;e.hitFlash=.11;sfx("hit");burst(e.x,e.y,crit?"#fff27a":"#fff0a8",crit?6:3);if(crit)texts.push({x:e.x,y:e.y-e.r,text:"CRIT!",color:"#f4ad32",life:.45});if(e.hp<=0&&!e.dead){e.dead=true;score++;sfx(e.boss?"boss":"kill");shake=Math.max(shake,e.type==="vacuum"?7:2.5);if(!e.finalBoss)gems.push({x:e.x,y:e.y,value:e.xp,dead:false,bob:Math.random()*6});if(e.boss&&!e.finalBoss){runBosses++;chests.push({x:e.x,y:e.y,bob:0,dead:false});pickups.push({x:e.x+24,y:e.y,type:"coin",value:5,dead:false,bob:0});}else if(!e.finalBoss&&Math.random()<.032)pickups.push({x:e.x,y:e.y,type:"coin",value:1,dead:false,bob:0});splatter(e);if(e.finalBoss)endGame(true);}}
 function openChest(c){
   sfx("chest");
   const possibleEvolutions=evolutionRecipes.filter(r=>weapons[r.weapon]>=8&&passives[r.passive]>0&&!evolved[r.weapon]);
@@ -1023,7 +1050,7 @@ function splatter(e){
   particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.42,ring:true,r:5,maxR:e.r*2.2,color:colors[1],duration:.42});
   for(let i=0;i<count;i++){const a=Math.random()*Math.PI*2,s=55+Math.random()*(e.type==="vacuum"?220:145);particles.push({kind:"splat",x:e.x,y:e.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-35,life:.55+Math.random()*.65,r:2+Math.random()*(e.type==="vacuum"?7:4),color:colors[i%colors.length],rot:Math.random()*6});}
 }
-function gainXp(n){xp+=n*(snackXpTimer>0?1.5:1);while(xp>=xpNeed){xp-=xpNeed;level++;xpNeed=Math.floor(xpNeed*1.27+5);showLevelUp();break;}}
+function gainXp(n){xp+=n*player.growth*(snackXpTimer>0?1.5:1);while(xp>=xpNeed){xp-=xpNeed;level++;xpNeed=Math.floor(xpNeed*1.27+5);showLevelUp();break;}}
 function showLevelUp(){
   paused=true;sfx("level");ui.level.classList.remove("hidden");
   rollUpgradePicks();renderUpgradeChoices();
@@ -1043,7 +1070,7 @@ function renderUpgradeChoices(){
   const rr=document.querySelector("#rerollBtn"),bn=document.querySelector("#banishBtn");document.querySelector("#rerollCount").textContent=rerollsLeft;document.querySelector("#banishCount").textContent=banishesLeft;rr.disabled=rerollsLeft<=0;bn.disabled=banishesLeft<=0;bn.classList.toggle("active",banishMode);
 }
 function renderLevelBuild(){
-  const weaponIcons={carrot:"🥕",dandelion:"🌼",hay:"🌾",seed:"🌻",laser:"☀️",bottle:"🧪",acorn:"🌰",meteor:"🧀",bubble:"🫧"},passiveIcons={speed:"👟",heart:"🍎",magnet:"🎒",regen:"🏠",power:"🎀",chew:"🪵",luck:"🍀",area:"🔭",cooldown:"🧣"};
+  const weaponIcons={carrot:"🥕",dandelion:"🌼",hay:"🌾",seed:"🌻",laser:"☀️",bottle:"🧪",acorn:"🌰",meteor:"🧀",bubble:"🫧",story:"📕",bell:"🔔"},passiveIcons={speed:"👟",heart:"🍎",magnet:"🎒",regen:"🏠",power:"🎀",chew:"🪵",luck:"🍀",area:"🔭",cooldown:"🧣",growth:"👑",armor:"🛡️"};
   const chip=(icon,lv,ready=false)=>`<span class="level-build-chip${ready?" ready":""}">${icon}<small>${lv}</small></span>`;
   const ws=Object.keys(weaponIcons).filter(id=>weapons[id]>0).map(id=>{const recipe=evolutionRecipes.find(r=>r.weapon===id),ready=weapons[id]>=8&&passives[recipe.passive]>0&&!evolved[id];return chip(evolved[id]?recipe.icon:weaponIcons[id],evolved[id]?"★":weapons[id],ready);}).join("");
   const ps=Object.keys(passiveIcons).filter(id=>passives[id]>0).map(id=>chip(passiveIcons[id],passives[id],evolutionRecipes.some(r=>r.passive===id&&weapons[r.weapon]>=8&&!evolved[r.weapon]))).join("");
@@ -1055,9 +1082,10 @@ function rerollUpgrades(){
 function burst(x,y,color,n){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=30+Math.random()*100;particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.25+Math.random()*.45,r:2+Math.random()*4,color});}}
 function endGame(win){
   if(!running)return;sfx(win?"win":"lose");running=false;paused=true;ui.end.classList.remove("hidden");ui.hud.classList.add("hidden");
+  const progressMinutes=Math.floor(Math.min(elapsed,1200)/60),reward=runRewardGranted?0:addCoins(progressMinutes*3+Math.min(60,Math.floor(score/120))+runBosses*6+(win?100:0));runRewardGranted=true;
   document.querySelector("#endEyebrow").textContent=win?"VICTORY!":"TAKE A BREAK";
   document.querySelector("#endTitle").textContent=win?"STARCROWN BOSS DEFEATED!":"YOU WERE BRAVE TODAY";
-  document.querySelector("#endDesc").textContent=win?"You defended the garden for 20 full minutes and won the final battle. The victory carrot belongs to Tuntun!":"Tuntun is heading back to the nest to recharge. Next time, you'll go even farther!";
+  document.querySelector("#endDesc").textContent=(win?"You defended the garden for 20 full minutes and won the final battle.":"Tuntun is heading back to the nest to recharge.")+`　Run reward: 🪙 ${reward}`;
   document.querySelector("#endMascot").textContent=win?"🏆":"🐹";
   document.querySelector("#finalTime").textContent=formatTime(elapsed);document.querySelector("#finalScore").textContent=score;document.querySelector("#finalLevel").textContent=level;
 }
@@ -1069,9 +1097,9 @@ function updateUI(){
 }
 function renderTray(){
   const evoIcon=id=>evolved[id]?"★":weapons[id];
-  const weaponIds=["carrot","dandelion","hay","seed","laser","bottle","acorn","meteor","bubble"],weaponIcons=["🥕","🌼","🌾","🌻","☀️","🧪","🌰","🧀","🫧"];
+  const weaponIds=["carrot","dandelion","hay","seed","laser","bottle","acorn","meteor","bubble","story","bell"],weaponIcons=["🥕","🌼","🌾","🌻","☀️","🧪","🌰","🧀","🫧","📕","🔔"];
   const weaponItems=weaponIds.map((id,i)=>[weaponIcons[i],evoIcon(id)]).filter((x,i)=>weapons[weaponIds[i]]>0);
-  const passiveItems=[["👟",passives.speed],["🍎",passives.heart],["🎒",passives.magnet],["🏠",passives.regen],["🎀",passives.power],["🪵",passives.chew],["🍀",passives.luck],["🔭",passives.area],["🧣",passives.cooldown]].filter(x=>x[1]);
+  const passiveItems=[["👟",passives.speed],["🍎",passives.heart],["🎒",passives.magnet],["🏠",passives.regen],["🎀",passives.power],["🪵",passives.chew],["🍀",passives.luck],["🔭",passives.area],["🧣",passives.cooldown],["👑",passives.growth],["🛡️",passives.armor]].filter(x=>x[1]);
   const row=(label,items)=>`<div class="tray-group"><label>${label}</label><div class="tray-row">${items.map(x=>`<div class="weapon-chip">${x[0]}<small>${x[1]}</small></div>`).join("")}</div></div>`;
   ui.tray.innerHTML=row("WEAPONS",weaponItems)+(passiveItems.length?row("ITEMS",passiveItems):"");
 }
@@ -1268,7 +1296,7 @@ function drawCarrot(s){ctx.save();ctx.translate(s.x,s.y);ctx.rotate(s.rot);if(s.
   else if(s.kind==="seed"){ctx.fillStyle="#554234";ctx.strokeStyle="#f0cf77";ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(0,0,s.r*1.25,s.r*.72,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.strokeStyle="#fff0aa";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-s.r*.45,-s.r*.35);ctx.lineTo(s.r*.5,s.r*.25);ctx.stroke();}
   else if(s.kind==="seedShard"){ctx.shadowBlur=14;ctx.shadowColor="#ffe56b";ctx.fillStyle="#fff0a0";ctx.strokeStyle="#f09045";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(8,0);ctx.lineTo(-5,-4);ctx.lineTo(-2,0);ctx.lineTo(-5,4);ctx.closePath();ctx.fill();ctx.stroke();}
   else if(s.kind==="acorn"){ctx.shadowBlur=evolved.acorn?18:8;ctx.shadowColor="#ffd85c";ctx.fillStyle=evolved.acorn?"#f5c84f":"#9a673e";ctx.strokeStyle="#573a29";ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,2,s.r,s.r*.78,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle="#6e9d50";ctx.beginPath();ctx.arc(-2,-s.r*.55,s.r*.7,Math.PI,0);ctx.fill();}
-  else if(s.kind==="bubble"){ctx.globalAlpha=.72;ctx.shadowBlur=evolved.bubble?22:12;ctx.shadowColor=evolved.bubble?"#e578ff":"#7ee8ff";const g=ctx.createRadialGradient(-s.r*.28,-s.r*.3,1,0,0,s.r);g.addColorStop(0,"rgba(255,255,255,.95)");g.addColorStop(.28,evolved.bubble?"rgba(255,125,225,.5)":"rgba(105,225,255,.45)");g.addColorStop(1,"rgba(120,170,255,.08)");ctx.fillStyle=g;ctx.strokeStyle=evolved.bubble?"#ffd0ff":"#a9f4ff";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,s.r,0,Math.PI*2);ctx.fill();ctx.stroke();}
+  else if(s.kind==="bubble"){ctx.globalAlpha=.78;ctx.shadowBlur=evolved.bubble?26:12;ctx.shadowColor=evolved.bubble?"#36d8cf":"#7ee8ff";const g=ctx.createRadialGradient(-s.r*.28,-s.r*.3,1,0,0,s.r);g.addColorStop(0,"rgba(255,255,255,.98)");g.addColorStop(.28,evolved.bubble?"rgba(76,224,211,.62)":"rgba(105,225,255,.45)");g.addColorStop(1,evolved.bubble?"rgba(15,72,126,.16)":"rgba(120,170,255,.08)");ctx.fillStyle=g;ctx.strokeStyle=evolved.bubble?"#eaffff":"#a9f4ff";ctx.lineWidth=evolved.bubble?4:2;ctx.beginPath();ctx.arc(0,0,s.r,0,Math.PI*2);ctx.fill();ctx.stroke();if(evolved.bubble){ctx.strokeStyle="rgba(76,224,211,.55)";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,s.r*.62,0,Math.PI*2);ctx.stroke();}}
   else if(s.kind==="rocket"){ctx.fillStyle="#f28a42";ctx.strokeStyle="#9b4e2d";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(16,0);ctx.lineTo(-8,-9);ctx.lineTo(-8,9);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle="#79a95f";ctx.beginPath();ctx.moveTo(-7,-7);ctx.lineTo(-15,-12);ctx.lineTo(-12,-3);ctx.moveTo(-7,7);ctx.lineTo(-15,12);ctx.lineTo(-12,3);ctx.fill();ctx.fillStyle="#ffe16f";ctx.beginPath();ctx.moveTo(-10,-4);ctx.lineTo(-22,0);ctx.lineTo(-10,4);ctx.fill();}
   else {ctx.fillStyle="#ed8843";ctx.beginPath();ctx.moveTo(13,0);ctx.lineTo(-10,-7);ctx.lineTo(-10,7);ctx.closePath();ctx.fill();ctx.strokeStyle="#fff1cc";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(1,-4);ctx.lineTo(-2,3);ctx.stroke();ctx.fillStyle="#5c9c59";ctx.fillRect(-15,-7,7,5);ctx.fillRect(-15,2,7,5);}
   ctx.restore();}
