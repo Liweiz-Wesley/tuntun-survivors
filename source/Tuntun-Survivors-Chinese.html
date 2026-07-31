@@ -120,10 +120,10 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
 .skill.ready:hover { transform:scale(1.025); filter:brightness(1.08); }
 .skill span { font-weight:900; letter-spacing:.01em; }
 .skill span b { margin-left:3px; padding:2px 6px; border-radius:8px; color:#efffdc; background:rgba(47,105,56,.32); font-size:10px; line-height:1; }
-#weaponTray { position: absolute; right: 20px; top: 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; max-width: 340px; }
+#weaponTray { position: absolute; right: 20px; top: 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
 .tray-group { display: flex; align-items: center; gap: 7px; }
 .tray-group > label { padding: 3px 7px; border-radius: 8px; color: white; background: rgba(61,77,54,.72); font-size: 9px; font-weight: 900; }
-.tray-row { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.tray-row { display: flex; flex-wrap: nowrap; justify-content: flex-end; gap: 6px; }
 .weapon-chip { width: 56px; height: 56px; display: grid; place-items: center; position: relative; border: 3px solid white; border-radius: 17px; background: rgba(255,249,233,.9); font-size: 27px; box-shadow: 0 3px 8px var(--shadow); }
 .weapon-chip small { position: absolute; right: -4px; bottom: -5px; min-width: 18px; height: 18px; display: grid; place-items:center; border-radius: 10px; background: var(--green); color: white; font: 800 10px inherit; }
 
@@ -322,12 +322,16 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
             <article><b>🌻 巨型瓜子</b><span>＋ 🎒 仓鼠小背包</span><strong>🌟 瓜子超新星</strong><p>超大范围爆炸后触发核心余震，并向四周分裂出 8 枚穿透碎片。</p></article>
             <article><b>☀️ 阳光射线</b><span>＋ 🍎 苹果点心</span><strong>🌈 彩虹日光炮</strong><p>同时降下三道高伤害彩虹光束。</p></article>
             <article><b>🧪 蔬菜汁瓶</b><span>＋ 🏠 温暖小窝</span><strong>🍇 梦幻蔬菜花园</strong><p>双瓶投掷，留下更大、更持久的花园。</p></article>
+            <article><b>🌰 回旋橡果</b><span>＋ 🍀 幸运四叶草</span><strong>👑 黄金橡果洪流</strong><p>多枚橡果飞出后回旋归来，往返切割敌群。</p></article>
+            <article><b>🧀 月光奶酪</b><span>＋ 🔭 观星镜</span><strong>🌕 满月奶酪雨</strong><p>连续召唤三颗巨大奶酪陨星，造成大范围伤害。</p></article>
+            <article><b>🫧 泡泡魔杖</b><span>＋ 🧣 软绵围巾</span><strong>🌈 彩虹泡泡海</strong><p>释放更多持续膨胀、穿透敌群的彩虹泡泡。</p></article>
           </div>
           <h3>被动道具</h3>
           <div class="mini-grid">
             <article>👟<b>轻盈小脚</b><span>提高移动速度</span></article><article>🍎<b>苹果点心</b><span>增加生命并治疗</span></article>
             <article>🎒<b>仓鼠小背包</b><span>扩大拾取范围</span></article><article>🏠<b>温暖小窝</b><span>持续恢复生命</span></article>
             <article>🎀<b>勇气蝴蝶结</b><span>提高攻击伤害</span></article><article>🪵<b>磨牙棒</b><span>强化伤害与穿透</span></article>
+            <article>🍀<b>幸运四叶草</b><span>提高暴击率</span></article><article>🔭<b>观星镜</b><span>扩大攻击范围</span></article><article>🧣<b>软绵围巾</b><span>缩短武器冷却</span></article>
           </div>
           <h3>花园怪物</h3>
           <div class="monster-grid">
@@ -369,7 +373,7 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
         <span class="eyebrow">PAUSED</span>
         <h2>豚豚休息中</h2>
         <p>喝口水，再继续守护花园吧。</p>
-        <div class="pause-recipes"><div>🥕 ＋ 🪵 ＝ 🚀</div><div>🌼 ＋ 🎀 ＝ 🌸</div><div>🌾 ＋ 👟 ＝ ⚔️</div><div>🌻 ＋ 🎒 ＝ 🌟</div><div>☀️ ＋ 🍎 ＝ 🌈</div><div>🧪 ＋ 🏠 ＝ 🍇</div></div>
+        <div class="pause-recipes"><div>🥕 ＋ 🪵 ＝ 🚀</div><div>🌼 ＋ 🎀 ＝ 🌸</div><div>🌾 ＋ 👟 ＝ ⚔️</div><div>🌻 ＋ 🎒 ＝ 🌟</div><div>☀️ ＋ 🍎 ＝ 🌈</div><div>🧪 ＋ 🏠 ＝ 🍇</div><div>🌰 ＋ 🍀 ＝ 👑</div><div>🧀 ＋ 🔭 ＝ 🌕</div><div>🫧 ＋ 🧣 ＝ 🌈</div></div>
         <button id="resumeBtn" class="primary">继续游戏 <span>▶</span></button>
         <button id="homeBtn" class="secondary wide">回到主界面</button>
         <small>按 ESC 也可以继续</small>
@@ -412,14 +416,14 @@ const ui = {
 let W = innerWidth, H = innerHeight, dpr = Math.min(devicePixelRatio, 2);
 const cameraZoom = .78;
 let running = false, paused = false, last = 0, elapsed = 0, score = 0, level = 1, finalPhase = false;
-let xp = 0, xpNeed = 18, spawnClock = 0, shotClock = 0, hayClock = 0, seedClock = 0, laserClock = 0, bottleClock = 0, gemMergeClock=0, skillCooldown = 0, freezeTimer=0, flameTimer=0, flameClock=0, potRespawnClock=12, shake = 0, flash = 0;
+let xp = 0, xpNeed = 18, spawnClock = 0, shotClock = 0, hayClock = 0, seedClock = 0, laserClock = 0, bottleClock = 0, acornClock=0, meteorClock=0, bubbleClock=0, gemMergeClock=0, skillCooldown = 0, freezeTimer=0, flameTimer=0, flameClock=0, potRespawnClock=12, shake = 0, flash = 0;
 let enemies = [], shots = [], swings = [], lasers = [], bottles = [], zones = [], gems = [], chests = [], obstacles=[], pots=[], pickups=[], enemyOrbs=[],bossWaves=[],bossTrails=[],particles = [], texts = [], bossWave = 0,mapAnchorX=0,mapAnchorY=0,mapChunkX=NaN,mapChunkY=NaN,rerollsLeft=0,banishesLeft=0,currentPicks=[],banishMode=false;
 let banishedUpgrades=new Set();
 const bossTimes = [120,240,360,480,600,720,840,960,1080];
 const bossNames = ["滚滚吸尘王","灰尘公爵","发条鼠队长","花园清扫者","午睡破坏王"];
 const keys = new Set();
 const pointer = { active:false, x:0, y:0, ox:0, oy:0 };
-const player = { x:0, y:0, r:20, speed:225, hp:130, maxHp:130, inv:0, damage:18, rate:.64, projectiles:1, magnet:105, size:1, regen:.12, facing:1, pierce:0 };
+const player = { x:0, y:0, r:20, speed:225, hp:130, maxHp:130, inv:0, damage:18, rate:.64, projectiles:1, magnet:105, size:1, regen:.12, facing:1, pierce:0, crit:0, area:1, cooldown:1 };
 const SAVE_KEY="tuntun-survivors-save-v2";
 const metaDefs=[
   {id:"health",icon:"❤️",name:"强健体魄",desc:"每级增加 10 点初始生命",max:10,base:35},
@@ -446,9 +450,10 @@ function buyMeta(id){const d=metaDefs.find(x=>x.id===id),lv=metaSave.upgrades[id
 function exportSave(){prompt("复制下面的存档代码并妥善保存：",btoa(unescape(encodeURIComponent(JSON.stringify(metaSave)))));}
 function importSave(){const code=prompt("粘贴存档代码：");if(!code)return;try{const data=JSON.parse(decodeURIComponent(escape(atob(code.trim()))));metaSave={coins:+data.coins||0,earned:+data.earned||0,upgrades:{...freshSave().upgrades,...(data.upgrades||{})}};persistSave();renderShop();alert("存档导入成功！");}catch(e){alert("存档代码无效。");}}
 function resetSave(){if(confirm("确定要清空金币和全部永久升级吗？")){metaSave=freshSave();persistSave();renderShop();}}
-const weapons = { carrot:1, dandelion:0, hay:0, seed:0, laser:0, bottle:0 };
-const passives = { speed:0, heart:0, magnet:0, regen:0, power:0, chew:0 };
-const evolved = { carrot:false, dandelion:false, hay:false, seed:false, laser:false, bottle:false };
+const MAX_WEAPONS=5,MAX_PASSIVES=5;
+const weapons = { carrot:1, dandelion:0, hay:0, seed:0, laser:0, bottle:0, acorn:0, meteor:0, bubble:0 };
+const passives = { speed:0, heart:0, magnet:0, regen:0, power:0, chew:0, luck:0, area:0, cooldown:0 };
+const evolved = { carrot:false, dandelion:false, hay:false, seed:false, laser:false, bottle:false, acorn:false, meteor:false, bubble:false };
 const evolutionRecipes = [
   {weapon:"carrot",passive:"chew",name:"胡萝卜火箭",icon:"🚀"},
   {weapon:"dandelion",passive:"power",name:"花冠风暴",icon:"🌸"},
@@ -456,6 +461,9 @@ const evolutionRecipes = [
   {weapon:"seed",passive:"magnet",name:"瓜子超新星",icon:"🌟"},
   {weapon:"laser",passive:"heart",name:"彩虹日光炮",icon:"🌈"},
   {weapon:"bottle",passive:"regen",name:"梦幻蔬菜花园",icon:"🍇"}
+  ,{weapon:"acorn",passive:"luck",name:"黄金橡果洪流",icon:"👑"}
+  ,{weapon:"meteor",passive:"area",name:"满月奶酪雨",icon:"🌕"}
+  ,{weapon:"bubble",passive:"cooldown",name:"彩虹泡泡海",icon:"🌈"}
 ];
 
 const upgrades = [
@@ -489,12 +497,18 @@ const upgrades = [
   { id:"seed", icon:"🌻", name:"巨型瓜子", available(){return weapons.seed<8;}, desc:"缓慢飞行，命中后产生范围爆炸。", preview(){return weapons.seed?`LV.${weapons.seed} → LV.${weapons.seed+1}　体积与爆炸范围提高　伤害 +10`:"解锁武器　大型慢速瓜子　范围爆炸";}, apply(){ weapons.seed++; }},
   { id:"laser", icon:"☀️", name:"阳光射线", available(){return weapons.laser<8;}, desc:"从天空轰击屏幕内的敌人。", preview(){return weapons.laser?`LV.${weapons.laser} → LV.${weapons.laser+1}　光束 +1　伤害 +12`:"解锁武器　每次降下一道光束";}, apply(){ weapons.laser++; }},
   { id:"bottle", icon:"🧪", name:"蔬菜汁瓶", available(){return weapons.bottle<8;}, desc:"抛出瓶子，落地留下持续伤害区域。", preview(){return weapons.bottle?`LV.${weapons.bottle} → LV.${weapons.bottle+1}　范围 +8　持续伤害提高`:"解锁武器　持续 5 秒的蔬菜汁区域";}, apply(){ weapons.bottle++; }},
+  { id:"acorn", icon:"🌰", name:"回旋橡果", available(){return weapons.acorn<8;}, desc:"像回旋镖一样飞出再返回，可往返命中敌人。", preview(){return weapons.acorn?`LV.${weapons.acorn} → LV.${weapons.acorn+1}　伤害、数量与穿透提高`:"解锁武器　飞出后返回的穿透橡果";}, apply(){ weapons.acorn++; }},
+  { id:"meteor", icon:"🧀", name:"月光奶酪", available(){return weapons.meteor<8;}, desc:"从天空砸下奶酪陨星，轰击随机敌群。", preview(){return weapons.meteor?`LV.${weapons.meteor} → LV.${weapons.meteor+1}　陨星伤害与范围提高`:"解锁武器　延迟坠落的大范围陨星";}, apply(){ weapons.meteor++; }},
+  { id:"bubble", icon:"🫧", name:"泡泡魔杖", available(){return weapons.bubble<8;}, desc:"发射缓慢膨胀的泡泡，连续穿过多名敌人。", preview(){return weapons.bubble?`LV.${weapons.bubble} → LV.${weapons.bubble+1}　泡泡数量、体积与穿透提高`:"解锁武器　持续膨胀的穿透泡泡";}, apply(){ weapons.bubble++; }},
   { id:"speed", icon:"👟", name:"轻盈小脚", available(){return passives.speed<5;}, desc:"更容易拉开距离、穿过敌群。", preview(){return `LV.${passives.speed} → LV.${passives.speed+1}　移速 ${fmt(player.speed)} → ${fmt(player.speed*1.1)}`;}, apply(){ passives.speed++;player.speed*=1.1; }},
   { id:"heart", icon:"🍎", name:"苹果点心", available(){return passives.heart<5;}, desc:"增加血量上限，并立即治疗。", preview(){return `LV.${passives.heart} → LV.${passives.heart+1}　生命上限 +20　恢复 35`;}, apply(){ passives.heart++;player.maxHp+=20; player.hp=Math.min(player.maxHp,player.hp+35); }},
   { id:"magnet", icon:"🎒", name:"仓鼠小背包", available(){return passives.magnet<5;}, desc:"从更远处吸取成长豆。", preview(){return `LV.${passives.magnet} → LV.${passives.magnet+1}　拾取范围 +45`;}, apply(){ passives.magnet++;player.magnet+=45; }},
   { id:"regen", icon:"🏠", name:"温暖小窝", available(){return passives.regen<5;}, desc:"持续自动恢复生命。", preview(){return `LV.${passives.regen} → LV.${passives.regen+1}　每秒回血 +0.6`;}, apply(){ passives.regen++;player.regen+=.6; }},
   { id:"power", icon:"🎀", name:"勇气蝴蝶结", available(){return passives.power<5;}, desc:"提高胡萝卜和大部分攻击伤害。", preview(){return `LV.${passives.power} → LV.${passives.power+1}　攻击伤害 +12%`;}, apply(){ passives.power++;player.damage*=1.12; }},
-  { id:"chew", icon:"🪵", name:"磨牙棒", available(){return passives.chew<5;}, desc:"让投射物更结实、更容易穿透敌群。", preview(){return passives.chew===2?`LV.2 → LV.3　伤害 +2　额外穿透 +1`:`LV.${passives.chew} → LV.${passives.chew+1}　投射伤害 +2`;}, apply(){ passives.chew++;player.damage+=2;if(passives.chew===3)player.pierce++; }}
+  { id:"chew", icon:"🪵", name:"磨牙棒", available(){return passives.chew<5;}, desc:"让投射物更结实、更容易穿透敌群。", preview(){return passives.chew===2?`LV.2 → LV.3　伤害 +2　额外穿透 +1`:`LV.${passives.chew} → LV.${passives.chew+1}　投射伤害 +2`;}, apply(){ passives.chew++;player.damage+=2;if(passives.chew===3)player.pierce++; }},
+  { id:"luck", icon:"🍀", name:"幸运四叶草", available(){return passives.luck<5;}, desc:"让所有攻击有机会造成双倍暴击伤害。", preview(){return `LV.${passives.luck} → LV.${passives.luck+1}　暴击率 +5%`;}, apply(){ passives.luck++;player.crit+=.05; }},
+  { id:"area", icon:"🔭", name:"观星镜", available(){return passives.area<5;}, desc:"放大大部分范围攻击与投射物。", preview(){return `LV.${passives.area} → LV.${passives.area+1}　攻击范围 +10%`;}, apply(){ passives.area++;player.area*=1.1; }},
+  { id:"cooldown", icon:"🧣", name:"软绵围巾", available(){return passives.cooldown<5;}, desc:"让全部自动武器更快再次攻击。", preview(){return `LV.${passives.cooldown} → LV.${passives.cooldown+1}　武器冷却 -6%`;}, apply(){ passives.cooldown++;player.cooldown*=.94; }}
 ];
 
 function resize(){
@@ -593,11 +607,11 @@ function startGame(){
   clearTimeout(chestRevealTimer);pendingChestReward=null;ui.chest.classList.add("hidden");ui.chest.classList.remove("revealed");
   const m=metaSave.upgrades,maxHp=105+(m.health||0)*10;
   rerollsLeft=m.reroll||0;banishesLeft=m.banish||0;banishedUpgrades=new Set();banishMode=false;currentPicks=[];
-  Object.assign(player,{x:0,y:0,r:20,hp:maxHp,maxHp,speed:205*(1+(m.speed||0)*.025),inv:0,damage:14*(1+(m.damage||0)*.06),rate:.7,projectiles:1,magnet:85+(m.magnet||0)*12,size:1,regen:(m.regen||0)*.05,facing:1,pierce:0});
-  Object.assign(weapons,{carrot:1,dandelion:0,hay:0,seed:0,laser:0,bottle:0});
-  Object.assign(passives,{speed:0,heart:0,magnet:0,regen:0,power:0,chew:0});
-  Object.assign(evolved,{carrot:false,dandelion:false,hay:false,seed:false,laser:false,bottle:false});
-  elapsed=score=xp=spawnClock=shotClock=hayClock=seedClock=laserClock=bottleClock=gemMergeClock=skillCooldown=freezeTimer=flameTimer=flameClock=0;potRespawnClock=12; level=1; xpNeed=18;
+  Object.assign(player,{x:0,y:0,r:20,hp:maxHp,maxHp,speed:205*(1+(m.speed||0)*.025),inv:0,damage:14*(1+(m.damage||0)*.06),rate:.7,projectiles:1,magnet:85+(m.magnet||0)*12,size:1,regen:(m.regen||0)*.05,facing:1,pierce:0,crit:0,area:1,cooldown:1});
+  Object.assign(weapons,{carrot:1,dandelion:0,hay:0,seed:0,laser:0,bottle:0,acorn:0,meteor:0,bubble:0});
+  Object.assign(passives,{speed:0,heart:0,magnet:0,regen:0,power:0,chew:0,luck:0,area:0,cooldown:0});
+  Object.assign(evolved,{carrot:false,dandelion:false,hay:false,seed:false,laser:false,bottle:false,acorn:false,meteor:false,bubble:false});
+  elapsed=score=xp=spawnClock=shotClock=hayClock=seedClock=laserClock=bottleClock=acornClock=meteorClock=bubbleClock=gemMergeClock=skillCooldown=freezeTimer=flameTimer=flameClock=0;potRespawnClock=12; level=1; xpNeed=18;
   enemies=[];shots=[];swings=[];lasers=[];bottles=[];zones=[];gems=[];chests=[];obstacles=[];pots=[];pickups=[];enemyOrbs=[];bossWaves=[];bossTrails=[];particles=[];texts=[];bossWave=0;finalPhase=false;running=true;paused=false;last=performance.now();buildMap();
   ui.start.classList.add("hidden");ui.pause.classList.add("hidden");ui.codex.classList.add("hidden");ui.shop.classList.add("hidden");ui.end.classList.add("hidden");ui.level.classList.add("hidden");ui.hud.classList.remove("hidden");updateCoinUI();
   renderTray(); requestAnimationFrame(loop);
@@ -723,15 +737,18 @@ function update(dt){
   if(!finalPhase&&bossWave<bossTimes.length&&elapsed>=bossTimes[bossWave]){spawnBoss(bossWave);bossWave++;}
   if(!finalPhase&&elapsed>=1200){elapsed=1200;startFinalBattle();}
   shotClock-=dt;
-  if(shotClock<=0&&enemies.length){ fireCarrots();shotClock=player.rate; }
-  if(weapons.hay){hayClock-=dt;if(hayClock<=0){fireHay();hayClock=evolved.hay?.62:Math.max(1.1,2.5-weapons.hay*.2);}}
-  if(weapons.seed){seedClock-=dt;if(seedClock<=0){fireSeeds();seedClock=Math.max(1.8,3.6-weapons.seed*.28);}}
-  if(weapons.laser){laserClock-=dt;if(laserClock<=0){fireLaser();laserClock=evolved.laser?1.35:Math.max(2,4.2-weapons.laser*.3);}}
-  if(weapons.bottle){bottleClock-=dt;if(bottleClock<=0){throwBottle();bottleClock=evolved.bottle?1.5:Math.max(2.2,4.8-weapons.bottle*.35);}}
+  if(shotClock<=0&&enemies.length){ fireCarrots();shotClock=player.rate*player.cooldown; }
+  if(weapons.hay){hayClock-=dt;if(hayClock<=0){fireHay();hayClock=(evolved.hay?.62:Math.max(1.1,2.5-weapons.hay*.2))*player.cooldown;}}
+  if(weapons.seed){seedClock-=dt;if(seedClock<=0){fireSeeds();seedClock=Math.max(1.8,3.6-weapons.seed*.28)*player.cooldown;}}
+  if(weapons.laser){laserClock-=dt;if(laserClock<=0){fireLaser();laserClock=(evolved.laser?1.35:Math.max(2,4.2-weapons.laser*.3))*player.cooldown;}}
+  if(weapons.bottle){bottleClock-=dt;if(bottleClock<=0){throwBottle();bottleClock=(evolved.bottle?1.5:Math.max(2.2,4.8-weapons.bottle*.35))*player.cooldown;}}
+  if(weapons.acorn){acornClock-=dt;if(acornClock<=0){fireAcorns();acornClock=(evolved.acorn?1.15:Math.max(1.65,3.1-weapons.acorn*.2))*player.cooldown;}}
+  if(weapons.meteor){meteorClock-=dt;if(meteorClock<=0){fireMeteor();meteorClock=(evolved.meteor?1.55:Math.max(2.35,5-weapons.meteor*.34))*player.cooldown;}}
+  if(weapons.bubble){bubbleClock-=dt;if(bubbleClock<=0){fireBubbles();bubbleClock=(evolved.bubble?1.05:Math.max(1.55,3.2-weapons.bubble*.2))*player.cooldown;}}
 
   const orbitCount=weapons.dandelion*2+(evolved.dandelion?8:0);
   if(orbitCount) enemies.forEach(e=>{
-    for(let i=0;i<orbitCount;i++){ const a=elapsed*(1.8+weapons.dandelion*.15)+i*Math.PI*2/orbitCount,radius=70+weapons.dandelion*5+(evolved.dandelion&&i%2?28:0);const ox=player.x+Math.cos(a)*radius,oy=player.y+Math.sin(a)*radius;if(dist(e.x,e.y,ox,oy)<e.r+10&&e.orbitHit<=0){hitEnemy(e,(7+weapons.dandelion*3)*(evolved.dandelion?1.55:1));e.orbitHit=evolved.dandelion?.16:.25;} }
+    for(let i=0;i<orbitCount;i++){ const a=elapsed*(1.8+weapons.dandelion*.15)+i*Math.PI*2/orbitCount,radius=(70+weapons.dandelion*5+(evolved.dandelion&&i%2?28:0))*player.area;const ox=player.x+Math.cos(a)*radius,oy=player.y+Math.sin(a)*radius;if(dist(e.x,e.y,ox,oy)<e.r+10*player.area&&e.orbitHit<=0){hitEnemy(e,(7+weapons.dandelion*3)*(evolved.dandelion?1.55:1));e.orbitHit=evolved.dandelion?.16:.25;} }
   });
   enemies.forEach(e=>{
     e.orbitHit=Math.max(0,e.orbitHit-dt);e.hitFlash=Math.max(0,e.hitFlash-dt);
@@ -739,12 +756,12 @@ function update(dt){
     if(e.finalBoss)updateFinalBoss(e,dt);else{const a=Math.atan2(player.y-e.y,player.x-e.x),zig=e.type==="moth"?Math.sin(elapsed*5+e.seed)*.75:0;e.kx=e.kx||0;e.ky=e.ky||0;const ex=e.x,ey=e.y;if(freezeTimer<=0){e.x+=(Math.cos(a+zig)*e.speed+e.kx)*dt;e.y+=(Math.sin(a+zig)*e.speed+e.ky)*dt;if(isOnScreen(e.x,e.y,220))resolveWorldCollision(e,ex,ey);}e.kx*=Math.pow(.035,dt);e.ky*=Math.pow(.035,dt);}
     if(dist(e.x,e.y,player.x,player.y)<e.r+player.r*.7)hurtPlayer(e.damage);
   });
-  shots.forEach(s=>{s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;s.rot+=dt*(s.kind==="seed"?2:10);s.trail=(s.trail||0)-dt;if((s.kind==="rocket"||s.kind==="seed"&&evolved.seed)&&s.trail<=0){s.trail=.045;particles.push({x:s.x-s.vx*.025,y:s.y-s.vy*.025,vx:-s.vx*.035+(Math.random()-.5)*25,vy:-s.vy*.035+(Math.random()-.5)*25,life:.28,r:s.kind==="rocket"?4:3,color:s.kind==="rocket"?(Math.random()>.5?"#ffb52e":"#ff6d38"):"#ffe56b"});}if(!isOnScreen(s.x,s.y,s.kind==="carrot"?190:90))s.dead=true;});
-  for(const s of shots) for(const e of enemies) if(!s.dead&&!e.dead&&dist(s.x,s.y,e.x,e.y)<s.r+e.r){if(s.kind==="seed"||s.kind==="rocket"){explodeSeed(s);s.dead=true;}else{hitEnemy(e,s.damage);s.pierce--;if(s.pierce<0)s.dead=true;}}
-  for(const s of shots) for(const p of pots) if(!s.dead&&!p.dead&&dist(s.x,s.y,p.x,p.y)<s.r+p.r){if(s.kind==="seed"||s.kind==="rocket"){explodeSeed(s);s.dead=true;}else{hitPot(p,s.damage);s.pierce--;if(s.pierce<0)s.dead=true;}}
+  shots.forEach(s=>{s.age=(s.age||0)+dt;if(s.kind==="acorn"&&s.age>(evolved.acorn?.42:.58)){const a=Math.atan2(player.y-s.y,player.x-s.x),sp=evolved.acorn?440:355;s.vx=Math.cos(a)*sp;s.vy=Math.sin(a)*sp;if(s.age>.72&&dist(s.x,s.y,player.x,player.y)<player.r+14)s.dead=true;}if(s.kind==="bubble")s.r+=dt*(evolved.bubble?15:9);s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;s.rot+=dt*(s.kind==="seed"?2:10);s.trail=(s.trail||0)-dt;if((s.kind==="rocket"||s.kind==="seed"&&evolved.seed)&&s.trail<=0){s.trail=.045;particles.push({x:s.x-s.vx*.025,y:s.y-s.vy*.025,vx:-s.vx*.035+(Math.random()-.5)*25,vy:-s.vy*.035+(Math.random()-.5)*25,life:.28,r:s.kind==="rocket"?4:3,color:s.kind==="rocket"?(Math.random()>.5?"#ffb52e":"#ff6d38"):"#ffe56b"});}if(!isOnScreen(s.x,s.y,s.kind==="carrot"?190:120))s.dead=true;});
+  for(const s of shots) for(const e of enemies) if(!s.dead&&!e.dead&&(!s.hitIds||!s.hitIds.has(e))&&dist(s.x,s.y,e.x,e.y)<s.r+e.r){if(s.kind==="seed"||s.kind==="rocket"){explodeSeed(s);s.dead=true;}else{if(s.hitIds)s.hitIds.add(e);hitEnemy(e,s.damage);s.pierce--;if(s.pierce<0)s.dead=true;}}
+  for(const s of shots) for(const p of pots) if(!s.dead&&!p.dead&&(!s.hitIds||!s.hitIds.has(p))&&dist(s.x,s.y,p.x,p.y)<s.r+p.r){if(s.kind==="seed"||s.kind==="rocket"){explodeSeed(s);s.dead=true;}else{if(s.hitIds)s.hitIds.add(p);hitPot(p,s.damage);s.pierce--;if(s.pierce<0)s.dead=true;}}
   swings.forEach(s=>{s.life-=dt;});
-  lasers.forEach(l=>{l.life-=dt;if(!l.hit){l.hit=true;enemies.forEach(e=>{if(dist(e.x,e.y,l.x,l.y)<l.radius+e.r)hitEnemy(e,l.damage);});pots.forEach(p=>{if(!p.dead&&dist(p.x,p.y,l.x,l.y)<l.radius+p.r)hitPot(p,l.damage);});}});
-  bottles.forEach(b=>{b.t+=dt/b.duration;if(b.t>=1){b.dead=true;zones.push({x:b.tx,y:b.ty,r:(54+weapons.bottle*8)*(b.garden?1.45:1),life:b.garden?8:5,tick:0,garden:b.garden});}});
+  lasers.forEach(l=>{l.life-=dt;l.delay=(l.delay||0)-dt;if(!l.hit&&l.delay<=0){l.hit=true;enemies.forEach(e=>{if(dist(e.x,e.y,l.x,l.y)<l.radius+e.r)hitEnemy(e,l.damage);});pots.forEach(p=>{if(!p.dead&&dist(p.x,p.y,l.x,l.y)<l.radius+p.r)hitPot(p,l.damage);});}});
+  bottles.forEach(b=>{b.t+=dt/b.duration;if(b.t>=1){b.dead=true;zones.push({x:b.tx,y:b.ty,r:(54+weapons.bottle*8)*(b.garden?1.45:1)*player.area,life:b.garden?8:5,tick:0,garden:b.garden});}});
   zones.forEach(z=>{z.life-=dt;z.tick-=dt;if(z.tick<=0){z.tick=.45;enemies.forEach(e=>{if(dist(e.x,e.y,z.x,z.y)<z.r+e.r)hitEnemy(e,5+weapons.bottle*2);});pots.forEach(p=>{if(!p.dead&&dist(p.x,p.y,z.x,z.y)<z.r+p.r)hitPot(p,5+weapons.bottle*2);});}});
   gems.forEach(g=>{let d=dist(g.x,g.y,player.x,player.y);if(g.vacuum){g.vacuumDelay-=dt;if(g.vacuumDelay<=0){const a=Math.atan2(player.y-g.y,player.x-g.x),pull=900+Math.min(1500,d*1.5);g.vx=(g.vx||0)*Math.pow(.08,dt)+Math.cos(a)*pull*dt;g.vy=(g.vy||0)*Math.pow(.08,dt)+Math.sin(a)*pull*dt;const sp=Math.hypot(g.vx,g.vy),cap=780;if(sp>cap){g.vx=g.vx/sp*cap;g.vy=g.vy/sp*cap;}g.x+=g.vx*dt;g.y+=g.vy*dt;d=dist(g.x,g.y,player.x,player.y);}}else if(d<player.magnet){const a=Math.atan2(player.y-g.y,player.x-g.x);const sp=240+(player.magnet-d)*3;g.x+=Math.cos(a)*sp*dt;g.y+=Math.sin(a)*sp*dt;}if(d<player.r+10){g.dead=true;sfx("pickup");gainXp(g.value);}});
   chests.forEach(c=>{c.bob+=dt;if(dist(c.x,c.y,player.x,player.y)<player.r+22){c.dead=true;openChest(c);}});
@@ -799,10 +816,10 @@ function fireCarrots(){
   const sorted=[...enemies.filter(e=>isOnScreen(e.x,e.y,10)),...pots.filter(p=>!p.dead&&isOnScreen(p.x,p.y,10))].sort((a,b)=>dist(a.x,a.y,player.x,player.y)-dist(b.x,b.y,player.x,player.y));
   const target=sorted[0];if(!target)return;
   const base=Math.atan2(target.y-player.y,target.x-player.x);
-  sfx("shot");for(let i=0;i<player.projectiles;i++){const spread=(i-(player.projectiles-1)/2)*.13,kind=evolved.carrot?"rocket":"carrot",speed=evolved.carrot?540:470;shots.push({kind,x:player.x,y:player.y,vx:Math.cos(base+spread)*speed,vy:Math.sin(base+spread)*speed,r:(evolved.carrot?13:8)*player.size,damage:player.damage*(evolved.carrot?1.65:1),life:2.5,rot:base+spread,pierce:evolved.carrot?0:(weapons.carrot>=5?1:0)+player.pierce,blast:evolved.carrot?72:0});}
+  sfx("shot");for(let i=0;i<player.projectiles;i++){const spread=(i-(player.projectiles-1)/2)*.13,kind=evolved.carrot?"rocket":"carrot",speed=evolved.carrot?540:470;shots.push({kind,x:player.x,y:player.y,vx:Math.cos(base+spread)*speed,vy:Math.sin(base+spread)*speed,r:(evolved.carrot?13:8)*player.size*player.area,damage:player.damage*(evolved.carrot?1.65:1),life:2.5,rot:base+spread,pierce:evolved.carrot?0:(weapons.carrot>=5?1:0)+player.pierce,blast:(evolved.carrot?72:0)*player.area});}
 }
 function fireHay(){
-  const angle=player.facing>0?0:Math.PI,radius=85+weapons.hay*10,damage=18+weapons.hay*7;
+  const angle=player.facing>0?0:Math.PI,radius=(85+weapons.hay*10)*player.area,damage=18+weapons.hay*7;
   swings.push({x:player.x,y:player.y,angle,radius:evolved.hay?radius+35:radius,life:.34,maxLife:.34,full:evolved.hay});
   enemies.forEach(e=>{const dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),a=Math.atan2(dy,dx),delta=Math.atan2(Math.sin(a-angle),Math.cos(a-angle));if(d<(evolved.hay?radius+35:radius)+e.r&&(evolved.hay||Math.abs(delta)<1.35))hitEnemy(e,damage*(evolved.hay?1.5:1));});
   pots.forEach(p=>{if(p.dead)return;const dx=p.x-player.x,dy=p.y-player.y,d=Math.hypot(dx,dy),a=Math.atan2(dy,dx),delta=Math.atan2(Math.sin(a-angle),Math.cos(a-angle));if(d<(evolved.hay?radius+35:radius)+p.r&&(evolved.hay||Math.abs(delta)<1.35))hitPot(p,damage*(evolved.hay?1.5:1));});
@@ -810,7 +827,7 @@ function fireHay(){
 function fireSeeds(){
   const targets=enemies.filter(e=>isOnScreen(e.x,e.y,20));if(!targets.length)return;
   const target=targets.sort((a,b)=>dist(a.x,a.y,player.x,player.y)-dist(b.x,b.y,player.x,player.y))[0],a=Math.atan2(target.y-player.y,target.x-player.x);
-  shots.push({kind:"seed",x:player.x,y:player.y,vx:Math.cos(a)*(evolved.seed?125:155+weapons.seed*7),vy:Math.sin(a)*(evolved.seed?125:155+weapons.seed*7),r:(12+weapons.seed*2)*(evolved.seed?1.55:1),damage:(24+weapons.seed*10)*(evolved.seed?1.8:1),life:4.8,rot:a,pierce:0,blast:(48+weapons.seed*9)*(evolved.seed?1.75:1)});
+  shots.push({kind:"seed",x:player.x,y:player.y,vx:Math.cos(a)*(evolved.seed?125:155+weapons.seed*7),vy:Math.sin(a)*(evolved.seed?125:155+weapons.seed*7),r:(12+weapons.seed*2)*(evolved.seed?1.55:1)*player.area,damage:(24+weapons.seed*10)*(evolved.seed?1.8:1),life:4.8,rot:a,pierce:0,blast:(48+weapons.seed*9)*(evolved.seed?1.75:1)*player.area});
 }
 function explodeSeed(s){
   shake=Math.max(shake,5);sfx("explode");particles.push({x:s.x,y:s.y,vx:0,vy:0,life:.4,ring:true,r:3,maxR:s.blast,color:"#f1bf63",duration:.4});
@@ -828,11 +845,23 @@ function explodeSeed(s){
 function fireLaser(){
   const targets=enemies.filter(e=>isOnScreen(e.x,e.y,0));if(!targets.length)return;
   const count=evolved.laser?3:Math.min(3,1+Math.floor((weapons.laser-1)/2));
-  [...targets].sort(()=>Math.random()-.5).slice(0,count).forEach(t=>lasers.push({x:t.x,y:t.y,radius:(35+weapons.laser*4)*(evolved.laser?1.45:1),damage:(28+weapons.laser*12)*(evolved.laser?1.7:1),life:.48,maxLife:.48,hit:false,rainbow:evolved.laser}));
+  [...targets].sort(()=>Math.random()-.5).slice(0,count).forEach(t=>lasers.push({x:t.x,y:t.y,radius:(35+weapons.laser*4)*(evolved.laser?1.45:1)*player.area,damage:(28+weapons.laser*12)*(evolved.laser?1.7:1),life:.48,maxLife:.48,hit:false,rainbow:evolved.laser}));
 }
 function throwBottle(){
   const targets=enemies.filter(e=>isOnScreen(e.x,e.y,0));if(!targets.length)return;
   const t=targets[Math.floor(Math.random()*targets.length)],count=evolved.bottle?2:1;for(let i=0;i<count;i++)bottles.push({x:player.x,y:player.y,tx:t.x+(i?55:-25),ty:t.y+(i?25:-15),t:0,duration:.75,garden:evolved.bottle});
+}
+function fireAcorns(){
+  const targets=enemies.filter(e=>isOnScreen(e.x,e.y,20));if(!targets.length)return;const target=targets.sort((a,b)=>dist(a.x,a.y,player.x,player.y)-dist(b.x,b.y,player.x,player.y))[0],base=Math.atan2(target.y-player.y,target.x-player.x),count=(1+Math.floor((weapons.acorn-1)/3))+(evolved.acorn?2:0);
+  for(let i=0;i<count;i++){const a=base+(i-(count-1)/2)*.24,sp=evolved.acorn?410:330;shots.push({kind:"acorn",x:player.x,y:player.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:(9+weapons.acorn*.7)*player.area,damage:(14+weapons.acorn*6)*(evolved.acorn?1.55:1),life:2.1,rot:a,pierce:2+Math.floor(weapons.acorn/2)+(evolved.acorn?3:0),hitIds:new Set(),age:0});}
+}
+function fireMeteor(){
+  const targets=enemies.filter(e=>isOnScreen(e.x,e.y,0));if(!targets.length)return;const count=evolved.meteor?3:1+Math.floor((weapons.meteor-1)/3),picked=[...targets].sort(()=>Math.random()-.5).slice(0,count);
+  picked.forEach((t,i)=>lasers.push({x:t.x,y:t.y,radius:(40+weapons.meteor*6)*player.area*(evolved.meteor?1.35:1),damage:(30+weapons.meteor*11)*(evolved.meteor?1.6:1),life:.95+i*.08,maxLife:.95+i*.08,delay:.38+i*.08,hit:false,meteor:true}));
+}
+function fireBubbles(){
+  const targets=enemies.filter(e=>isOnScreen(e.x,e.y,20));if(!targets.length)return;const target=targets.sort((a,b)=>dist(a.x,a.y,player.x,player.y)-dist(b.x,b.y,player.x,player.y))[0],base=Math.atan2(target.y-player.y,target.x-player.x),count=1+Math.floor((weapons.bubble-1)/3)+(evolved.bubble?2:0);
+  for(let i=0;i<count;i++){const a=base+(i-(count-1)/2)*.2,sp=evolved.bubble?205:165;shots.push({kind:"bubble",x:player.x,y:player.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:(11+weapons.bubble)*player.area*(evolved.bubble?1.35:1),damage:(10+weapons.bubble*5)*(evolved.bubble?1.45:1),life:evolved.bubble?4.5:3.6,rot:a,pierce:2+weapons.bubble+(evolved.bubble?5:0),hitIds:new Set(),age:0});}
 }
 function activateSkill(){
   if(!running||paused||skillCooldown>0)return;
@@ -842,7 +871,7 @@ function activateSkill(){
   enemies.forEach(e=>{const d=dist(e.x,e.y,player.x,player.y);if(d<radius){const a=Math.atan2(e.y-player.y,e.x-player.x),force=850*(1-d/radius*.35);e.kx=Math.cos(a)*force;e.ky=Math.sin(a)*force;hitEnemy(e,12);}});
   texts.push({x:player.x,y:player.y-42,text:"吱——！",color:"#4f8b52",life:1});
 }
-function hitEnemy(e,dmg){e.hp-=dmg;e.hitFlash=.11;sfx("hit");burst(e.x,e.y,"#fff0a8",3);if(e.hp<=0&&!e.dead){e.dead=true;score++;sfx(e.boss?"boss":"kill");shake=Math.max(shake,e.type==="vacuum"?7:2.5);if(!e.finalBoss)gems.push({x:e.x,y:e.y,value:e.xp,dead:false,bob:Math.random()*6});if(e.boss&&!e.finalBoss){chests.push({x:e.x,y:e.y,bob:0,dead:false});pickups.push({x:e.x+24,y:e.y,type:"coin",value:18,dead:false,bob:0});}else if(!e.finalBoss&&Math.random()<.16)pickups.push({x:e.x,y:e.y,type:"coin",value:1+Math.floor(Math.random()*3),dead:false,bob:0});splatter(e);if(e.finalBoss)endGame(true);}}
+function hitEnemy(e,dmg){const crit=player.crit>0&&Math.random()<player.crit;if(crit)dmg*=2;e.hp-=dmg;e.hitFlash=.11;sfx("hit");burst(e.x,e.y,crit?"#fff27a":"#fff0a8",crit?6:3);if(crit)texts.push({x:e.x,y:e.y-e.r,text:"暴击!",color:"#f4ad32",life:.45});if(e.hp<=0&&!e.dead){e.dead=true;score++;sfx(e.boss?"boss":"kill");shake=Math.max(shake,e.type==="vacuum"?7:2.5);if(!e.finalBoss)gems.push({x:e.x,y:e.y,value:e.xp,dead:false,bob:Math.random()*6});if(e.boss&&!e.finalBoss){chests.push({x:e.x,y:e.y,bob:0,dead:false});pickups.push({x:e.x+24,y:e.y,type:"coin",value:18,dead:false,bob:0});}else if(!e.finalBoss&&Math.random()<.16)pickups.push({x:e.x,y:e.y,type:"coin",value:1+Math.floor(Math.random()*3),dead:false,bob:0});splatter(e);if(e.finalBoss)endGame(true);}}
 function openChest(c){
   sfx("chest");
   const possibleEvolutions=evolutionRecipes.filter(r=>weapons[r.weapon]>=8&&passives[r.passive]>0&&!evolved[r.weapon]);
@@ -877,7 +906,9 @@ function showLevelUp(){
   rollUpgradePicks();renderUpgradeChoices();
 }
 function rollUpgradePicks(){
-  const pool=upgrades.filter(u=>(!u.available||u.available())&&!banishedUpgrades.has(u.id));
+  const weaponCount=Object.values(weapons).filter(v=>v>0).length,passiveCount=Object.values(passives).filter(v=>v>0).length;
+  const hasSlot=u=>!(u.id in weapons&&weapons[u.id]===0&&weaponCount>=MAX_WEAPONS)&&!(u.id in passives&&passives[u.id]===0&&passiveCount>=MAX_PASSIVES);
+  const pool=upgrades.filter(u=>(!u.available||u.available())&&hasSlot(u)&&!banishedUpgrades.has(u.id));
   const weightedPick=list=>{let total=list.reduce((s,u)=>s+((u.id in weapons&&weapons[u.id]>0)?1.35:(u.id in passives&&passives[u.id]>0)?1.12:1),0),roll=Math.random()*total;for(const u of list){roll-=((u.id in weapons&&weapons[u.id]>0)?1.35:(u.id in passives&&passives[u.id]>0)?1.12:1);if(roll<=0)return u;}return list[list.length-1];};
   currentPicks=[];const remaining=[...pool];while(currentPicks.length<3&&remaining.length){const pick=weightedPick(remaining);currentPicks.push(pick);remaining.splice(remaining.indexOf(pick),1);}
   if(!currentPicks.length)currentPicks=[{id:"bonusCoins",icon:"🪙",name:"金币袋",desc:"所有装备都已满级。",preview(){return "获得 30 金币";},apply(){addCoins(30);}}];
@@ -889,7 +920,7 @@ function renderUpgradeChoices(){
   const rr=document.querySelector("#rerollBtn"),bn=document.querySelector("#banishBtn");document.querySelector("#rerollCount").textContent=rerollsLeft;document.querySelector("#banishCount").textContent=banishesLeft;rr.disabled=rerollsLeft<=0;bn.disabled=banishesLeft<=0;bn.classList.toggle("active",banishMode);
 }
 function renderLevelBuild(){
-  const weaponIcons={carrot:"🥕",dandelion:"🌼",hay:"🌾",seed:"🌻",laser:"☀️",bottle:"🧪"},passiveIcons={speed:"👟",heart:"🍎",magnet:"🎒",regen:"🏠",power:"🎀",chew:"🪵"};
+  const weaponIcons={carrot:"🥕",dandelion:"🌼",hay:"🌾",seed:"🌻",laser:"☀️",bottle:"🧪",acorn:"🌰",meteor:"🧀",bubble:"🫧"},passiveIcons={speed:"👟",heart:"🍎",magnet:"🎒",regen:"🏠",power:"🎀",chew:"🪵",luck:"🍀",area:"🔭",cooldown:"🧣"};
   const chip=(icon,lv,ready=false)=>`<span class="level-build-chip${ready?" ready":""}">${icon}<small>${lv}</small></span>`;
   const ws=Object.keys(weaponIcons).filter(id=>weapons[id]>0).map(id=>{const recipe=evolutionRecipes.find(r=>r.weapon===id),ready=weapons[id]>=8&&passives[recipe.passive]>0&&!evolved[id];return chip(evolved[id]?recipe.icon:weaponIcons[id],evolved[id]?"★":weapons[id],ready);}).join("");
   const ps=Object.keys(passiveIcons).filter(id=>passives[id]>0).map(id=>chip(passiveIcons[id],passives[id],evolutionRecipes.some(r=>r.passive===id&&weapons[r.weapon]>=8&&!evolved[r.weapon]))).join("");
@@ -914,8 +945,9 @@ function updateUI(){
 }
 function renderTray(){
   const evoIcon=id=>evolved[id]?"★":weapons[id];
-  const weaponItems=[["🥕",evoIcon("carrot")],["🌼",evoIcon("dandelion")],["🌾",evoIcon("hay")],["🌻",evoIcon("seed")],["☀️",evoIcon("laser")],["🧪",evoIcon("bottle")]].filter((x,i)=>weapons[["carrot","dandelion","hay","seed","laser","bottle"][i]]>0);
-  const passiveItems=[["👟",passives.speed],["🍎",passives.heart],["🎒",passives.magnet],["🏠",passives.regen],["🎀",passives.power],["🪵",passives.chew]].filter(x=>x[1]);
+  const weaponIds=["carrot","dandelion","hay","seed","laser","bottle","acorn","meteor","bubble"],weaponIcons=["🥕","🌼","🌾","🌻","☀️","🧪","🌰","🧀","🫧"];
+  const weaponItems=weaponIds.map((id,i)=>[weaponIcons[i],evoIcon(id)]).filter((x,i)=>weapons[weaponIds[i]]>0);
+  const passiveItems=[["👟",passives.speed],["🍎",passives.heart],["🎒",passives.magnet],["🏠",passives.regen],["🎀",passives.power],["🪵",passives.chew],["🍀",passives.luck],["🔭",passives.area],["🧣",passives.cooldown]].filter(x=>x[1]);
   const row=(label,items)=>`<div class="tray-group"><label>${label}</label><div class="tray-row">${items.map(x=>`<div class="weapon-chip">${x[0]}<small>${x[1]}</small></div>`).join("")}</div></div>`;
   ui.tray.innerHTML=row("武器",weaponItems)+(passiveItems.length?row("道具",passiveItems):"");
 }
@@ -1102,6 +1134,8 @@ function drawCarrot(s){ctx.save();ctx.translate(s.x,s.y);ctx.rotate(s.rot);if(s.
   if(s.kind==="hay"){ctx.strokeStyle="#e8d574";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-10,0);ctx.lineTo(11,0);ctx.stroke();ctx.fillStyle="#8eb65c";ctx.beginPath();ctx.ellipse(-2,-3,7,2,-.5,0,Math.PI*2);ctx.ellipse(4,3,7,2,.5,0,Math.PI*2);ctx.fill();}
   else if(s.kind==="seed"){ctx.fillStyle="#554234";ctx.strokeStyle="#f0cf77";ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(0,0,s.r*1.25,s.r*.72,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.strokeStyle="#fff0aa";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-s.r*.45,-s.r*.35);ctx.lineTo(s.r*.5,s.r*.25);ctx.stroke();}
   else if(s.kind==="seedShard"){ctx.shadowBlur=14;ctx.shadowColor="#ffe56b";ctx.fillStyle="#fff0a0";ctx.strokeStyle="#f09045";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(8,0);ctx.lineTo(-5,-4);ctx.lineTo(-2,0);ctx.lineTo(-5,4);ctx.closePath();ctx.fill();ctx.stroke();}
+  else if(s.kind==="acorn"){ctx.shadowBlur=evolved.acorn?18:8;ctx.shadowColor="#ffd85c";ctx.fillStyle=evolved.acorn?"#f5c84f":"#9a673e";ctx.strokeStyle="#573a29";ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,2,s.r,s.r*.78,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle="#6e9d50";ctx.beginPath();ctx.arc(-2,-s.r*.55,s.r*.7,Math.PI,0);ctx.fill();}
+  else if(s.kind==="bubble"){ctx.globalAlpha=.72;ctx.shadowBlur=evolved.bubble?22:12;ctx.shadowColor=evolved.bubble?"#e578ff":"#7ee8ff";const g=ctx.createRadialGradient(-s.r*.28,-s.r*.3,1,0,0,s.r);g.addColorStop(0,"rgba(255,255,255,.95)");g.addColorStop(.28,evolved.bubble?"rgba(255,125,225,.5)":"rgba(105,225,255,.45)");g.addColorStop(1,"rgba(120,170,255,.08)");ctx.fillStyle=g;ctx.strokeStyle=evolved.bubble?"#ffd0ff":"#a9f4ff";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,s.r,0,Math.PI*2);ctx.fill();ctx.stroke();}
   else if(s.kind==="rocket"){ctx.fillStyle="#f28a42";ctx.strokeStyle="#9b4e2d";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(16,0);ctx.lineTo(-8,-9);ctx.lineTo(-8,9);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle="#79a95f";ctx.beginPath();ctx.moveTo(-7,-7);ctx.lineTo(-15,-12);ctx.lineTo(-12,-3);ctx.moveTo(-7,7);ctx.lineTo(-15,12);ctx.lineTo(-12,3);ctx.fill();ctx.fillStyle="#ffe16f";ctx.beginPath();ctx.moveTo(-10,-4);ctx.lineTo(-22,0);ctx.lineTo(-10,4);ctx.fill();}
   else {ctx.fillStyle="#ed8843";ctx.beginPath();ctx.moveTo(13,0);ctx.lineTo(-10,-7);ctx.lineTo(-10,7);ctx.closePath();ctx.fill();ctx.strokeStyle="#fff1cc";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(1,-4);ctx.lineTo(-2,3);ctx.stroke();ctx.fillStyle="#5c9c59";ctx.fillRect(-15,-7,7,5);ctx.fillRect(-15,2,7,5);}
   ctx.restore();}
@@ -1125,7 +1159,7 @@ function drawPickup(p){ctx.save();ctx.translate(p.x,p.y+Math.sin(elapsed*6+p.bob
 function drawFlameAura(){ctx.save();ctx.globalCompositeOperation="lighter";for(let i=0;i<22;i++){const a=i*Math.PI*2/22+elapsed*(2.2+(i%3)*.22),r=62+(i%4)*24+Math.sin(elapsed*8+i)*7,x=player.x+Math.cos(a)*r,y=player.y+Math.sin(a)*r,h=24+(i%5)*5,w=10+(i%3)*3;const g=ctx.createLinearGradient(x,y+h*.55,x,y-h);g.addColorStop(0,"rgba(255,55,10,.18)");g.addColorStop(.35,"#ff5a18");g.addColorStop(.7,"#ffbd31");g.addColorStop(1,"#fff6ad");ctx.fillStyle=g;ctx.shadowBlur=18;ctx.shadowColor="#ff6a18";ctx.beginPath();ctx.moveTo(x,y+h*.55);ctx.bezierCurveTo(x+w,y+h*.15,x+w*.7,y-h*.3,x+Math.sin(elapsed*11+i)*5,y-h);ctx.bezierCurveTo(x-w*.8,y-h*.25,x-w,y+h*.18,x,y+h*.55);ctx.fill();if(i%3===0){ctx.fillStyle="#fff8c7";ctx.beginPath();ctx.ellipse(x,y+h*.05,w*.28,h*.22,0,0,Math.PI*2);ctx.fill();}}ctx.globalAlpha=.3;ctx.fillStyle="#ff7a1a";ctx.beginPath();ctx.arc(player.x,player.y,58+Math.sin(elapsed*9)*5,0,Math.PI*2);ctx.fill();ctx.restore();}
 function drawGem(g){const tier=g.rainbow?3:g.value>=30?2:g.value>=12?1:0,hue=(elapsed*120+g.bob*35)%360,colors=tier===3?[`hsl(${hue} 90% 53%)`,`hsl(${(hue+80)%360} 100% 78%)`,`hsl(${(hue+170)%360} 100% 60%)`]:[["#006bff","#72f4ff","#00d9ff"],["#19a957","#a5ff8c","#3cff8b"],["#d92945","#ff9a78","#ff3b57"]][tier],sz=[8,10,13,17][tier];ctx.save();if(g.vacuum&&g.vacuumDelay<=0){ctx.strokeStyle=tier===3?`hsla(${hue} 100% 65% / .65)`:tier===2?"rgba(255,70,86,.55)":tier===1?"rgba(73,255,145,.52)":"rgba(74,226,255,.52)";ctx.lineWidth=4+tier*2;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(g.x-(g.vx||0)*.075,g.y-(g.vy||0)*.075);ctx.lineTo(g.x,g.y);ctx.stroke();}ctx.translate(g.x,g.y+Math.sin(elapsed*5+g.bob)*3);ctx.rotate(Math.PI/4+(g.rainbow?elapsed*.8:0));const pulse=1+Math.sin(elapsed*7+g.bob)*.12;ctx.scale(pulse,pulse);ctx.shadowBlur=(g.vacuum?28:18)+tier*4;ctx.shadowColor=colors[2];ctx.fillStyle=colors[0];ctx.strokeStyle="#f4ffff";ctx.lineWidth=g.rainbow?4:3;ctx.beginPath();ctx.roundRect(-sz,-sz,sz*2,sz*2,3+tier);ctx.fill();ctx.stroke();ctx.fillStyle=colors[1];ctx.fillRect(-sz*.52,-sz*.64,sz*.62,sz*.62);ctx.fillStyle="white";ctx.fillRect(-sz*.38,-sz*.58,2+tier,2+tier);ctx.restore();}
 function drawSwing(s){const k=s.life/s.maxLife;ctx.save();ctx.translate(s.x,s.y);if(s.full){ctx.shadowBlur=24;ctx.shadowColor="#ffe86b";for(let q=0;q<3;q++){ctx.strokeStyle=q===0?`rgba(255,181,54,${k*.72})`:q===1?`rgba(255,238,111,${k*.9})`:`rgba(255,255,225,${k})`;ctx.lineWidth=(22-q*8)*k+3;ctx.beginPath();ctx.arc(0,0,s.radius+q*9+Math.sin(elapsed*12+q)*4,0,Math.PI*2);ctx.stroke();}for(let i=0;i<10;i++){const a=i*Math.PI/5+elapsed*5;ctx.fillStyle=i%2?"#fff3a0":"#f3ad39";ctx.beginPath();ctx.arc(Math.cos(a)*(s.radius+18),Math.sin(a)*(s.radius+18),3+4*k,0,Math.PI*2);ctx.fill();}}else{ctx.strokeStyle=`rgba(238,223,124,${k})`;ctx.lineWidth=12*k+3;ctx.beginPath();ctx.arc(0,0,s.radius,s.angle-1.35,s.angle+1.35);ctx.stroke();ctx.strokeStyle=`rgba(255,251,207,${k})`;ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,s.radius+6,s.angle-1.25,s.angle+1.25);ctx.stroke();}ctx.restore();}
-function drawLaser(l){const k=l.life/l.maxLife;ctx.save();ctx.globalAlpha=Math.min(1,k*2);const grad=ctx.createLinearGradient(l.x,l.y-650,l.x,l.y);grad.addColorStop(0,"rgba(255,255,210,0)");grad.addColorStop(.25,l.rainbow?"rgba(89,220,255,.9)":"rgba(255,244,137,.8)");grad.addColorStop(.5,l.rainbow?"rgba(255,232,92,.95)":"rgba(255,244,137,.9)");grad.addColorStop(.72,l.rainbow?"rgba(255,105,189,.95)":"rgba(255,244,137,.9)");grad.addColorStop(1,"rgba(255,255,235,1)");ctx.shadowBlur=l.rainbow?35:12;ctx.shadowColor=l.rainbow?"#d46cff":"#fff28a";ctx.strokeStyle=grad;ctx.lineWidth=l.radius*(l.rainbow?1.55-k*.25:1.25-k*.3);ctx.beginPath();ctx.moveTo(l.x,l.y-650);ctx.lineTo(l.x,l.y);ctx.stroke();ctx.fillStyle=l.rainbow?"rgba(191,128,233,.55)":"rgba(255,232,103,.45)";ctx.beginPath();ctx.ellipse(l.x,l.y,l.radius*1.35,l.radius*.48,0,0,Math.PI*2);ctx.fill();if(l.rainbow){for(let q=0;q<3;q++){ctx.strokeStyle=["#71e4ff","#ffe46d","#ff7bbb"][q];ctx.lineWidth=4;ctx.beginPath();ctx.ellipse(l.x,l.y,l.radius*(.55+q*.35),l.radius*(.2+q*.1),0,0,Math.PI*2);ctx.stroke();}}ctx.restore();}
+function drawLaser(l){const k=l.life/l.maxLife;ctx.save();if(l.meteor){const charge=Math.max(0,l.delay||0);ctx.globalAlpha=.85;ctx.strokeStyle=charge>0?"#ffd96a":"#fff4ad";ctx.lineWidth=4;ctx.beginPath();ctx.arc(l.x,l.y,l.radius*(1+charge*.7),0,Math.PI*2);ctx.stroke();if(charge>0){ctx.fillStyle="#f4cf65";ctx.shadowBlur=24;ctx.shadowColor="#ff9f43";ctx.beginPath();ctx.arc(l.x+charge*90,l.y-charge*240,15+weapons.meteor*1.2,0,Math.PI*2);ctx.fill();}else{ctx.fillStyle="rgba(255,183,68,.5)";ctx.beginPath();ctx.arc(l.x,l.y,l.radius,0,Math.PI*2);ctx.fill();}ctx.restore();return;}ctx.globalAlpha=Math.min(1,k*2);const grad=ctx.createLinearGradient(l.x,l.y-650,l.x,l.y);grad.addColorStop(0,"rgba(255,255,210,0)");grad.addColorStop(.25,l.rainbow?"rgba(89,220,255,.9)":"rgba(255,244,137,.8)");grad.addColorStop(.5,l.rainbow?"rgba(255,232,92,.95)":"rgba(255,244,137,.9)");grad.addColorStop(.72,l.rainbow?"rgba(255,105,189,.95)":"rgba(255,244,137,.9)");grad.addColorStop(1,"rgba(255,255,235,1)");ctx.shadowBlur=l.rainbow?35:12;ctx.shadowColor=l.rainbow?"#d46cff":"#fff28a";ctx.strokeStyle=grad;ctx.lineWidth=l.radius*(l.rainbow?1.55-k*.25:1.25-k*.3);ctx.beginPath();ctx.moveTo(l.x,l.y-650);ctx.lineTo(l.x,l.y);ctx.stroke();ctx.fillStyle=l.rainbow?"rgba(191,128,233,.55)":"rgba(255,232,103,.45)";ctx.beginPath();ctx.ellipse(l.x,l.y,l.radius*1.35,l.radius*.48,0,0,Math.PI*2);ctx.fill();if(l.rainbow){for(let q=0;q<3;q++){ctx.strokeStyle=["#71e4ff","#ffe46d","#ff7bbb"][q];ctx.lineWidth=4;ctx.beginPath();ctx.ellipse(l.x,l.y,l.radius*(.55+q*.35),l.radius*(.2+q*.1),0,0,Math.PI*2);ctx.stroke();}}ctx.restore();}
 function drawBottle(b){const x=b.x+(b.tx-b.x)*b.t,y=b.y+(b.ty-b.y)*b.t-Math.sin(b.t*Math.PI)*95;ctx.save();ctx.translate(x,y);ctx.rotate(b.t*9);ctx.fillStyle="#7a4f83";ctx.strokeStyle="#46354c";ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(-6,-11,12,20,4);ctx.fill();ctx.stroke();ctx.fillStyle="#d5b37a";ctx.fillRect(-4,-15,8,6);ctx.restore();}
 function drawZone(z){ctx.save();ctx.globalAlpha=Math.min(.72,z.life);ctx.shadowBlur=z.garden?22:0;ctx.shadowColor="#b9ef72";ctx.fillStyle=z.garden?"#65ad69":"#8f72a9";ctx.strokeStyle=z.garden?"#efff9b":"#c8a7d8";ctx.lineWidth=z.garden?6:3;ctx.beginPath();ctx.ellipse(z.x,z.y,z.r,z.r*.55,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=z.garden?"#fff0a4":"#d7b6dd";for(let i=0;i<(z.garden?20:7);i++){const a=i*2.4+z.life*(z.garden?2:1),rr=z.r*(z.garden?.3+(i%3)*.2:.65);ctx.beginPath();ctx.arc(z.x+Math.cos(a)*rr,z.y+Math.sin(a)*rr*.55,3+Math.sin(a)*1.5+(z.garden?2:0),0,Math.PI*2);ctx.fill();}if(z.garden){ctx.globalAlpha*=.55;ctx.strokeStyle="#ff9fc8";ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(z.x,z.y,z.r*.72,z.r*.38,elapsed,0,Math.PI*2);ctx.stroke();}ctx.restore();}
 function drawChest(c){ctx.save();ctx.translate(c.x,c.y+Math.sin(c.bob*5)*4);ctx.fillStyle="rgba(72,60,40,.18)";ctx.beginPath();ctx.ellipse(0,17,21,6,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#d99245";ctx.strokeStyle="#714626";ctx.lineWidth=2.5;ctx.beginPath();ctx.roundRect(-19,-10,38,28,6);ctx.fill();ctx.stroke();ctx.fillStyle="#f3c75f";ctx.fillRect(-19,-2,38,6);ctx.strokeRect(-19,-2,38,6);ctx.beginPath();ctx.arc(0,4,5,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle="#fff3ad";ctx.globalAlpha=.75;for(let i=0;i<3;i++){const a=c.bob*2+i*2.1;ctx.beginPath();ctx.arc(Math.cos(a)*25,Math.sin(a)*14-8,2.2,0,Math.PI*2);ctx.fill();}ctx.restore();}
