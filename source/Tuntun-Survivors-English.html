@@ -186,6 +186,11 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
 .shop-head h2 { margin:4px 0 0; color:#435e40; font-size:clamp(28px,5vw,44px); }
 .coin-bank { padding:9px 14px; border-radius:18px; color:#765318; background:#ffe898; font-size:20px; font-weight:900; white-space:nowrap; }
 .shop-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:18px; }
+.character-screen { background:linear-gradient(145deg,rgba(109,153,88,.96),rgba(239,218,164,.96)); }
+.character-book { width:min(940px,94vw); max-height:92vh; overflow:auto; padding:28px; border:4px solid #fff3d1; border-radius:30px; background:#fff9e9; box-shadow:0 22px 70px rgba(45,58,37,.35); }
+.character-head { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:18px; }.character-head h2{margin:3px 0;font-size:clamp(27px,4vw,45px);}
+.character-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }.character-card{position:relative;padding:18px;border:3px solid #ded1b5;border-radius:23px;background:white;text-align:center;transition:.2s}.character-card.unlocked{cursor:pointer}.character-card.unlocked:hover{transform:translateY(-4px);border-color:#83ae66;box-shadow:0 10px 24px rgba(76,103,57,.18)}.character-card.locked{filter:grayscale(1);background:#ddd;color:#666}.character-avatar{font-size:68px;filter:none}.character-card h3{font-size:23px;margin:5px}.character-card p{min-height:45px;font-size:13px;line-height:1.45}.character-stats{display:grid;gap:4px;margin:10px 0;text-align:left;font-size:12px}.character-card button{width:100%;margin-top:9px}.character-price{font-size:18px;font-weight:900;color:#94632d}.character-card.locked .character-price{color:#555}
+@media(max-width:720px){.character-grid{grid-template-columns:1fr}.character-book{padding:17px}.character-card p{min-height:0}}
 .shop-item { display:grid; grid-template-columns:52px 1fr auto; align-items:center; gap:10px; padding:14px; border:2px solid #eadfc8; border-radius:18px; background:white; }
 .shop-item .shop-icon { font-size:34px; }.shop-item h3 { margin:0; font-size:16px; }.shop-item p { margin:3px 0 0; color:#887b6d; font-size:11px; }
 .shop-buy { min-width:92px; padding:9px 10px; border:0; border-radius:12px; color:white; background:#e88b4e; font:800 12px inherit; cursor:pointer; }
@@ -279,7 +284,7 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
         <div class="bar hp"><i id="hpFill"></i><span>♥ <b id="hp">100</b></span></div>
         <div class="bar xp"><i id="xpFill"></i><span>GROWTH</span></div>
         <button id="skillBar" class="bar skill ready" aria-label="Unleash Tuntun's Squeal">
-          <i id="skillFill"></i><span>📣 TUNTUN SQUEAL <b id="skillCd">SPACE</b></span>
+          <i id="skillFill"></i><span><span id="skillName">📣 TUNTUN SQUEAL</span> <b id="skillCd">SPACE</b></span>
         </button>
       </div>
       <div id="weaponTray"></div>
@@ -296,11 +301,18 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
           <button id="shopBtn" class="secondary">🪙 UPGRADES</button>
         </div>
         <div class="controls">
-          <span><kbd>WASD</kbd> Move · <kbd>SPACE</kbd> Squeal</span>
+          <span><kbd>WASD</kbd> Move · <kbd>SPACE</kbd> Unique Skill</span>
           <span>Drag to move on mobile</span>
         </div>
       </div>
       <div class="version">DEMO · GARDEN CRISIS</div>
+    </section>
+
+    <section id="characterScreen" class="screen character-screen hidden">
+      <div class="character-book">
+        <div class="character-head"><div><span class="eyebrow">CHOOSE YOUR PET</span><h2>Choose a Character</h2><p>Each pet has a unique starting weapon and SPACE ability.</p></div><div><b id="characterCoins" class="coin-bank">🪙 0</b><button id="closeCharacterBtn" class="icon-btn">✕</button></div></div>
+        <div id="characterGrid" class="character-grid"></div>
+      </div>
     </section>
 
     <section id="shopScreen" class="screen shop-screen hidden">
@@ -409,7 +421,7 @@ const ui = {
   timer: document.querySelector("#timer"), levelText: document.querySelector("#level"),
   score: document.querySelector("#score"), coinText:document.querySelector("#coinCount"), hp: document.querySelector("#hp"),
   hpFill: document.querySelector("#hpFill"), xpFill: document.querySelector("#xpFill"),
-  skillFill: document.querySelector("#skillFill"), skillCd: document.querySelector("#skillCd"),
+  skillFill: document.querySelector("#skillFill"), skillCd: document.querySelector("#skillCd"), skillName:document.querySelector("#skillName"),
   skillBar: document.querySelector("#skillBar"), bossHud:document.querySelector("#bossHud"),
   bossName:document.querySelector("#bossName"), bossFill:document.querySelector("#bossFill"),
   choices: document.querySelector("#upgradeChoices"), tray: document.querySelector("#weaponTray")
@@ -427,6 +439,12 @@ const keys = new Set();
 const pointer = { active:false, x:0, y:0, ox:0, oy:0 };
 const player = { x:0, y:0, r:20, speed:225, hp:130, maxHp:130, inv:0, damage:18, rate:.64, projectiles:1, magnet:105, size:1, regen:.12, facing:1, pierce:0, crit:0, area:1, cooldown:1 };
 const SAVE_KEY="tuntun-survivors-save-v2";
+let selectedCharacter="tuntun",skillMaxCooldown=10;
+const characterDefs=[
+  {id:"tuntun",icon:"🐹",name:"Tuntun",cost:0,starter:"carrot",starterName:"🥕 Carrot Dart",skill:"📣 Tuntun Squeal",desc:"A balanced guinea pig whose squeal knocks back nearby enemies.",hp:1,speed:1,damage:1,cd:10},
+  {id:"rabbit",icon:"🐰",name:"Mochi Bunny",cost:650,starter:"bubble",starterName:"🫧 Bubble Wand",skill:"🌙 Moon Hop",desc:"Fast but less sturdy; leaps forward and blasts the landing area.",hp:.9,speed:1.18,damage:.95,cd:9},
+  {id:"chinchilla",icon:"🐭",name:"Nono Chinchilla",cost:1100,starter:"acorn",starterName:"🌰 Boomerang Acorn",skill:"🌪️ Fluff Cyclone",desc:"Tougher and stronger; pulls in and crushes nearby enemies.",hp:1.15,speed:.94,damage:1.08,cd:12}
+];
 const metaDefs=[
   {id:"health",icon:"❤️",name:"HEARTY BUILD",desc:"+10 starting health per level",max:10,base:35},
   {id:"damage",icon:"🥕",name:"CARROT TRAINING",desc:"+6% starting damage per level",max:10,base:45},
@@ -437,21 +455,28 @@ const metaDefs=[
   {id:"reroll",icon:"🎲",name:"REROLL TOKEN",desc:"+1 upgrade reroll per run",max:5,base:120},
   {id:"banish",icon:"✖",name:"BANISH TOKEN",desc:"+1 permanent option removal per run",max:5,base:165}
 ];
-function freshSave(){return {coins:0,earned:0,upgrades:{health:0,damage:0,speed:0,magnet:0,regen:0,fortune:0,reroll:0,banish:0}};}
-function loadSave(){try{const raw=localStorage.getItem(SAVE_KEY),data=raw?JSON.parse(raw):freshSave();return {coins:+data.coins||0,earned:+data.earned||0,upgrades:{...freshSave().upgrades,...(data.upgrades||{})}};}catch(e){return freshSave();}}
+function freshSave(){return {coins:0,earned:0,characters:{tuntun:true,rabbit:false,chinchilla:false},upgrades:{health:0,damage:0,speed:0,magnet:0,regen:0,fortune:0,reroll:0,banish:0}};}
+function loadSave(){try{const raw=localStorage.getItem(SAVE_KEY),data=raw?JSON.parse(raw):freshSave();return {coins:+data.coins||0,earned:+data.earned||0,characters:{...freshSave().characters,...(data.characters||{})},upgrades:{...freshSave().upgrades,...(data.upgrades||{})}};}catch(e){return freshSave();}}
 let metaSave=loadSave();
 function persistSave(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(metaSave));}catch(e){}}
 function metaCost(d,l){return Math.floor(d.base*Math.pow(1.58,l));}
 function addCoins(n){const gain=Math.max(1,Math.round(n*(1+(metaSave.upgrades.fortune||0)*.08)));metaSave.coins+=gain;metaSave.earned+=gain;persistSave();updateCoinUI();return gain;}
-function updateCoinUI(){if(ui.coinText)ui.coinText.textContent=metaSave.coins;const bank=document.querySelector("#shopCoins");if(bank)bank.textContent="🪙 "+metaSave.coins;}
+function updateCoinUI(){if(ui.coinText)ui.coinText.textContent=metaSave.coins;const bank=document.querySelector("#shopCoins");if(bank)bank.textContent="🪙 "+metaSave.coins;const characterCoins=document.querySelector("#characterCoins");if(characterCoins)characterCoins.textContent="🪙 "+metaSave.coins;}
 function renderShop(){
   updateCoinUI();document.querySelector("#shopGrid").innerHTML=metaDefs.map(d=>{const lv=metaSave.upgrades[d.id]||0,cost=metaCost(d,lv),max=lv>=d.max;return `<article class="shop-item"><span class="shop-icon">${d.icon}</span><div><h3>${d.name}　LV.${lv}/${d.max}</h3><p>${d.desc}</p></div><button class="shop-buy" data-id="${d.id}" ${max||metaSave.coins<cost?"disabled":""}>${max?"MAXED":"🪙 "+cost}</button></article>`;}).join("");
   document.querySelectorAll(".shop-buy").forEach(b=>b.onclick=()=>buyMeta(b.dataset.id));
 }
 function buyMeta(id){const d=metaDefs.find(x=>x.id===id),lv=metaSave.upgrades[id]||0,cost=metaCost(d,lv);if(!d||lv>=d.max||metaSave.coins<cost)return;metaSave.coins-=cost;metaSave.upgrades[id]=lv+1;persistSave();sfx("chest");renderShop();}
 function exportSave(){prompt("Copy and keep this save code:",btoa(unescape(encodeURIComponent(JSON.stringify(metaSave)))));}
-function importSave(){const code=prompt("Paste your save code:");if(!code)return;try{const data=JSON.parse(decodeURIComponent(escape(atob(code.trim()))));metaSave={coins:+data.coins||0,earned:+data.earned||0,upgrades:{...freshSave().upgrades,...(data.upgrades||{})}};persistSave();renderShop();alert("Save imported!");}catch(e){alert("Invalid save code.");}}
+function importSave(){const code=prompt("Paste your save code:");if(!code)return;try{const data=JSON.parse(decodeURIComponent(escape(atob(code.trim()))));metaSave={coins:+data.coins||0,earned:+data.earned||0,characters:{...freshSave().characters,...(data.characters||{})},upgrades:{...freshSave().upgrades,...(data.upgrades||{})}};persistSave();renderShop();alert("Save imported!");}catch(e){alert("Invalid save code.");}}
 function resetSave(){if(confirm("Reset all coins and permanent upgrades?")){metaSave=freshSave();persistSave();renderShop();}}
+function openCharacterSelect(){initAudio();renderCharacterSelect();ui.start.classList.add("hidden");document.querySelector("#characterScreen").classList.remove("hidden");}
+function closeCharacterSelect(){document.querySelector("#characterScreen").classList.add("hidden");ui.start.classList.remove("hidden");}
+function renderCharacterSelect(){
+  updateCoinUI();document.querySelector("#characterGrid").innerHTML=characterDefs.map(c=>{const unlocked=!!metaSave.characters[c.id],canBuy=metaSave.coins>=c.cost;return `<article class="character-card ${unlocked?"unlocked":"locked"}"><div class="character-avatar">${unlocked?c.icon:"🔒"}</div><h3>${c.name}</h3><p>${c.desc}</p><div class="character-stats"><span>Starting weapon　<b>${c.starterName}</b></span><span>Active skill　<b>${c.skill}</b></span><span>Health ${Math.round(c.hp*100)}% · Speed ${Math.round(c.speed*100)}% · Damage ${Math.round(c.damage*100)}%</span></div>${unlocked?`<button class="primary character-play" data-id="${c.id}">Select</button>`:`<div class="character-price">🪙 ${c.cost}</div><button class="character-buy" data-id="${c.id}" ${canBuy?"":"disabled"}>${canBuy?"Unlock":"Not enough coins"}</button>`}</article>`;}).join("");
+  document.querySelectorAll(".character-play").forEach(b=>b.onclick=()=>{selectedCharacter=b.dataset.id;document.querySelector("#characterScreen").classList.add("hidden");startGame();});
+  document.querySelectorAll(".character-buy").forEach(b=>b.onclick=()=>{const c=characterDefs.find(x=>x.id===b.dataset.id);if(!c||metaSave.characters[c.id]||metaSave.coins<c.cost)return;metaSave.coins-=c.cost;metaSave.characters[c.id]=true;persistSave();sfx("chest");renderCharacterSelect();});
+}
 const MAX_WEAPONS=5,MAX_PASSIVES=5;
 const weapons = { carrot:1, dandelion:0, hay:0, seed:0, laser:0, bottle:0, acorn:0, meteor:0, bubble:0 };
 const passives = { speed:0, heart:0, magnet:0, regen:0, power:0, chew:0, luck:0, area:0, cooldown:0 };
@@ -472,9 +497,11 @@ const upgrades = [
   {
     id:"carrot", icon:"🥕", name:"Carrot Dart", available(){return weapons.carrot<8;},
     desc(){
+      if(!weapons.carrot)return "Fires fast carrots at the nearest enemy.";
       return ["","Increases damage per shot.","Fires one extra carrot per volley.","Reduces the delay between volleys.","Greatly increases damage and adds piercing.","Increases carrot size and damage.","Adds another projectile.","Final boost to attack speed, damage, and piercing."][weapons.carrot];
     },
     preview(){
+      if(!weapons.carrot)return "Unlock weapon　Auto-aiming Carrot Dart";
       if(weapons.carrot===1)return `LV.1 → LV.2　Damage ${fmt(player.damage)} → ${fmt(player.damage+6)}`;
       if(weapons.carrot===2)return `LV.2 → LV.3　Carrots per volley ${player.projectiles} → ${player.projectiles+1}`;
       if(weapons.carrot===3)return `LV.3 → LV.4　Interval ${player.rate.toFixed(2)}s → ${Math.max(.25,player.rate-.1).toFixed(2)}s`;
@@ -532,8 +559,9 @@ addEventListener("keyup",e=>keys.delete(e.key.toLowerCase()));
 canvas.addEventListener("pointerdown",e=>{pointer.active=true;pointer.ox=pointer.x=e.clientX;pointer.oy=pointer.y=e.clientY;});
 canvas.addEventListener("pointermove",e=>{if(pointer.active){pointer.x=e.clientX;pointer.y=e.clientY;}});
 addEventListener("pointerup",()=>pointer.active=false);
-document.querySelector("#startBtn").onclick=startGame;
+document.querySelector("#startBtn").onclick=openCharacterSelect;
 document.querySelector("#restartBtn").onclick=startGame;
+document.querySelector("#closeCharacterBtn").onclick=closeCharacterSelect;
 document.querySelector("#endHomeBtn").onclick=goHome;
 ui.skillBar.onclick=activateSkill;
 document.querySelector("#resumeBtn").onclick=togglePause;
@@ -607,15 +635,15 @@ function startGame(){
   initAudio();musicStep=0;sfx("start");
   ui.hud.classList.remove("pause-visible");
   clearTimeout(chestRevealTimer);pendingChestReward=null;ui.chest.classList.add("hidden");ui.chest.classList.remove("revealed");
-  const m=metaSave.upgrades,maxHp=105+(m.health||0)*10;
+  const m=metaSave.upgrades,char=characterDefs.find(c=>c.id===selectedCharacter)||characterDefs[0],maxHp=Math.round((105+(m.health||0)*10)*char.hp);skillMaxCooldown=char.cd;
   rerollsLeft=m.reroll||0;banishesLeft=m.banish||0;banishedUpgrades=new Set();banishMode=false;currentPicks=[];
-  Object.assign(player,{x:0,y:0,r:20,hp:maxHp,maxHp,speed:205*(1+(m.speed||0)*.025),inv:0,damage:14*(1+(m.damage||0)*.06),rate:.7,projectiles:1,magnet:85+(m.magnet||0)*12,size:1,regen:(m.regen||0)*.05,facing:1,pierce:0,crit:0,area:1,cooldown:1});
-  Object.assign(weapons,{carrot:1,dandelion:0,hay:0,seed:0,laser:0,bottle:0,acorn:0,meteor:0,bubble:0});
+  Object.assign(player,{x:0,y:0,r:20,hp:maxHp,maxHp,speed:205*(1+(m.speed||0)*.025)*char.speed,inv:0,damage:14*(1+(m.damage||0)*.06)*char.damage,rate:.7,projectiles:1,magnet:85+(m.magnet||0)*12,size:1,regen:(m.regen||0)*.05,facing:1,pierce:0,crit:0,area:1,cooldown:1});
+  Object.keys(weapons).forEach(id=>weapons[id]=0);weapons[char.starter]=1;
   Object.assign(passives,{speed:0,heart:0,magnet:0,regen:0,power:0,chew:0,luck:0,area:0,cooldown:0});
   Object.assign(evolved,{carrot:false,dandelion:false,hay:false,seed:false,laser:false,bottle:false,acorn:false,meteor:false,bubble:false});
   elapsed=score=xp=spawnClock=shotClock=hayClock=seedClock=laserClock=bottleClock=acornClock=meteorClock=bubbleClock=gemMergeClock=skillCooldown=freezeTimer=flameTimer=flameClock=0;potRespawnClock=12; level=1; xpNeed=18;
   enemies=[];shots=[];swings=[];lasers=[];bottles=[];zones=[];gems=[];chests=[];obstacles=[];pots=[];pickups=[];enemyOrbs=[];bossWaves=[];bossTrails=[];particles=[];texts=[];bossWave=0;finalPhase=false;running=true;paused=false;last=performance.now();buildMap();
-  ui.start.classList.add("hidden");ui.pause.classList.add("hidden");ui.codex.classList.add("hidden");ui.shop.classList.add("hidden");ui.end.classList.add("hidden");ui.level.classList.add("hidden");ui.hud.classList.remove("hidden");updateCoinUI();
+  ui.start.classList.add("hidden");ui.pause.classList.add("hidden");ui.codex.classList.add("hidden");ui.shop.classList.add("hidden");ui.end.classList.add("hidden");ui.level.classList.add("hidden");ui.hud.classList.remove("hidden");updateCoinUI();ui.skillName.textContent=char.skill;ui.skillBar.setAttribute("aria-label",char.skill);
   renderTray(); requestAnimationFrame(loop);
 }
 function togglePause(){
@@ -623,7 +651,7 @@ function togglePause(){
   paused=!paused;ui.pause.classList.toggle("hidden",!paused);ui.hud.classList.toggle("pause-visible",paused);keys.clear();if(!paused)initAudio();
 }
 function goHome(){
-  running=false;paused=false;keys.clear();ui.hud.classList.remove("pause-visible");ui.pause.classList.add("hidden");ui.level.classList.add("hidden");ui.end.classList.add("hidden");ui.hud.classList.add("hidden");ui.start.classList.remove("hidden");draw();
+  running=false;paused=false;keys.clear();ui.hud.classList.remove("pause-visible");ui.pause.classList.add("hidden");ui.level.classList.add("hidden");ui.end.classList.add("hidden");document.querySelector("#characterScreen").classList.add("hidden");ui.hud.classList.add("hidden");ui.start.classList.remove("hidden");draw();
 }
 function closeCodex(){ui.codex.classList.add("hidden");}
 const tr=(zh,en)=>document.documentElement.lang==="en"?en:zh;
@@ -867,7 +895,15 @@ function fireBubbles(){
 }
 function activateSkill(){
   if(!running||paused||skillCooldown>0)return;
-  skillCooldown=10;flash=.16;shake=9;sfx("skill");const radius=205;
+  skillCooldown=skillMaxCooldown;flash=.16;shake=9;sfx("skill");
+  if(selectedCharacter==="rabbit"){
+    const dx=(keys.has("d")||keys.has("arrowright")?1:0)-(keys.has("a")||keys.has("arrowleft")?1:0),dy=(keys.has("s")||keys.has("arrowdown")?1:0)-(keys.has("w")||keys.has("arrowup")?1:0),len=Math.hypot(dx,dy)||1,a=Math.abs(dx)+Math.abs(dy)>0?Math.atan2(dy/len,dx/len):(player.facing>0?0:Math.PI),oldX=player.x,oldY=player.y;player.x+=Math.cos(a)*175;player.y+=Math.sin(a)*175;resolveWorldCollision(player,oldX,oldY);player.inv=1.25;const radius=235;
+    particles.push({x:player.x,y:player.y,vx:0,vy:0,life:.7,ring:true,r:8,maxR:radius,color:"#bde9ff",duration:.7});for(let i=0;i<24;i++){const p=i*Math.PI*2/24,sp=120+Math.random()*220;particles.push({x:player.x,y:player.y,vx:Math.cos(p)*sp,vy:Math.sin(p)*sp,life:.7,r:3+Math.random()*4,color:i%2?"#fff3bf":"#9ee9ff"});}enemies.forEach(e=>{const d=dist(e.x,e.y,player.x,player.y);if(d<radius+e.r){const q=Math.atan2(e.y-player.y,e.x-player.x);e.kx=Math.cos(q)*720;e.ky=Math.sin(q)*720;hitEnemy(e,55+player.damage*.8);}});texts.push({x:player.x,y:player.y-48,text:"MOON HOP!",color:"#5aa4c8",life:1});return;
+  }
+  if(selectedCharacter==="chinchilla"){
+    const radius=315;particles.push({x:player.x,y:player.y,vx:0,vy:0,life:1,ring:true,r:12,maxR:radius,color:"#cbb7e9",duration:1});for(let i=0;i<34;i++){const p=i*.72,rr=50+(i%7)*32;particles.push({x:player.x+Math.cos(p)*rr,y:player.y+Math.sin(p)*rr,vx:-Math.cos(p)*170,vy:-Math.sin(p)*170,life:.9,r:3+(i%3),color:i%2?"#d8c9ef":"#9f8abd"});}enemies.forEach(e=>{const d=dist(e.x,e.y,player.x,player.y);if(d<radius+e.r){const q=Math.atan2(player.y-e.y,player.x-e.x),force=620*(1-d/(radius+e.r)*.35);e.kx=Math.cos(q)*force;e.ky=Math.sin(q)*force;hitEnemy(e,42+player.damage*.7);}});texts.push({x:player.x,y:player.y-48,text:"FLUFF CYCLONE!",color:"#8066a8",life:1});return;
+  }
+  const radius=205;
   particles.push({x:player.x,y:player.y,vx:0,vy:0,life:.7,ring:true,r:10,maxR:radius,color:"#dfff9f",duration:.7});
   for(let i=0;i<18;i++){const a=i*Math.PI*2/18;particles.push({x:player.x,y:player.y,vx:Math.cos(a)*240,vy:Math.sin(a)*240,life:.55,r:3,color:i%2?"#fff4a8":"#a9e786"});}
   enemies.forEach(e=>{const d=dist(e.x,e.y,player.x,player.y);if(d<radius){const a=Math.atan2(e.y-player.y,e.x-player.x),force=850*(1-d/radius*.35);e.kx=Math.cos(a)*force;e.ky=Math.sin(a)*force;hitEnemy(e,12);}});
@@ -942,7 +978,7 @@ function endGame(win){
 }
 function updateUI(){
   ui.timer.textContent=formatTime(elapsed);ui.levelText.textContent=level;ui.score.textContent=score;ui.coinText.textContent=metaSave.coins;ui.hp.textContent=Math.ceil(player.hp);ui.hpFill.style.width=(player.hp/player.maxHp*100)+"%";ui.xpFill.style.width=(xp/xpNeed*100)+"%";
-  const ready=skillCooldown<=0;ui.skillFill.style.width=((10-skillCooldown)/10*100)+"%";ui.skillCd.textContent=ready?"SPACE":skillCooldown.toFixed(1)+"s";ui.skillBar.classList.toggle("ready",ready);
+  const ready=skillCooldown<=0;ui.skillFill.style.width=((skillMaxCooldown-skillCooldown)/skillMaxCooldown*100)+"%";ui.skillCd.textContent=ready?"SPACE":skillCooldown.toFixed(1)+"s";ui.skillBar.classList.toggle("ready",ready);
   const boss=enemies.find(e=>e.boss&&!e.dead);ui.bossHud.classList.toggle("hidden",!boss);if(boss){ui.bossName.textContent=boss.name;ui.bossFill.style.width=Math.max(0,boss.hp/boss.maxHp*100)+"%";}
 }
 function renderTray(){
@@ -985,7 +1021,14 @@ function drawGround(){
   ctx.fillStyle="#a9d98d";ctx.fillRect(player.x-viewW/2-50,player.y-viewH/2-50,viewW+100,viewH+100);
   for(let x=startX;x<endX;x+=grid)for(let y=startY;y<endY;y+=grid){const n=Math.abs(Math.sin(x*12.989+y*78.233));ctx.fillStyle=n>.55?"#8fc87c":"#bbe4a2";ctx.beginPath();ctx.ellipse(x+18,y+25,3,8,.5,0,Math.PI*2);ctx.ellipse(x+27,y+22,3,8,-.5,0,Math.PI*2);ctx.fill();if(n>.8){ctx.fillStyle="#fff4b5";for(let i=0;i<5;i++){const a=i*Math.PI*2/5;ctx.beginPath();ctx.arc(x+70+Math.cos(a)*6,y+70+Math.sin(a)*6,3,0,Math.PI*2);ctx.fill();}ctx.fillStyle="#f2a957";ctx.beginPath();ctx.arc(x+70,y+70,3,0,Math.PI*2);ctx.fill();}}
 }
+function drawAltPlayer(){
+  ctx.save();ctx.translate(player.x,player.y+Math.sin(elapsed*8)*1.5);if(player.inv>0&&Math.floor(player.inv*14)%2)ctx.globalAlpha=.45;ctx.fillStyle="rgba(70,80,51,.17)";ctx.beginPath();ctx.ellipse(0,20,23,7,0,0,Math.PI*2);ctx.fill();ctx.scale(player.facing,1);ctx.strokeStyle="#51463f";ctx.lineWidth=2.3;
+  if(selectedCharacter==="rabbit"){ctx.fillStyle="#faf5ea";for(const x of [-9,9]){ctx.beginPath();ctx.ellipse(x,-25,6,18,x<0?-.12:.12,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle="#efb4b7";ctx.beginPath();ctx.ellipse(x,-25,2.5,12,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#faf5ea";}ctx.beginPath();ctx.ellipse(0,1,21,22,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle="#c6e4ef";ctx.beginPath();ctx.moveTo(-17,10);ctx.lineTo(17,10);ctx.lineTo(11,18);ctx.lineTo(-11,18);ctx.closePath();ctx.fill();ctx.stroke();}
+  else{ctx.fillStyle="#a89ab6";for(const x of [-16,16]){ctx.beginPath();ctx.arc(x,-13,9,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle="#dbcde5";ctx.beginPath();ctx.arc(x,-13,4.5,0,Math.PI*2);ctx.fill();ctx.fillStyle="#a89ab6";}ctx.beginPath();ctx.ellipse(0,1,23,21,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle="#e9e1ef";ctx.beginPath();ctx.ellipse(0,6,14,13,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#755f8e";ctx.beginPath();ctx.moveTo(-18,11);ctx.lineTo(18,11);ctx.lineTo(12,19);ctx.lineTo(-12,19);ctx.closePath();ctx.fill();ctx.stroke();}
+  ctx.fillStyle="#302927";for(const x of [-8,8]){ctx.beginPath();ctx.arc(x,-4,4,0,Math.PI*2);ctx.fill();}ctx.fillStyle="white";for(const x of [-6.8,9.2]){ctx.beginPath();ctx.arc(x,-5.3,1.4,0,Math.PI*2);ctx.fill();}ctx.fillStyle="#ed8f91";ctx.beginPath();ctx.arc(0,4,3,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#51463f";ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(0,6);ctx.lineTo(0,9);ctx.arc(-3,9,3,0,.9);ctx.moveTo(0,9);ctx.arc(3,9,3,2.2,Math.PI);ctx.stroke();ctx.restore();
+}
 function drawPlayer(){
+  if(selectedCharacter!=="tuntun"){drawAltPlayer();return;}
   ctx.save();ctx.translate(player.x,player.y);const bob=Math.sin(elapsed*8)*1.5;ctx.translate(0,bob);if(player.inv>0&&Math.floor(player.inv*14)%2)ctx.globalAlpha=.45;
   ctx.fillStyle="rgba(70,80,51,.17)";ctx.beginPath();ctx.ellipse(0,19,22,7,0,0,Math.PI*2);ctx.fill();
   ctx.scale(player.facing,1);
