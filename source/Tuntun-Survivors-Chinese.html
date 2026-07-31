@@ -319,7 +319,7 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
             <article><b>🥕 胡萝卜飞镖</b><span>＋ 🪵 磨牙棒</span><strong>🚀 胡萝卜火箭</strong><p>高速爆炸火箭，命中产生范围伤害。</p></article>
             <article><b>🌼 蒲公英旋风</b><span>＋ 🎀 勇气蝴蝶结</span><strong>🌸 花冠风暴</strong><p>内外双层彩色花瓣，扩大范围和攻击频率。</p></article>
             <article><b>🌾 牧草镰刀</b><span>＋ 👟 轻盈小脚</span><strong>⚔️ 黄金割草机</strong><p>高速释放360度近战斩击。</p></article>
-            <article><b>🌻 巨型瓜子</b><span>＋ 🎒 仓鼠小背包</span><strong>🌟 瓜子超新星</strong><p>更大的弹丸与超大范围爆炸。</p></article>
+            <article><b>🌻 巨型瓜子</b><span>＋ 🎒 仓鼠小背包</span><strong>🌟 瓜子超新星</strong><p>超大范围爆炸后触发核心余震，并向四周分裂出 8 枚穿透碎片。</p></article>
             <article><b>☀️ 阳光射线</b><span>＋ 🍎 苹果点心</span><strong>🌈 彩虹日光炮</strong><p>同时降下三道高伤害彩虹光束。</p></article>
             <article><b>🧪 蔬菜汁瓶</b><span>＋ 🏠 温暖小窝</span><strong>🍇 梦幻蔬菜花园</strong><p>双瓶投掷，留下更大、更持久的花园。</p></article>
           </div>
@@ -817,7 +817,13 @@ function explodeSeed(s){
   enemies.forEach(e=>{if(!e.dead&&dist(e.x,e.y,s.x,s.y)<s.blast+e.r)hitEnemy(e,s.damage);});
   pots.forEach(p=>{if(!p.dead&&dist(p.x,p.y,s.x,s.y)<s.blast+p.r)hitPot(p,s.damage);});
   for(let i=0;i<16;i++){const a=Math.random()*Math.PI*2,sp=45+Math.random()*130;particles.push({x:s.x,y:s.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:.5,r:2+Math.random()*3,color:i%2?"#5b4939":"#f1cd74"});}
-  if(s.kind==="seed"&&evolved.seed){flash=Math.max(flash,.12);for(let i=0;i<28;i++){const a=i*Math.PI*2/28,sp=150+Math.random()*170;particles.push({x:s.x,y:s.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:.7,r:3+Math.random()*4,color:i%3===0?"#fff6a8":i%2?"#ffbe4f":"#f47d55"});}}
+  if(s.kind==="seed"&&evolved.seed){
+    flash=Math.max(flash,.18);
+    enemies.forEach(e=>{if(!e.dead&&dist(e.x,e.y,s.x,s.y)<s.blast*.55+e.r)hitEnemy(e,s.damage*.42);});
+    const shardCount=8,spawnRadius=Math.min(72,s.blast*.38);
+    for(let i=0;i<shardCount;i++){const a=i*Math.PI*2/shardCount,sp=315;shots.push({kind:"seedShard",x:s.x+Math.cos(a)*spawnRadius,y:s.y+Math.sin(a)*spawnRadius,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:5,damage:s.damage*.34,life:1.25,rot:a,pierce:1,blast:0});}
+    for(let i=0;i<28;i++){const a=i*Math.PI*2/28,sp=150+Math.random()*170;particles.push({x:s.x,y:s.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:.7,r:3+Math.random()*4,color:i%3===0?"#fff6a8":i%2?"#ffbe4f":"#f47d55"});}
+  }
 }
 function fireLaser(){
   const targets=enemies.filter(e=>isOnScreen(e.x,e.y,0));if(!targets.length)return;
@@ -1095,6 +1101,7 @@ function drawBossVariant(e){
 function drawCarrot(s){ctx.save();ctx.translate(s.x,s.y);ctx.rotate(s.rot);if(s.kind==="rocket"){ctx.shadowBlur=20;ctx.shadowColor="#ff8a32";}else if(s.kind==="seed"&&evolved.seed){ctx.shadowBlur=24;ctx.shadowColor="#ffd84e";}
   if(s.kind==="hay"){ctx.strokeStyle="#e8d574";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-10,0);ctx.lineTo(11,0);ctx.stroke();ctx.fillStyle="#8eb65c";ctx.beginPath();ctx.ellipse(-2,-3,7,2,-.5,0,Math.PI*2);ctx.ellipse(4,3,7,2,.5,0,Math.PI*2);ctx.fill();}
   else if(s.kind==="seed"){ctx.fillStyle="#554234";ctx.strokeStyle="#f0cf77";ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(0,0,s.r*1.25,s.r*.72,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.strokeStyle="#fff0aa";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-s.r*.45,-s.r*.35);ctx.lineTo(s.r*.5,s.r*.25);ctx.stroke();}
+  else if(s.kind==="seedShard"){ctx.shadowBlur=14;ctx.shadowColor="#ffe56b";ctx.fillStyle="#fff0a0";ctx.strokeStyle="#f09045";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(8,0);ctx.lineTo(-5,-4);ctx.lineTo(-2,0);ctx.lineTo(-5,4);ctx.closePath();ctx.fill();ctx.stroke();}
   else if(s.kind==="rocket"){ctx.fillStyle="#f28a42";ctx.strokeStyle="#9b4e2d";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(16,0);ctx.lineTo(-8,-9);ctx.lineTo(-8,9);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle="#79a95f";ctx.beginPath();ctx.moveTo(-7,-7);ctx.lineTo(-15,-12);ctx.lineTo(-12,-3);ctx.moveTo(-7,7);ctx.lineTo(-15,12);ctx.lineTo(-12,3);ctx.fill();ctx.fillStyle="#ffe16f";ctx.beginPath();ctx.moveTo(-10,-4);ctx.lineTo(-22,0);ctx.lineTo(-10,4);ctx.fill();}
   else {ctx.fillStyle="#ed8843";ctx.beginPath();ctx.moveTo(13,0);ctx.lineTo(-10,-7);ctx.lineTo(-10,7);ctx.closePath();ctx.fill();ctx.strokeStyle="#fff1cc";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(1,-4);ctx.lineTo(-2,3);ctx.stroke();ctx.fillStyle="#5c9c59";ctx.fillRect(-15,-7,7,5);ctx.fillRect(-15,2,7,5);}
   ctx.restore();}
