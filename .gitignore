@@ -1,0 +1,10 @@
+# Image-generation intermediates are reproducible and are not shipped.
+assets/source/*-chroma.png
+
+# Earlier unused concept exports kept locally for reference only.
+assets/sprites/boss-owl-128.png
+assets/sprites/hamster-thief-64.png
+assets/sprites/nugget-64.png
+assets/sprites/rat-bully-64.png
+assets/sprites/rival-guinea-64.png
+assets/sprites/watermelon-guinea-64.png

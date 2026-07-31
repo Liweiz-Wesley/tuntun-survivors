@@ -1,9 +1,10 @@
 import { readFile, writeFile } from "node:fs/promises";
 
-const chinese = await readFile("source/Tuntun-Survivors-Chinese.html");
-const english = await readFile("source/Tuntun-Survivors-English.html");
-const zh64 = chinese.toString("base64");
-const en64 = english.toString("base64");
+const removeUnusedEmbeddedCover = source => source.replace(/url\("data:image\/png;base64,[^"]+"\)/g, "none");
+const chinese = removeUnusedEmbeddedCover(await readFile("source/Tuntun-Survivors-Chinese.html", "utf8"));
+const english = removeUnusedEmbeddedCover(await readFile("source/Tuntun-Survivors-English.html", "utf8"));
+const zh64 = Buffer.from(chinese).toString("base64");
+const en64 = Buffer.from(english).toString("base64");
 
 const merged = `<!doctype html>
 <html lang="zh-CN">
@@ -12,10 +13,10 @@ const merged = `<!doctype html>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>豚豚大暴走 / Tuntun Survivors</title>
   <style>
-    *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#a9d98d}
+    *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#83bd70}
     #gameFrame{display:block;width:100%;height:100%;border:0}
-    .language-picker{position:fixed;z-index:99999;right:16px;bottom:16px;display:flex;align-items:center;gap:8px;padding:8px 10px;border:2px solid rgba(255,255,255,.9);border-radius:15px;background:rgba(255,249,233,.92);box-shadow:0 5px 18px rgba(49,65,42,.24);font:700 13px system-ui,sans-serif;color:#465c42;backdrop-filter:blur(8px)}
-    .language-picker select{border:1px solid #cbbd9f;border-radius:9px;padding:6px 9px;background:white;color:#43583f;font:700 13px system-ui,sans-serif;cursor:pointer}
+    .language-picker{position:fixed;z-index:99999;right:16px;bottom:16px;display:flex;align-items:center;gap:8px;padding:8px 10px;border:3px solid #392f32;border-radius:2px;background:#fff2ca;box-shadow:4px 4px 0 rgba(57,47,50,.4);font:700 13px system-ui,sans-serif;color:#465c42}
+    .language-picker select{border:2px solid #392f32;border-radius:1px;padding:6px 9px;background:white;color:#43583f;font:700 13px system-ui,sans-serif;cursor:pointer}
     @media(max-width:600px){.language-picker{right:8px;bottom:8px;padding:6px 8px}.language-picker span{display:none}}
   </style>
 </head>
