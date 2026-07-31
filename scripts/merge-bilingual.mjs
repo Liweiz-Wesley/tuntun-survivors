@@ -11,7 +11,7 @@ const merged = `<!doctype html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>豚豚大暴走 / Tuntun Survivors</title>
+  <title>豚豚生存者 / Tuntun Survivors</title>
   <style>
     *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#83bd70}
     #gameFrame{display:block;width:100%;height:100%;border:0}
@@ -30,7 +30,7 @@ const merged = `<!doctype html>
     let language=localStorage.getItem('tuntun-language')||'zh';
     if(!pages[language])language='zh';
     select.value=language;
-    const loadLanguage=lang=>{document.documentElement.lang=lang==='zh'?'zh-CN':'en';document.title=lang==='zh'?'豚豚大暴走':'Tuntun Survivors';frame.title=document.title;frame.srcdoc=decode(pages[lang]);};
+    const loadLanguage=lang=>{document.documentElement.lang=lang==='zh'?'zh-CN':'en';document.title=lang==='zh'?'豚豚生存者':'Tuntun Survivors';frame.title=document.title;frame.srcdoc=decode(pages[lang]);};
     select.addEventListener('change',()=>{language=select.value;localStorage.setItem('tuntun-language',language);loadLanguage(language);});
     loadLanguage(language);
   </script>
