@@ -1,0 +1,37 @@
+{
+  "frameWidth": 128,
+  "frameHeight": 128,
+  "animations": {
+    "move": {
+      "file": "move-strip.png",
+      "frames": 6,
+      "durationsMs": [110, 110, 110, 110, 110, 110],
+      "loop": true
+    },
+    "dualSlash": {
+      "file": "dual-slash-strip.png",
+      "frames": 8,
+      "durationsMs": [180, 140, 180, 75, 105, 75, 135, 190],
+      "hitFrames": [3, 5]
+    },
+    "leafDash": {
+      "file": "leaf-dash-strip.png",
+      "frames": 8,
+      "durationsMs": [190, 150, 180, 70, 55, 55, 120, 190],
+      "dashFrames": [3, 4, 5]
+    },
+    "hideInLeaves": {
+      "file": "hide-leaves-strip.png",
+      "frames": 8,
+      "durationsMs": [180, 140, 150, 180, 280, 70, 95, 190],
+      "hiddenFrames": [3, 4],
+      "hitFrames": [6]
+    },
+    "bladeSpin": {
+      "file": "blade-spin-strip.png",
+      "frames": 8,
+      "durationsMs": [180, 150, 180, 80, 70, 65, 130, 200],
+      "hitFrames": [3, 4, 5]
+    }
+  }
+}

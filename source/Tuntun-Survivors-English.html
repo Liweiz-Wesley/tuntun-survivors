@@ -609,19 +609,19 @@ let banishedUpgrades=new Set();
 let visitedFoodChunks=new Set();
 const bossTimes = [120,240,360,480,600,720,840,960,1080];
 const BOSS_DEFS={
-  mole:{tier:1,sprite:"bossMole",drawSize:270,r:82,hp:2800,speed:42,damage:18,name:["钻地鼹鼠","Burrowing Mole"],skills:[["钻地潜行","Burrow"],["震动预警","Quake Warning"],["土石抛掷","Stone Toss"],["塌方突顶","Collapse Uppercut"]]},
-  toycar:{tier:1,sprite:"bossToycar",drawSize:285,r:86,hp:3100,speed:54,damage:20,name:["遥控玩具车","Remote Toy Car"],skills:[["高速漂移","Drift"],["轮胎碾压","Crush Charge"],["电池爆火花","Battery Spark"],["玩具小兵释放","Toy Bots"]]},
-  mantis:{tier:1,sprite:"bossMantis",drawSize:295,r:84,hp:2600,speed:58,damage:21,name:["巨型螳螂","Giant Mantis"],skills:[["双刃连斩","Dual Slash"],["叶影突进","Leaf Dash"],["藏叶伏击","Hide in Leaves"],["镰刀旋身","Blade Spin"]]},
-  snake:{tier:2,sprite:"bossSnake",drawSize:325,r:100,hp:5600,speed:44,damage:23,name:["花斑毒蛇","Garden Snake"],skills:[["盘绕禁区","Coil Zone"],["直线扑咬","Lunge Bite"],["毒液喷吐","Poison Spit"],["蛇蜕分身","Shed Clone"]]},
-  spider:{tier:2,sprite:"bossSpider",drawSize:355,r:112,hp:6200,speed:38,damage:24,name:["蜘蛛女王","Spider Queen"],skills:[["铺网陷阱","Web Trap"],["小蜘蛛召唤","Spiderlings"],["拉丝突进","Silk Charge"],["卵囊生成","Egg Sacs"]]},
-  weasel:{tier:2,sprite:"bossWeasel",drawSize:335,r:102,hp:5900,speed:65,damage:24,name:["疾风黄鼠狼","Weasel"],skills:[["疾冲扑袭","Rush Pounce"],["假动作变向","Fake Turn"],["连续咬击","Multi-Bite"],["气味轨迹","Scent Trail"]]},
-  wildcat:{tier:3,sprite:"bossWildcat",drawSize:385,r:124,hp:10500,speed:62,damage:27,name:["庭院野猫","Wild Cat"],skills:[["低姿潜伏","Stalk"],["瞬间扑击","Pounce"],["猫爪连斩","Claw Combo"],["激光点追逐","Laser Chase"]]},
-  raccoon:{tier:3,sprite:"bossRaccoon",drawSize:385,r:122,hp:11500,speed:48,damage:28,name:["拾荒浣熊","Raccoon"],skills:[["垃圾投掷","Junk Throw"],["翻倒垃圾桶","Topple Bin"],["锅盖格挡","Pot-Lid Guard"],["偷经验","Steal XP"]]},
-  hand:{tier:3,sprite:"bossHand",drawSize:420,r:138,hp:12800,speed:36,damage:31,name:["巨人之手","Giant Human Hand"],skills:[["阴影抓取","Grab"],["横扫拨开","Sweep"],["双指捏夹","Pinch"],["拍地掌击","Palm Slam"]]},
-  owl:{tier:4,sprite:"bossOwl",drawSize:430,r:146,hp:17800,speed:48,damage:31,name:["灯笼猫头鹰","Owl"],skills:[["羽毛齐射","Feather Volley"],["狂风拍翼","Gust Wingbeat"],["灯笼光束","Lantern Beam"],["俯冲抓击","Dive Strike"]]},
-  fox:{tier:4,sprite:"bossFox",drawSize:455,r:154,hp:18600,speed:67,damage:32,name:["九尾狐狸","Nine-Tailed Fox"],skills:[["疾跑突袭","Dash Pounce"],["假撤退反扑","Fake Retreat"],["九尾横扫","Tail Sweep"],["果篮诱饵","Fruit Trick"]]},
-  mower:{tier:4,sprite:"bossMower",drawSize:460,r:158,hp:20500,speed:56,damage:34,name:["失控割草机","Lawn Mower"],skills:[["直线冲锋","Charge Rush"],["旋转刀盘","Spinning Blades"],["草屑喷射","Grass Spray"],["过热喷烟","Overheat Smoke"]]},
-  foot:{tier:4,sprite:"bossFoot",drawSize:475,r:164,hp:22000,speed:40,damage:36,name:["巨人之脚","Giant Human Foot"],skills:[["落影预警","Shadow Warning"],["重踩践踏","Stomp"],["泥土震波","Dirt Shockwave"],["退步拖擦","Retreat Scrape"]]}
+  mole:{tier:1,sprite:"bossMole",drawSize:220,r:68,hp:2800,speed:42,damage:18,name:["钻地鼹鼠","Burrowing Mole"],skills:[["钻地潜行","Burrow"],["震动预警","Quake Warning"],["土石抛掷","Stone Toss"],["塌方突顶","Collapse Uppercut"]]},
+  toycar:{tier:1,sprite:"bossToycar",drawSize:250,r:76,hp:3100,speed:54,damage:20,name:["遥控玩具车","Remote Toy Car"],skills:[["高速漂移","Drift"],["轮胎碾压","Crush Charge"],["电池爆火花","Battery Spark"],["玩具小兵释放","Toy Bots"]]},
+  mantis:{tier:1,sprite:"bossMantis",drawSize:210,r:62,hp:2600,speed:58,damage:21,name:["巨型螳螂","Giant Mantis"],skills:[["双刃连斩","Dual Slash"],["叶影突进","Leaf Dash"],["藏叶伏击","Hide in Leaves"],["镰刀旋身","Blade Spin"]]},
+  snake:{tier:2,sprite:"bossSnake",drawSize:300,r:92,hp:5600,speed:44,damage:23,name:["花斑毒蛇","Garden Snake"],skills:[["盘绕禁区","Coil Zone"],["直线扑咬","Lunge Bite"],["毒液喷吐","Poison Spit"],["蛇蜕分身","Shed Clone"]]},
+  spider:{tier:2,sprite:"bossSpider",drawSize:315,r:98,hp:6200,speed:38,damage:24,name:["蜘蛛女王","Spider Queen"],skills:[["铺网陷阱","Web Trap"],["小蜘蛛召唤","Spiderlings"],["拉丝突进","Silk Charge"],["卵囊生成","Egg Sacs"]]},
+  weasel:{tier:2,sprite:"bossWeasel",drawSize:275,r:84,hp:5900,speed:65,damage:24,name:["疾风黄鼠狼","Weasel"],skills:[["疾冲扑袭","Rush Pounce"],["假动作变向","Fake Turn"],["连续咬击","Multi-Bite"],["气味轨迹","Scent Trail"]]},
+  wildcat:{tier:3,sprite:"bossWildcat",drawSize:360,r:112,hp:10500,speed:62,damage:27,name:["庭院野猫","Wild Cat"],skills:[["低姿潜伏","Stalk"],["瞬间扑击","Pounce"],["猫爪连斩","Claw Combo"],["激光点追逐","Laser Chase"]]},
+  raccoon:{tier:3,sprite:"bossRaccoon",drawSize:335,r:104,hp:11500,speed:48,damage:28,name:["拾荒浣熊","Raccoon"],skills:[["垃圾投掷","Junk Throw"],["翻倒垃圾桶","Topple Bin"],["锅盖格挡","Pot-Lid Guard"],["偷经验","Steal XP"]]},
+  hand:{tier:3,sprite:"bossHand",drawSize:470,r:154,hp:12800,speed:36,damage:31,name:["巨人之手","Giant Human Hand"],skills:[["阴影抓取","Grab"],["横扫拨开","Sweep"],["双指捏夹","Pinch"],["拍地掌击","Palm Slam"]]},
+  owl:{tier:4,sprite:"bossOwl",drawSize:380,r:126,hp:17800,speed:48,damage:31,name:["灯笼猫头鹰","Owl"],skills:[["羽毛齐射","Feather Volley"],["狂风拍翼","Gust Wingbeat"],["灯笼光束","Lantern Beam"],["俯冲抓击","Dive Strike"]]},
+  fox:{tier:4,sprite:"bossFox",drawSize:430,r:144,hp:18600,speed:67,damage:32,name:["九尾狐狸","Nine-Tailed Fox"],skills:[["疾跑突袭","Dash Pounce"],["假撤退反扑","Fake Retreat"],["九尾横扫","Tail Sweep"],["果篮诱饵","Fruit Trick"]]},
+  mower:{tier:4,sprite:"bossMower",drawSize:510,r:170,hp:20500,speed:56,damage:34,name:["失控割草机","Lawn Mower"],skills:[["直线冲锋","Charge Rush"],["旋转刀盘","Spinning Blades"],["草屑喷射","Grass Spray"],["过热喷烟","Overheat Smoke"]]},
+  foot:{tier:4,sprite:"bossFoot",drawSize:600,r:198,hp:22000,speed:40,damage:36,name:["巨人之脚","Giant Human Foot"],skills:[["落影预警","Shadow Warning"],["重踩践踏","Stomp"],["泥土震波","Dirt Shockwave"],["退步拖擦","Retreat Scrape"]]}
 };
 const BOSS_POOLS={1:["mole","toycar","mantis"],2:["snake","spider","weasel"],3:["wildcat","raccoon","hand"],4:["owl","fox","mower","foot"]};
 let bossBags={1:[],2:[],3:[],4:[]};
