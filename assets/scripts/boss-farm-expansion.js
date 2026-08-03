@@ -39,6 +39,7 @@ let chiliEffectElapsed=0;
 // Tier 4 remains the elite animal tier. The two environment-scale machines become the final tier.
 BOSS_DEFS.mower.tier=5;BOSS_DEFS.mower.hp=36000;BOSS_DEFS.mower.damage=40;BOSS_DEFS.mower.drawSize=520;BOSS_DEFS.mower.r=174;
 BOSS_DEFS.foot.tier=5;BOSS_DEFS.foot.hp=42000;BOSS_DEFS.foot.damage=44;BOSS_DEFS.foot.drawSize=620;BOSS_DEFS.foot.r=204;
+BOSS_POOLS[1].splice(0,BOSS_POOLS[1].length,"mole","mantis");
 BOSS_POOLS[4].splice(0,BOSS_POOLS[4].length,"owl","fox");
 BOSS_POOLS[5]=["mower","foot"];
 
@@ -179,6 +180,7 @@ draw=function(){legacyDraw();drawExpansionWorldFx();};
 
 // --- Farm: run-based growth, plot backpack and a persistent full-screen merchant. ---
 const CROP_PRICES={chili:120,carrot:70,pumpkin:125,tomato:90,blueberry:135,garlic:105,watermelon:150,corn:80,mushroom:130,sunflower:115};
+const CROP_STAGE_COLORS={chili:"#d84b35",carrot:"#ee8b31",pumpkin:"#e29a36",tomato:"#df5746",blueberry:"#536ac4",garlic:"#ead9a3",watermelon:"#5eaa54",corn:"#f1ca4f",mushroom:"#d9c3a6",sunflower:"#e8b83f"};
 const cropCooldowns={chili:20,carrot:24,pumpkin:30,tomato:28,blueberry:32,garlic:26,watermelon:35,corn:22,mushroom:32,sunflower:28};
 for(const crop of CROP_DEFS){crop.cd=cropCooldowns[crop.id]||crop.cd;if(crop.id==="chili")crop.desc=["向前持续喷出超远距离高伤害火焰 8 秒，冷却 20 秒。","Sustain a long-range, high-damage flame jet for 8 seconds. 20-second cooldown."];}
 
@@ -219,7 +221,7 @@ function manageFarmBag(action){
 
 renderFarmPlots=function(){
   const f=ensureFarmV3(),el=document.querySelector("#farmPlots");if(!el)return;
-  el.innerHTML=f.plots.map((p,i)=>{if(!p)return `<button class="farm-plot empty" data-plot="${i}" aria-label="${tr("打开种子背包","Open seed backpack")}"><span class="soil-plus">＋</span></button>`;const stage=p.runsLeft<=0?2:p.runsLeft===1?1:0;return `<button class="farm-plot planted stage-${stage} ${stage===2?"ready":""} ${p.pest?"pest":""}" data-plot="${i}"><img src="assets/sprites/farm/crops/${p.cropId}.png"><span class="farm-stage-shadow"></span>${p.fertilized?'<i class="fertilized-spark">✦</i>':''}${p.pest?'<i class="farm-pest-mark"></i>':''}</button>`;}).join("");
+  el.innerHTML=f.plots.map((p,i)=>{if(!p)return `<button class="farm-plot empty" data-plot="${i}" aria-label="${tr("打开种子背包","Open seed backpack")}"><span class="soil-plus">＋</span></button>`;const stage=p.runsLeft<=0?2:p.runsLeft===1?1:0,accent=CROP_STAGE_COLORS[p.cropId]||"#e4b84f";return `<button class="farm-plot planted stage-${stage} ${stage===2?"ready":""} ${p.pest?"pest":""}" data-plot="${i}" data-crop="${p.cropId}" style="--crop-accent:${accent}"><span class="farm-stage-plant"><i class="stem"></i><i class="leaf leaf-a"></i><i class="leaf leaf-b"></i><i class="leaf leaf-c"></i><i class="leaf leaf-d"></i><i class="crop-bud"></i></span><img src="assets/sprites/farm/crops/${p.cropId}.png"><span class="farm-stage-shadow"></span>${p.fertilized?'<i class="fertilized-spark">✦</i>':''}${p.pest?'<i class="farm-pest-mark"></i>':''}</button>`;}).join("");
   el.querySelectorAll("[data-plot]").forEach(button=>button.onclick=()=>{const i=Number(button.dataset.plot),p=f.plots[i];if(p&&p.runsLeft<=0){farmBagPlot=i;manageFarmBag("harvest");}else openFarmBag(i);});
 };
 
