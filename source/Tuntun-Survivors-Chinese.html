@@ -237,6 +237,7 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
 .mini-grid b,.monster-grid b { font-size:12px; }.mini-grid span,.monster-grid span { color:#887c6c; font-size:10px; }
 .monster-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:9px; }
 .monster-grid i { font-size:28px; font-style:normal; }.monster-grid.bosses { grid-template-columns:repeat(5,1fr); }.bosses article { background:#efe1dc; }
+.monster-grid.bosses img { width:74px; height:74px; object-fit:contain; image-rendering:pixelated; }
 .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 22px; }
 .stats div { padding: 13px; border-radius: 16px; background: #f2ead8; }
 .stats b, .stats span { display: block; }
@@ -439,8 +440,11 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
           </div>
           <h3>Boss 档案</h3>
           <div class="monster-grid bosses">
-            <article><i>🧹</i><b>吸尘器霸王</b></article><article><i>🦀</i><b>桶蟹爆破手</b></article>
-            <article><i>💥</i><b>炮台宝箱怪</b></article><article><i>🐙</i><b>深海章鱼船长</b></article><article><i>👻</i><b>幽灵军需官</b></article><article><i>👁️</i><b>星冠花园吞噬者</b><span>20分钟最终 Boss</span></article>
+            <article><img src="assets/sprites/bosses/mole.png"><b>钻地鼹鼠</b><span>Tier 1</span></article><article><img src="assets/sprites/bosses/toycar.png"><b>遥控玩具车</b><span>Tier 1</span></article><article><img src="assets/sprites/bosses/mantis.png"><b>巨型螳螂</b><span>Tier 1</span></article>
+            <article><img src="assets/sprites/bosses/snake.png"><b>花斑毒蛇</b><span>Tier 2</span></article><article><img src="assets/sprites/bosses/spider.png"><b>蜘蛛女王</b><span>Tier 2</span></article><article><img src="assets/sprites/bosses/weasel.png"><b>疾风黄鼠狼</b><span>Tier 2</span></article>
+            <article><img src="assets/sprites/bosses/wildcat.png"><b>庭院野猫</b><span>Tier 3</span></article><article><img src="assets/sprites/bosses/raccoon.png"><b>拾荒浣熊</b><span>Tier 3</span></article><article><img src="assets/sprites/bosses/hand.png"><b>巨人之手</b><span>Tier 3</span></article>
+            <article><img src="assets/sprites/bosses/owl.png"><b>灯笼猫头鹰</b><span>Tier 4</span></article><article><img src="assets/sprites/bosses/fox.png"><b>九尾狐狸</b><span>Tier 4</span></article><article><img src="assets/sprites/bosses/mower.png"><b>失控割草机</b><span>Tier 4</span></article><article><img src="assets/sprites/bosses/foot.png"><b>巨人之脚</b><span>Tier 4</span></article>
+            <article><i>👁️</i><b>星冠花园吞噬者</b><span>20分钟最终 Boss</span></article>
           </div>
         </div>
       </div>
@@ -517,9 +521,10 @@ const pixelArtSources = {
   minion:"assets/sprites/idle/minion-mouse.png",
   archer:"assets/sprites/idle/archer-guinea.png",
   gatherer:"assets/sprites/idle/gatherer-hamster.png",
-  owl:"assets/sprites/idle/owl-boss.png",
-  weasel:"assets/sprites/idle/weasel-boss.png",
-  fox:"assets/sprites/idle/fox-boss.png",
+  bossMole:"assets/sprites/bosses/mole.png",bossToycar:"assets/sprites/bosses/toycar.png",bossMantis:"assets/sprites/bosses/mantis.png",
+  bossSnake:"assets/sprites/bosses/snake.png",bossSpider:"assets/sprites/bosses/spider.png",bossWeasel:"assets/sprites/bosses/weasel.png",
+  bossWildcat:"assets/sprites/bosses/wildcat.png",bossRaccoon:"assets/sprites/bosses/raccoon.png",bossHand:"assets/sprites/bosses/hand.png",
+  bossOwl:"assets/sprites/bosses/owl.png",bossFox:"assets/sprites/bosses/fox.png",bossMower:"assets/sprites/bosses/mower.png",bossFoot:"assets/sprites/bosses/foot.png",
   bomb:"assets/sprites/idle/bomb-mouse.png",
   bully:"assets/sprites/idle/bully-mouse.png",
   bat:"assets/sprites/idle/bat.png",
@@ -564,7 +569,11 @@ function drawPixelPlayer(){
   return drawPixelFrame("nugget",4,4.5,player.x,player.y+31,78,player.facing);
 }
 function pixelEnemySpec(e){
-  if(e.boss){const bossKeys=["owl","weasel","fox","owl","weasel","fox"],key=bossKeys[e.bossStyle||0],realScale={owl:460,weasel:620,fox:780}[key],size=Math.round(realScale*(e.finalBoss?1.13:e.major?1.08:1)),fps={owl:7,weasel:5.5,fox:7}[key];return {key,frames:6,fps,size};}
+  if(e.finalBoss)return {key:"finalBoss",frames:1,fps:1,size:620};
+  if(e.boss&&e.bossId&&BOSS_DEFS[e.bossId]){const def=BOSS_DEFS[e.bossId];return {key:def.sprite,frames:1,fps:1,size:def.drawSize};}
+  if(e.type==="snakeClone")return {key:"bossSnake",frames:1,fps:1,size:112};
+  if(e.type==="spiderling")return {key:"bossSpider",frames:1,fps:1,size:88};
+  if(e.type==="toyBot")return {key:"bossToycar",frames:1,fps:1,size:92};
   if(e.type==="bombMouse")return {key:"bomb",frames:4,fps:6,size:72};
   if(e.type==="bullyMouse")return {key:"bully",frames:4,fps:8,size:94};
   if(e.type==="bat")return {key:"bat",frames:4,fps:10,size:62};
@@ -585,7 +594,24 @@ let enemies = [], shots = [], swings = [], lasers = [], bottles = [], zones = []
 let banishedUpgrades=new Set();
 let visitedFoodChunks=new Set();
 const bossTimes = [120,240,360,480,600,720,840,960,1080];
-const bossNames = ["滚滚吸尘王","灰尘公爵","发条鼠队长","花园清扫者","午睡破坏王"];
+const BOSS_DEFS={
+  mole:{tier:1,sprite:"bossMole",drawSize:270,r:82,hp:2800,speed:42,damage:18,name:["钻地鼹鼠","Burrowing Mole"],skills:[["钻地潜行","Burrow"],["震动预警","Quake Warning"],["土石抛掷","Stone Toss"],["塌方突顶","Collapse Uppercut"]]},
+  toycar:{tier:1,sprite:"bossToycar",drawSize:285,r:86,hp:3100,speed:54,damage:20,name:["遥控玩具车","Remote Toy Car"],skills:[["高速漂移","Drift"],["轮胎碾压","Crush Charge"],["电池爆火花","Battery Spark"],["玩具小兵释放","Toy Bots"]]},
+  mantis:{tier:1,sprite:"bossMantis",drawSize:295,r:84,hp:2600,speed:58,damage:21,name:["巨型螳螂","Giant Mantis"],skills:[["双刃连斩","Dual Slash"],["叶影突进","Leaf Dash"],["藏叶伏击","Hide in Leaves"],["镰刀旋身","Blade Spin"]]},
+  snake:{tier:2,sprite:"bossSnake",drawSize:325,r:100,hp:5600,speed:44,damage:23,name:["花斑毒蛇","Garden Snake"],skills:[["盘绕禁区","Coil Zone"],["直线扑咬","Lunge Bite"],["毒液喷吐","Poison Spit"],["蛇蜕分身","Shed Clone"]]},
+  spider:{tier:2,sprite:"bossSpider",drawSize:355,r:112,hp:6200,speed:38,damage:24,name:["蜘蛛女王","Spider Queen"],skills:[["铺网陷阱","Web Trap"],["小蜘蛛召唤","Spiderlings"],["拉丝突进","Silk Charge"],["卵囊生成","Egg Sacs"]]},
+  weasel:{tier:2,sprite:"bossWeasel",drawSize:335,r:102,hp:5900,speed:65,damage:24,name:["疾风黄鼠狼","Weasel"],skills:[["疾冲扑袭","Rush Pounce"],["假动作变向","Fake Turn"],["连续咬击","Multi-Bite"],["气味轨迹","Scent Trail"]]},
+  wildcat:{tier:3,sprite:"bossWildcat",drawSize:385,r:124,hp:10500,speed:62,damage:27,name:["庭院野猫","Wild Cat"],skills:[["低姿潜伏","Stalk"],["瞬间扑击","Pounce"],["猫爪连斩","Claw Combo"],["激光点追逐","Laser Chase"]]},
+  raccoon:{tier:3,sprite:"bossRaccoon",drawSize:385,r:122,hp:11500,speed:48,damage:28,name:["拾荒浣熊","Raccoon"],skills:[["垃圾投掷","Junk Throw"],["翻倒垃圾桶","Topple Bin"],["锅盖格挡","Pot-Lid Guard"],["偷经验","Steal XP"]]},
+  hand:{tier:3,sprite:"bossHand",drawSize:420,r:138,hp:12800,speed:36,damage:31,name:["巨人之手","Giant Human Hand"],skills:[["阴影抓取","Grab"],["横扫拨开","Sweep"],["双指捏夹","Pinch"],["拍地掌击","Palm Slam"]]},
+  owl:{tier:4,sprite:"bossOwl",drawSize:430,r:146,hp:17800,speed:48,damage:31,name:["灯笼猫头鹰","Owl"],skills:[["羽毛齐射","Feather Volley"],["狂风拍翼","Gust Wingbeat"],["灯笼光束","Lantern Beam"],["俯冲抓击","Dive Strike"]]},
+  fox:{tier:4,sprite:"bossFox",drawSize:455,r:154,hp:18600,speed:67,damage:32,name:["九尾狐狸","Nine-Tailed Fox"],skills:[["疾跑突袭","Dash Pounce"],["假撤退反扑","Fake Retreat"],["九尾横扫","Tail Sweep"],["果篮诱饵","Fruit Trick"]]},
+  mower:{tier:4,sprite:"bossMower",drawSize:460,r:158,hp:20500,speed:56,damage:34,name:["失控割草机","Lawn Mower"],skills:[["直线冲锋","Charge Rush"],["旋转刀盘","Spinning Blades"],["草屑喷射","Grass Spray"],["过热喷烟","Overheat Smoke"]]},
+  foot:{tier:4,sprite:"bossFoot",drawSize:475,r:164,hp:22000,speed:40,damage:36,name:["巨人之脚","Giant Human Foot"],skills:[["落影预警","Shadow Warning"],["重踩践踏","Stomp"],["泥土震波","Dirt Shockwave"],["退步拖擦","Retreat Scrape"]]}
+};
+const BOSS_POOLS={1:["mole","toycar","mantis"],2:["snake","spider","weasel"],3:["wildcat","raccoon","hand"],4:["owl","fox","mower","foot"]};
+let bossBags={1:[],2:[],3:[],4:[]};
+function takeTierBoss(tier){if(!bossBags[tier].length){bossBags[tier]=[...BOSS_POOLS[tier]];for(let i=bossBags[tier].length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[bossBags[tier][i],bossBags[tier][j]]=[bossBags[tier][j],bossBags[tier][i]];}}return bossBags[tier].pop();}
 const keys = new Set();
 const pointer = { active:false, x:0, y:0, ox:0, oy:0 };
 const player = { x:0, y:0, r:20, speed:225, hp:130, maxHp:130, inv:0, damage:18, rate:.64, projectiles:1, magnet:105, size:1, regen:.12, facing:1, pierce:0, crit:0, area:1, cooldown:1, growth:1, armor:0, duration:1, revives:0 };
@@ -808,7 +834,7 @@ function startGame(){
   Object.assign(passives,{speed:0,heart:0,magnet:0,regen:0,power:0,chew:0,luck:0,area:0,cooldown:0,growth:0,armor:0});
   Object.assign(evolved,{carrot:false,dandelion:false,hay:false,seed:false,laser:false,bottle:false,acorn:false,meteor:false,bubble:false,story:false,bell:false});
   elapsed=score=xp=spawnClock=shotClock=hayClock=seedClock=laserClock=bottleClock=acornClock=meteorClock=bubbleClock=storyClock=bellClock=gemMergeClock=skillCooldown=freezeTimer=flameTimer=flameClock=snackRateTimer=snackSpeedTimer=snackHealTimer=snackXpTimer=0;runBosses=0;runRewardGranted=false;potRespawnClock=12; level=1; xpNeed=18;visitedFoodChunks=new Set();
-  enemies=[];shots=[];swings=[];lasers=[];bottles=[];zones=[];gems=[];chests=[];obstacles=[];pots=[];pickups=[];enemyBombs=[];enemyOrbs=[];bossWaves=[];bossTrails=[];particles=[];texts=[];bossWave=0;finalPhase=false;running=true;paused=false;last=performance.now();buildMap();
+  enemies=[];shots=[];swings=[];lasers=[];bottles=[];zones=[];gems=[];chests=[];obstacles=[];pots=[];pickups=[];enemyBombs=[];enemyOrbs=[];bossWaves=[];bossTrails=[];particles=[];texts=[];bossWave=0;bossBags={1:[],2:[],3:[],4:[]};finalPhase=false;running=true;paused=false;last=performance.now();buildMap();
   ui.start.classList.add("hidden");ui.pause.classList.add("hidden");ui.codex.classList.add("hidden");ui.shop.classList.add("hidden");ui.end.classList.add("hidden");ui.level.classList.add("hidden");ui.hud.classList.remove("hidden");updateCoinUI();const skillIcon=selectedCharacter==="rabbit"?"roll":selectedCharacter==="chinchilla"?"watermelon":"squeal";ui.skillName.innerHTML=pixelIcon(skillIcon)+" "+char.skill;ui.skillBar.setAttribute("aria-label",char.skill);
   renderTray(); requestAnimationFrame(loop);
 }
@@ -972,9 +998,9 @@ function update(dt){
   gems.forEach(g=>{let d=dist(g.x,g.y,player.x,player.y);if(g.vacuum){g.vacuumDelay-=dt;if(g.vacuumDelay<=0){const a=Math.atan2(player.y-g.y,player.x-g.x),pull=900+Math.min(1500,d*1.5);g.vx=(g.vx||0)*Math.pow(.08,dt)+Math.cos(a)*pull*dt;g.vy=(g.vy||0)*Math.pow(.08,dt)+Math.sin(a)*pull*dt;const sp=Math.hypot(g.vx,g.vy),cap=780;if(sp>cap){g.vx=g.vx/sp*cap;g.vy=g.vy/sp*cap;}g.x+=g.vx*dt;g.y+=g.vy*dt;d=dist(g.x,g.y,player.x,player.y);}}else if(d<player.magnet){const a=Math.atan2(player.y-g.y,player.x-g.x);const sp=240+(player.magnet-d)*3;g.x+=Math.cos(a)*sp*dt;g.y+=Math.sin(a)*sp*dt;}if(d<player.r+10){g.dead=true;sfx("pickup");gainXp(g.value);}});
   chests.forEach(c=>{c.bob+=dt;if(dist(c.x,c.y,player.x,player.y)<player.r+22){c.dead=true;openChest(c);}});
   pickups.forEach(p=>{let d=dist(p.x,p.y,player.x,player.y),range=p.type==="coin"?player.magnet:player.magnet*.8;if(d<range){const a=Math.atan2(player.y-p.y,player.x-p.x),sp=230+(range-d)*2.4;p.x+=Math.cos(a)*sp*dt;p.y+=Math.sin(a)*sp*dt;d=dist(p.x,p.y,player.x,player.y);}if(d<player.r+15)collectPickup(p);});
-  enemyOrbs.forEach(o=>{const a=Math.atan2(o.vy,o.vx)+o.turn*dt,sp=Math.hypot(o.vx,o.vy);o.vx=Math.cos(a)*sp;o.vy=Math.sin(a)*sp;o.x+=o.vx*dt;o.y+=o.vy*dt;o.life-=dt;o.phase+=dt*7;if(dist(o.x,o.y,player.x,player.y)<o.r+player.r*.65){hurtPlayer(14);o.dead=true;}});
-  bossTrails.forEach(t=>{t.life-=dt;if(t.danger&&t.life>.25&&dist(t.x,t.y,player.x,player.y)<t.r+player.r*.5)hurtPlayer(10);});
-  bossWaves.forEach(w=>{w.life-=dt;w.hitCooldown=Math.max(0,(w.hitCooldown||0)-dt);if(w.charge>0){w.charge-=dt;}else{w.angle+=w.spin*dt;const len=1050,x2=w.x+Math.cos(w.angle)*len,y2=w.y+Math.sin(w.angle)*len;if(w.hitCooldown<=0&&pointSegmentDistance(player.x,player.y,w.x,w.y,x2,y2)<25+player.r*.45){hurtPlayer(22);w.hitCooldown=.9;}}});
+  enemyOrbs.forEach(o=>{const a=Math.atan2(o.vy,o.vx)+o.turn*dt,sp=Math.hypot(o.vx,o.vy);o.vx=Math.cos(a)*sp;o.vy=Math.sin(a)*sp;o.x+=o.vx*dt;o.y+=o.vy*dt;o.life-=dt;o.phase+=dt*7;if(dist(o.x,o.y,player.x,player.y)<o.r+player.r*.65){hurtPlayer(o.damage||14);o.dead=true;}});
+  bossTrails.forEach(t=>{t.life-=dt;if(t.danger&&t.life>.25&&dist(t.x,t.y,player.x,player.y)<t.r+player.r*.5)hurtPlayer(t.damage||10);});
+  bossWaves.forEach(w=>{w.life-=dt;w.hitCooldown=Math.max(0,(w.hitCooldown||0)-dt);if(w.charge>0){w.charge-=dt;}else{w.angle+=w.spin*dt;const len=1050,x2=w.x+Math.cos(w.angle)*len,y2=w.y+Math.sin(w.angle)*len;if(w.hitCooldown<=0&&pointSegmentDistance(player.x,player.y,w.x,w.y,x2,y2)<25+player.r*.45){hurtPlayer(w.damage||22);w.hitCooldown=.9;}}});
   enemyBombs.forEach(b=>{b.timer-=dt;if(b.timer<=0&&!b.dead)explodeEnemyBomb(b);});
   gemMergeClock-=dt;if(gemMergeClock<=0){gemMergeClock=.8;compactGems();}
   particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.96;p.vy*=.96;if(p.kind==="splat"){p.vy+=95*dt;p.rot=(p.rot||0)+dt*7;}p.life-=dt;});
@@ -996,28 +1022,44 @@ function spawnBatSwarm(){
   const side=Math.random()<.5?-1:1,x=player.x+side*(W/(cameraZoom*2)+150),centerY=player.y+(Math.random()-.5)*H/cameraZoom*.58,flyVx=-side*(165+Math.min(70,elapsed/18));
   for(let i=0;i<5;i++)pushScaledEnemy("bat",x+side*Math.abs(i-2)*14,centerY+(i-2)*46,{flyVx,flyLife:11,swarm:i});
 }
+function bossFan(e,aim,count,spread,speed,r=10,turn=0,damage=14){for(let i=0;i<count;i++){const a=aim+(i-(count-1)/2)*spread;enemyOrbs.push({x:e.x,y:e.y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,r,life:7,phase:i,turn:(i%2?1:-1)*turn,damage});}}
+function bossRadial(e,count,speed,r=10,turn=.08,damage=14){for(let i=0;i<count;i++){const a=i*Math.PI*2/count;enemyOrbs.push({x:e.x,y:e.y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,r,life:7,phase:i,turn:(i%2?1:-1)*turn,damage});}}
+function bossBlast(e,radius,damage,color="#e7a55f",x=e.x,y=e.y){particles.push({x,y,vx:0,vy:0,life:.78,ring:true,r:8,maxR:radius,color,duration:.78});if(dist(x,y,player.x,player.y)<radius+player.r*.55)hurtPlayer(damage);}
+function bossHazard(x,y,r,life,color,damage){bossTrails.push({x,y,life,maxLife:life,r,color,danger:true,damage});}
+function bossDash(e,aim,force,trailColor){e.kx=Math.cos(aim)*force;e.ky=Math.sin(aim)*force;if(trailColor)bossHazard(e.x,e.y,e.r*.7,.85,trailColor,12);}
+function bossAdds(e,type,count){const stats={toyBot:[18,145,78,10,18],snakeClone:[22,220,66,13,24],spiderling:[16,95,88,9,14]}[type];for(let i=0;i<count;i++){const a=i*Math.PI*2/count+Math.random()*.4,x=e.x+Math.cos(a)*(e.r+45),y=e.y+Math.sin(a)*(e.r+45),hp=stats[1]*(1+elapsed/900);enemies.push({type,x,y,r:stats[0],hp,maxHp:hp,speed:stats[2],damage:stats[3],xp:stats[4],orbitHit:0,hitFlash:0,seed:Math.random()*10,kx:0,ky:0});}}
 function spawnBoss(index){
-  const a=Math.random()*Math.PI*2,rad=Math.max(W,H)/cameraZoom*.55+340,major=(index+1)%5===0||index===bossTimes.length-1,style=index%5,bossRadii=[144,192,244,144,192],bossRadius=Math.round(bossRadii[style]*(major?1.15:1));
-  const hp=(major?1250:650)*(1+index*.38),name=major?`巨型 ${bossNames[index%bossNames.length]}`:bossNames[index%bossNames.length];
-  enemies.push({type:"vacuum",boss:true,bossStyle:style,major,name,x:player.x+Math.cos(a)*rad,y:player.y+Math.sin(a)*rad,r:bossRadius,hp,maxHp:hp,speed:major?34:44+index*1.1,damage:major?24:18,xp:80+index*12,orbitHit:0,hitFlash:0,seed:Math.random()*10,aiTimer:2.4,skillCycle:0,skillCharge:0,pendingSkill:-1,kx:0,ky:0});
-  texts.push({x:player.x,y:player.y-90,text:`⚠ ${name} 出现！`,color:"#c8504c",life:2.2});shake=8;sfx("boss");
+  const tier=index<3?1:index<6?2:index<8?3:4,id=takeTierBoss(tier),def=BOSS_DEFS[id];
+  const a=Math.random()*Math.PI*2,rad=Math.max(W,H)/cameraZoom*.55+340,hp=Math.round(def.hp*(1+index*.08)),name=`Tier ${tier} · ${tr(def.name[0],def.name[1])}`;
+  enemies.push({type:"vacuum",boss:true,bossId:id,bossTier:tier,bossStyle:0,major:tier===4,name,x:player.x+Math.cos(a)*rad,y:player.y+Math.sin(a)*rad,r:def.r,hp,maxHp:hp,speed:def.speed,damage:def.damage,xp:160+tier*70+index*12,orbitHit:0,hitFlash:0,seed:Math.random()*10,aiTimer:2.2,skillCycle:Math.floor(Math.random()*4),skillCharge:0,pendingSkill:-1,kx:0,ky:0});
+  texts.push({x:player.x,y:player.y-90,text:`⚠ ${name} ${tr("出现！","APPEARS!")}`,color:"#c8504c",life:2.5});shake=8;sfx("boss");
 }
 function updateAnimalBoss(e,dt){
-  if(freezeTimer>0)return;const animal=["owl","weasel","fox","owl","weasel"][e.bossStyle||0],a=Math.atan2(player.y-e.y,player.x-e.x);e.kx=e.kx||0;e.ky=e.ky||0;
-  if(e.skillCharge>0){e.skillCharge-=dt;if(e.skillCharge<=0)executeAnimalBossSkill(e,animal,e.pendingSkill);return;}
+  if(freezeTimer>0)return;const def=BOSS_DEFS[e.bossId];if(!def)return;const a=Math.atan2(player.y-e.y,player.x-e.x);e.kx=e.kx||0;e.ky=e.ky||0;
+  if(e.skillCharge>0){e.skillCharge-=dt;if(e.skillCharge<=0)executeTierBossSkill(e,e.pendingSkill);return;}
   e.aiTimer-=dt;e.x+=(Math.cos(a)*e.speed+e.kx)*dt;e.y+=(Math.sin(a)*e.speed+e.ky)*dt;e.kx*=Math.pow(.05,dt);e.ky*=Math.pow(.05,dt);
-  if(e.aiTimer<=0){e.pendingSkill=e.skillCycle++%3;e.skillCharge=.72;e.aiTimer=3.2+(e.major?-.35:0);const names={owl:["羽毛扇射","震翼风暴","月影俯冲"],weasel:["钻地突袭","长身冲撞","偷吃回血"],fox:["狐火扇阵","九尾横扫","幻火包围"]};texts.push({x:e.x,y:e.y-e.r-24,text:`⚠ ${names[animal][e.pendingSkill]}`,color:"#df554b",life:1.1});particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.72,ring:true,r:8,maxR:e.r*1.35,color:animal==="owl"?"#a8dcff":animal==="weasel"?"#e1b05e":"#ff8668",duration:.72});}
+  if(e.aiTimer<=0){e.pendingSkill=e.skillCycle++%4;e.skillCharge=.8;e.aiTimer=3.9-def.tier*.24;const skill=def.skills[e.pendingSkill];texts.push({x:e.x,y:e.y-e.r-25,text:`⚠ ${tr(skill[0],skill[1])}`,color:def.tier>=3?"#e64f48":"#d96a48",life:1.2});particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.8,ring:true,r:8,maxR:e.r*1.35,color:["#d7a75d","#70bd6f","#df735e","#a8dcff"][def.tier-1],duration:.8});}
 }
-function executeAnimalBossSkill(e,animal,skill){
-  const aim=Math.atan2(player.y-e.y,player.x-e.x);sfx("skill");shake=5;
-  if(animal==="owl"){if(skill===0)for(let i=-3;i<=3;i++){const a=aim+i*.16;enemyOrbs.push({x:e.x,y:e.y,vx:Math.cos(a)*190,vy:Math.sin(a)*190,r:9,life:6,phase:i,turn:0});}else if(skill===1){particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.7,ring:true,r:8,maxR:285,color:"#a8dcff",duration:.7});if(dist(e.x,e.y,player.x,player.y)<285)hurtPlayer(18);}else{e.kx=Math.cos(aim)*560;e.ky=Math.sin(aim)*560;bossTrails.push({x:e.x,y:e.y,life:.8,maxLife:.8,r:e.r*.65,color:"#7ea6d8",danger:true});}}
-  else if(animal==="weasel"){if(skill===0){e.x=player.x-Math.cos(aim)*180;e.y=player.y-Math.sin(aim)*180;particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.55,ring:true,r:5,maxR:110,color:"#d7a85b",duration:.55});}else if(skill===1){e.kx=Math.cos(aim)*650;e.ky=Math.sin(aim)*650;}else{e.hp=Math.min(e.maxHp,e.hp+e.maxHp*.08);for(let i=0;i<3;i++)pushScaledEnemy("mouse",e.x+(Math.random()-.5)*120,e.y+(Math.random()-.5)*120,{weaponVariant:i});texts.push({x:e.x,y:e.y-e.r,text:"+8%",color:"#68b85f",life:1});}}
-  else{if(skill===0)for(let i=-2;i<=2;i++){const a=aim+i*.22;enemyOrbs.push({x:e.x,y:e.y,vx:Math.cos(a)*175,vy:Math.sin(a)*175,r:12,life:7,phase:i,turn:i*.035});}else if(skill===1){particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.65,ring:true,r:10,maxR:250,color:"#ff8a68",duration:.65});if(dist(e.x,e.y,player.x,player.y)<250)hurtPlayer(24);}else for(let i=0;i<10;i++){const a=i*Math.PI/5;enemyOrbs.push({x:e.x,y:e.y,vx:Math.cos(a)*125,vy:Math.sin(a)*125,r:10,life:7,phase:i,turn:(i%2?1:-1)*.18});}}
+function executeTierBossSkill(e,skill){
+  const id=e.bossId,tier=e.bossTier||1,aim=Math.atan2(player.y-e.y,player.x-e.x),dmg=11+tier*5;sfx("skill");shake=4+tier;
+  if(id==="mole"){if(skill===0){bossHazard(e.x,e.y,90,1.5,"#9c693d",13);e.x=player.x-Math.cos(aim)*190;e.y=player.y-Math.sin(aim)*190;}else if(skill===1)bossBlast(e,240,dmg,"#c89958");else if(skill===2)bossFan(e,aim,7,.15,205,11,0,dmg-2);else{bossDash(e,aim,640,"#a66f3e");bossBlast(e,125,dmg+3,"#bf7c42");}}
+  else if(id==="toycar"){if(skill===0)bossDash(e,aim+.4,760,"#d7ba66");else if(skill===1)bossDash(e,aim,900,"#e0a43c");else if(skill===2)bossRadial(e,14,170,10,.16,dmg);else bossAdds(e,"toyBot",4);}
+  else if(id==="mantis"){if(skill===0){bossFan(e,aim,3,.18,310,13,0,dmg+2);bossBlast(e,140,dmg,"#91c84e");}else if(skill===1)bossDash(e,aim,780,"#79ba4e");else if(skill===2){e.hp=Math.min(e.maxHp,e.hp+e.maxHp*.04);e.x=player.x-Math.cos(aim)*230;e.y=player.y-Math.sin(aim)*230;}else bossBlast(e,255,dmg+3,"#a5d75d");}
+  else if(id==="snake"){if(skill===0)bossHazard(e.x,e.y,215,4.2,"#79a839",dmg-3);else if(skill===1)bossDash(e,aim,820,"#7ca33e");else if(skill===2)bossFan(e,aim,7,.13,220,12,.025,dmg);else bossAdds(e,"snakeClone",3);}
+  else if(id==="spider"){if(skill===0)bossHazard(player.x,player.y,145,4.5,"#d8d1b5",dmg-3);else if(skill===1)bossAdds(e,"spiderling",6);else if(skill===2)bossDash(e,aim,680,"#e8e2cf");else{bossAdds(e,"spiderling",4);bossHazard(e.x,e.y,125,3.5,"#e9dcc1",dmg-4);}}
+  else if(id==="weasel"){if(skill===0)bossDash(e,aim,860,"#b18b52");else if(skill===1){e.x=player.x+Math.cos(aim)*210;e.y=player.y+Math.sin(aim)*210;bossDash(e,aim+Math.PI,780,"#ccb06b");}else if(skill===2)bossBlast(e,165,dmg+4,"#d0a35f");else for(let i=1;i<=5;i++)bossHazard(e.x-Math.cos(aim)*i*72,e.y-Math.sin(aim)*i*72,58,3.1,"#a8a45c",dmg-5);}
+  else if(id==="wildcat"){if(skill===0){e.hp=Math.min(e.maxHp,e.hp+e.maxHp*.025);e.x=player.x-Math.cos(aim)*280;e.y=player.y-Math.sin(aim)*280;}else if(skill===1)bossDash(e,aim,980,"#cc8946");else if(skill===2){bossBlast(e,225,dmg+4,"#e78c46");bossRadial(e,8,185,11,.04,dmg);}else bossWaves.push({x:e.x,y:e.y,angle:aim,charge:1.05,active:3,life:4.05,spin:.42,damage:dmg+2});}
+  else if(id==="raccoon"){if(skill===0)bossFan(e,aim,7,.18,235,13,.03,dmg);else if(skill===1)bossBlast(e,295,dmg+4,"#8b9a68");else if(skill===2){e.hp=Math.min(e.maxHp,e.hp+e.maxHp*.07);texts.push({x:e.x,y:e.y-e.r,text:tr("锅盖格挡 +7%","POT-LID GUARD +7%"),color:"#6aa65d",life:1.1});}else if(dist(e.x,e.y,player.x,player.y)<330){const stolen=Math.min(xp,Math.max(5,xpNeed*.1));xp=Math.max(0,xp-stolen);e.hp=Math.min(e.maxHp,e.hp+stolen*8);texts.push({x:player.x,y:player.y-38,text:tr(`经验 -${Math.round(stolen)}`,`XP -${Math.round(stolen)}`),color:"#c76456",life:1.2});}}
+  else if(id==="hand"){if(skill===0){e.x=player.x-Math.cos(aim)*115;e.y=player.y-Math.sin(aim)*115;bossBlast(e,120,dmg+5,"#d8a47e");}else if(skill===1){bossBlast(e,310,dmg+3,"#dfb18b");bossRadial(e,10,190,12,.03,dmg);}else if(skill===2)bossFan(e,aim,2,.22,300,17,0,dmg+6);else bossBlast(e,370,dmg+7,"#e1b18d");}
+  else if(id==="owl"){if(skill===0)bossFan(e,aim,11,.13,245,10,.02,dmg);else if(skill===1)bossBlast(e,320,dmg+3,"#a8dcff");else if(skill===2)bossWaves.push({x:e.x,y:e.y,angle:aim,charge:1.1,active:3.3,life:4.4,spin:.28,damage:dmg+4});else bossDash(e,aim,840,"#7ea6d8");}
+  else if(id==="fox"){if(skill===0)bossDash(e,aim,930,"#ff8868");else if(skill===1)bossDash(e,aim+Math.PI,680,"#e9a15f");else if(skill===2)bossBlast(e,325,dmg+6,"#ff8a68");else bossRadial(e,16,155,12,.18,dmg);}
+  else if(id==="mower"){if(skill===0)bossDash(e,aim,1080,"#a6bd4e");else if(skill===1)bossBlast(e,355,dmg+7,"#bfd850");else if(skill===2)bossFan(e,aim,13,.11,260,11,.01,dmg+1);else{bossHazard(e.x,e.y,245,4.2,"#777b58",dmg-4);e.hp=Math.min(e.maxHp,e.hp+e.maxHp*.035);}}
+  else if(id==="foot"){if(skill===0){e.x=player.x;e.y=player.y-235;bossBlast(e,170,dmg+2,"#d7b48a");}else if(skill===1)bossBlast(e,395,dmg+8,"#d2a36f");else if(skill===2)bossRadial(e,20,205,13,.05,dmg+2);else{bossDash(e,aim+Math.PI,760,"#aa815c");for(let i=1;i<=4;i++)bossHazard(e.x+Math.cos(aim)*i*85,e.y+Math.sin(aim)*i*85,70,2.8,"#9b7655",dmg-4);}}
 }
 function startFinalBattle(){
   finalPhase=true;elapsed=1200;
   enemies.forEach(e=>splatter(e));enemies=[];shots=[];swings=[];bottles=[];zones=[];chests=[];
-  const a=-Math.PI/2,rad=Math.max(W,H)/cameraZoom*.52+60,hp=12000;
+  const a=-Math.PI/2,rad=Math.max(W,H)/cameraZoom*.52+60,hp=30000;
   enemies.push({type:"vacuum",boss:true,finalBoss:true,bossStyle:5,name:"星冠花园吞噬者",x:player.x+Math.cos(a)*rad,y:player.y+Math.sin(a)*rad,r:276,hp,maxHp:hp,speed:48,damage:28,xp:0,orbitHit:0,hitFlash:0,seed:Math.random()*10,aiState:"idle",aiTimer:1.4,attackCycle:0,stateTimer:0,trailClock:0});
   flash=.72;shake=18;sfx("boss");texts.push({x:player.x,y:player.y-100,text:"⚠ 最终决战：星冠花园吞噬者！",color:"#9c4fd1",life:3.5});
   for(let i=0;i<70;i++){const a=Math.random()*Math.PI*2,s=80+Math.random()*260;particles.push({x:player.x,y:player.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1+Math.random(),r:2+Math.random()*6,color:i%3===0?"#9b72e3":i%2?"#ff78b4":"#ffe478"});}
