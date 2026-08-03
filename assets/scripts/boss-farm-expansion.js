@@ -2,15 +2,15 @@
 "use strict";
 
 const expansionImages={
-  bossMantisMove:"assets/retro32/sprites/bosses/mantis-animation/move-strip.png",
-  bossMantisSkill0:"assets/retro32/sprites/bosses/mantis-animation/dual-slash-strip.png",
-  bossMantisSkill1:"assets/retro32/sprites/bosses/mantis-animation/leaf-dash-strip.png",
-  bossMantisSkill2:"assets/retro32/sprites/bosses/mantis-animation/hide-leaves-strip.png",
-  bossMantisSkill3:"assets/retro32/sprites/bosses/mantis-animation/blade-spin-strip.png",
+  bossMantisMove:"assets/sprites/bosses/mantis-animation/move-strip.png",
+  bossMantisSkill0:"assets/sprites/bosses/mantis-animation/dual-slash-strip.png",
+  bossMantisSkill1:"assets/sprites/bosses/mantis-animation/leaf-dash-strip.png",
+  bossMantisSkill2:"assets/sprites/bosses/mantis-animation/hide-leaves-strip.png",
+  bossMantisSkill3:"assets/sprites/bosses/mantis-animation/blade-spin-strip.png",
   chiliFlame:"assets/retro32/sprites/effects/chili-flamethrower-strip.png",
   ...Object.fromEntries(["mole","toycar","snake","spider","weasel","wildcat","raccoon","hand","owl","fox","mower","foot"].flatMap(id=>[
-    [`boss_${id}_move`,`assets/retro32/sprites/bosses/${id}-animation/move-strip.png`],
-    ...[0,1,2,3].map(skill=>[`boss_${id}_skill${skill}`,`assets/retro32/sprites/bosses/${id}-animation/skill-${skill}-strip.png`])
+    [`boss_${id}_move`,`assets/sprites/bosses/${id}-animation/move-strip.png`],
+    ...[0,1,2,3].map(skill=>[`boss_${id}_skill${skill}`,`assets/sprites/bosses/${id}-animation/skill-${skill}-strip.png`])
   ]))
 };
 for(const [key,src] of Object.entries(expansionImages)){const image=new Image();image.src=src;pixelArt[key]=image;}
@@ -37,8 +37,8 @@ let chiliLongTick=0;
 let chiliEffectElapsed=0;
 
 // Tier 4 remains the elite animal tier. The two environment-scale machines become the final tier.
-BOSS_DEFS.mower.tier=5;BOSS_DEFS.mower.hp=36000;BOSS_DEFS.mower.damage=40;BOSS_DEFS.mower.drawSize=160;BOSS_DEFS.mower.r=58;
-BOSS_DEFS.foot.tier=5;BOSS_DEFS.foot.hp=42000;BOSS_DEFS.foot.damage=44;BOSS_DEFS.foot.drawSize=192;BOSS_DEFS.foot.r=70;
+BOSS_DEFS.mower.tier=5;BOSS_DEFS.mower.hp=36000;BOSS_DEFS.mower.damage=40;BOSS_DEFS.mower.drawSize=520;BOSS_DEFS.mower.r=174;
+BOSS_DEFS.foot.tier=5;BOSS_DEFS.foot.hp=42000;BOSS_DEFS.foot.damage=44;BOSS_DEFS.foot.drawSize=620;BOSS_DEFS.foot.r=204;
 BOSS_POOLS[1].splice(0,BOSS_POOLS[1].length,"mole","mantis");
 BOSS_POOLS[4].splice(0,BOSS_POOLS[4].length,"owl","fox");
 BOSS_POOLS[5]=["mower","foot"];
@@ -212,10 +212,10 @@ function openFarmBag(index){
   ensureFarmOverlay();const f=ensureFarmV3(),plot=f.plots[index],bag=document.querySelector("#farmPlotBag");farmBagPlot=index;
   if(plot){
     const crop=CROP_DEFS.find(c=>c.id===plot.cropId),ready=plot.runsLeft<=0;
-    bag.innerHTML=`<div class="farm-bag-panel"><button class="farm-bag-close">✕</button><img class="farm-bag-crop" src="assets/retro32/sprites/farm/crops/${plot.cropId}.png">${plot.pest?'<i class="farm-pest-large"></i>':''}<div class="farm-growth-pips"><i class="on"></i><i class="${plot.runsLeft<=1?"on":""}"></i><i class="${ready?"on":""}"></i></div><div class="farm-bag-actions">${!ready&&!plot.fertilized&&f.supplies.fertilizer>0?`<button data-farm-manage="fertilize">${tr("施肥 ×1","FERTILIZE ×1")}</button>`:""}${plot.pest&&f.supplies.pesticide>0?`<button data-farm-manage="pesticide">${tr("除虫 ×1","PEST CONTROL ×1")}</button>`:""}${ready?`<button data-farm-manage="harvest">${tr("收割","HARVEST")}</button>`:""}<button data-farm-manage="cancel">${tr("取消","CANCEL")}</button></div></div>`;
+    bag.innerHTML=`<div class="farm-bag-panel"><button class="farm-bag-close">✕</button><img class="farm-bag-crop" src="assets/sprites/farm/crops/${plot.cropId}.png">${plot.pest?'<i class="farm-pest-large"></i>':''}<div class="farm-growth-pips"><i class="on"></i><i class="${plot.runsLeft<=1?"on":""}"></i><i class="${ready?"on":""}"></i></div><div class="farm-bag-actions">${!ready&&!plot.fertilized&&f.supplies.fertilizer>0?`<button data-farm-manage="fertilize">${tr("施肥 ×1","FERTILIZE ×1")}</button>`:""}${plot.pest&&f.supplies.pesticide>0?`<button data-farm-manage="pesticide">${tr("除虫 ×1","PEST CONTROL ×1")}</button>`:""}${ready?`<button data-farm-manage="harvest">${tr("收割","HARVEST")}</button>`:""}<button data-farm-manage="cancel">${tr("取消","CANCEL")}</button></div></div>`;
   }else{
     farmBagSelection=f.mysterySeeds>0?"mystery":cropIds.find(id=>(f.seeds[id]||0)>0)||null;
-    bag.innerHTML=`<div class="farm-bag-panel seed-bag"><button class="farm-bag-close">✕</button><div class="farm-seed-grid"><button class="farm-seed-card mystery-seed-card ${farmBagSelection==="mystery"?"selected":""}" data-seed-pick="mystery" ${f.mysterySeeds<=0?"disabled":""}><span class="mystery-seed-art"><i></i><b>?</b></span><strong>${tr("未知种子","MYSTERY SEED")}</strong><span>🌱 ${f.mysterySeeds}</span><small>${tr("成熟时揭晓","REVEALS AT HARVEST")}</small></button>${CROP_DEFS.map(c=>`<button class="farm-seed-card ${farmBagSelection===c.id?"selected":""}" data-seed-pick="${c.id}" ${(f.seeds[c.id]||0)<=0?"disabled":""}><img src="assets/retro32/sprites/farm/crops/${c.id}.png"><b>${tr(c.name[0],c.name[1])}</b><span>🌱 ${f.seeds[c.id]||0}</span><small>🎒 ${f.inventory[c.id]||0}</small></button>`).join("")}</div><div class="farm-bag-actions"><button data-farm-manage="sow" ${farmBagSelection?"":"disabled"}>${tr("播种","SOW")}</button><button data-farm-manage="cancel">${tr("取消","CANCEL")}</button></div></div>`;
+    bag.innerHTML=`<div class="farm-bag-panel seed-bag"><button class="farm-bag-close">✕</button><div class="farm-seed-grid"><button class="farm-seed-card mystery-seed-card ${farmBagSelection==="mystery"?"selected":""}" data-seed-pick="mystery" ${f.mysterySeeds<=0?"disabled":""}><span class="mystery-seed-art"><i></i><b>?</b></span><strong>${tr("未知种子","MYSTERY SEED")}</strong><span>🌱 ${f.mysterySeeds}</span><small>${tr("成熟时揭晓","REVEALS AT HARVEST")}</small></button>${CROP_DEFS.map(c=>`<button class="farm-seed-card ${farmBagSelection===c.id?"selected":""}" data-seed-pick="${c.id}" ${(f.seeds[c.id]||0)<=0?"disabled":""}><img src="assets/sprites/farm/crops/${c.id}.png"><b>${tr(c.name[0],c.name[1])}</b><span>🌱 ${f.seeds[c.id]||0}</span><small>🎒 ${f.inventory[c.id]||0}</small></button>`).join("")}</div><div class="farm-bag-actions"><button data-farm-manage="sow" ${farmBagSelection?"":"disabled"}>${tr("播种","SOW")}</button><button data-farm-manage="cancel">${tr("取消","CANCEL")}</button></div></div>`;
   }
   bag.classList.remove("hidden");bag.querySelector(".farm-bag-close").onclick=closeFarmBag;
   bag.querySelectorAll("[data-seed-pick]").forEach(button=>button.onclick=()=>{farmBagSelection=button.dataset.seedPick;openFarmBag(index);});
@@ -236,13 +236,13 @@ function manageFarmBag(action){
 
 renderFarmPlots=function(){
   const f=ensureFarmV3(),el=document.querySelector("#farmPlots");if(!el)return;
-  el.innerHTML=f.plots.map((p,i)=>{if(!p)return `<button class="farm-plot empty" data-plot="${i}" aria-label="${tr("打开种子背包","Open seed backpack")}"><span class="soil-plus">＋</span></button>`;const stage=p.runsLeft<=0?2:p.runsLeft===1?1:0,accent=p.mystery&&stage<2?"#d4c56b":CROP_STAGE_COLORS[p.cropId]||"#e4b84f";return `<button class="farm-plot planted stage-${stage} ${stage===2?"ready":""} ${p.mystery?"mystery-crop":""} ${p.pest?"pest":""}" data-plot="${i}" data-crop="${p.cropId}" style="--crop-accent:${accent}"><span class="farm-stage-plant"><i class="stem"></i><i class="leaf leaf-a"></i><i class="leaf leaf-b"></i><i class="leaf leaf-c"></i><i class="leaf leaf-d"></i><i class="crop-bud"></i></span><img src="assets/retro32/sprites/farm/crops/${p.cropId}.png"><span class="farm-stage-shadow"></span>${p.fertilized?'<i class="fertilized-spark">✦</i>':''}${p.pest?'<i class="farm-pest-mark"></i>':''}</button>`;}).join("");
+  el.innerHTML=f.plots.map((p,i)=>{if(!p)return `<button class="farm-plot empty" data-plot="${i}" aria-label="${tr("打开种子背包","Open seed backpack")}"><span class="soil-plus">＋</span></button>`;const stage=p.runsLeft<=0?2:p.runsLeft===1?1:0,accent=p.mystery&&stage<2?"#d4c56b":CROP_STAGE_COLORS[p.cropId]||"#e4b84f";return `<button class="farm-plot planted stage-${stage} ${stage===2?"ready":""} ${p.mystery?"mystery-crop":""} ${p.pest?"pest":""}" data-plot="${i}" data-crop="${p.cropId}" style="--crop-accent:${accent}"><span class="farm-stage-plant"><i class="stem"></i><i class="leaf leaf-a"></i><i class="leaf leaf-b"></i><i class="leaf leaf-c"></i><i class="leaf leaf-d"></i><i class="crop-bud"></i></span><img src="assets/sprites/farm/crops/${p.cropId}.png"><span class="farm-stage-shadow"></span>${p.fertilized?'<i class="fertilized-spark">✦</i>':''}${p.pest?'<i class="farm-pest-mark"></i>':''}</button>`;}).join("");
   el.querySelectorAll("[data-plot]").forEach(button=>button.onclick=()=>{const i=Number(button.dataset.plot),p=f.plots[i];if(p&&p.runsLeft<=0){farmBagPlot=i;manageFarmBag("harvest");}else openFarmBag(i);});
 };
 
 function renderFarmMerchant(){
   const f=ensureFarmV3(),merchant=document.querySelector("#farmMerchant");if(!merchant)return;
-  merchant.innerHTML=`<div class="merchant-full-panel"><button id="closeMerchantBtn" class="icon-btn farm-merchant-close">✕</button><div class="merchant-character"><img src="assets/retro32/sprites/farm/farmer-uncle.png" alt=""><div><small>OLD TUNTUN'S SEED SHOP</small><h2>${tr("老豚鼠的种子铺","OLD TUNTUN'S SEED SHOP")}</h2><b>🪙 ${metaSave.coins}</b></div></div><div class="merchant-offers">${f.shop.offers.map((id,i)=>{const c=CROP_DEFS.find(x=>x.id===id),base=CROP_PRICES[id],price=Math.round(base*(i===f.shop.specialIndex ? .75 : 1));return `<button class="merchant-card ${i===f.shop.specialIndex?"special":""}" data-seed-offer="${i}" ${metaSave.coins<price?"disabled":""}><img src="assets/retro32/sprites/farm/crops/${id}.png"><b>${tr(c.name[0],c.name[1])}</b>${i===f.shop.specialIndex?'<em>75%</em>':''}<span>🪙 ${price}</span></button>`;}).join("")}</div><div class="merchant-supplies"><button data-supply="fertilizer" data-price="70"><span>🌿</span><b>${tr("速生肥料","FAST FERTILIZER")}</b><small>${tr("成熟时间缩短为一局","HARVEST AFTER ONE RUN")}</small><strong>🪙 70</strong></button><button data-supply="pesticide" data-price="45"><span>🧴</span><b>${tr("温和除虫剂","GENTLE PESTICIDE")}</b><small>${tr("保护作物","PROTECT CROPS")}</small><strong>🪙 45</strong></button></div></div>`;
+  merchant.innerHTML=`<div class="merchant-full-panel"><button id="closeMerchantBtn" class="icon-btn farm-merchant-close">✕</button><div class="merchant-character"><img src="assets/sprites/farm/farmer-uncle.png" alt=""><div><small>OLD TUNTUN'S SEED SHOP</small><h2>${tr("老豚鼠的种子铺","OLD TUNTUN'S SEED SHOP")}</h2><b>🪙 ${metaSave.coins}</b></div></div><div class="merchant-offers">${f.shop.offers.map((id,i)=>{const c=CROP_DEFS.find(x=>x.id===id),base=CROP_PRICES[id],price=Math.round(base*(i===f.shop.specialIndex ? .75 : 1));return `<button class="merchant-card ${i===f.shop.specialIndex?"special":""}" data-seed-offer="${i}" ${metaSave.coins<price?"disabled":""}><img src="assets/sprites/farm/crops/${id}.png"><b>${tr(c.name[0],c.name[1])}</b>${i===f.shop.specialIndex?'<em>75%</em>':''}<span>🪙 ${price}</span></button>`;}).join("")}</div><div class="merchant-supplies"><button data-supply="fertilizer" data-price="70"><span>🌿</span><b>${tr("速生肥料","FAST FERTILIZER")}</b><small>${tr("成熟时间缩短为一局","HARVEST AFTER ONE RUN")}</small><strong>🪙 70</strong></button><button data-supply="pesticide" data-price="45"><span>🧴</span><b>${tr("温和除虫剂","GENTLE PESTICIDE")}</b><small>${tr("保护作物","PROTECT CROPS")}</small><strong>🪙 45</strong></button></div></div>`;
   merchant.querySelector("#closeMerchantBtn").onclick=()=>merchant.classList.add("hidden");merchant.querySelectorAll("[data-seed-offer]").forEach(button=>button.onclick=()=>buyFarmSeedOffer(Number(button.dataset.seedOffer)));merchant.querySelectorAll("[data-supply]").forEach(button=>button.onclick=()=>buyFarmSupplyV3(button.dataset.supply,Number(button.dataset.price)));
 }
 function buyFarmSeedOffer(index){const f=ensureFarmV3(),id=f.shop.offers[index],price=Math.round(CROP_PRICES[id]*(index===f.shop.specialIndex ? .75 : 1));if(metaSave.coins<price)return;metaSave.coins-=price;f.seeds[id]=(f.seeds[id]||0)+1;persistSave();updateCoinUI();renderFarmMerchant();renderFarm();sfx("chest");}

@@ -1,0 +1,54 @@
+#bossHud.boss-hud {
+  position: absolute;
+  left: 20px;
+  top: 160px;
+  width: min(310px, 32vw);
+  height: 28px;
+  transform: none;
+  color: #fff;
+  text-align: left;
+  text-shadow: 2px 2px 0 #24132e;
+}
+
+#bossHud.boss-hud > span {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  font-size: 11px;
+  letter-spacing: .04em;
+}
+
+#bossHud.boss-hud > div {
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  overflow: hidden;
+  border: 4px solid #f5f1ff;
+  border-radius: 0;
+  background: #25133f;
+  box-shadow: 4px 4px 0 #8e8bb8, 8px 8px 0 #17172c;
+}
+
+#bossHud.boss-hud i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #ed3558;
+  transition: width .15s steps(5, end);
+}
+
+@media (max-width: 760px) {
+  #bossHud.boss-hud {
+    left: 12px;
+    top: 146px;
+    width: min(280px, 52vw);
+  }
+}
