@@ -241,6 +241,9 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
 .mini-grid b,.monster-grid b { font-size:12px; }.mini-grid span,.monster-grid span { color:#887c6c; font-size:10px; }
 .monster-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:9px; }
 .monster-grid i { font-size:28px; font-style:normal; }.monster-grid.bosses { grid-template-columns:repeat(5,1fr); }.bosses article { background:#efe1dc; }
+.codex-sprite { display:block; width:58px; height:58px; overflow:hidden; }
+.codex-sprite img { display:block; width:auto; height:58px; max-width:none; image-rendering:pixelated; }
+.codex-sprite.boss { width:76px; height:76px; }.codex-sprite.boss img { height:76px; }
 .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 22px; }
 .stats div { padding: 13px; border-radius: 16px; background: #f2ead8; }
 .stats b, .stats span { display: block; }
@@ -439,14 +442,15 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
           </div>
           <h3>Garden Monsters</h3>
           <div class="monster-grid">
-            <article><i>☁️</i><b>Dust Bunny</b><span>Basic swarming monster</span></article><article><i>🐭</i><b>Clockwork Mouse</b><span>Agile mechanical enemy</span></article>
-            <article><i>🐞</i><b>Speed Beetle</b><span>Extremely fast</span></article><article><i>🟢</i><b>Tanky Jelly</b><span>Slow but very tough</span></article>
-            <article><i>🦋</i><b>Cream Moth</b><span>Flies in curves</span></article><article><i>🦔</i><b>Charging Hedgehog</b><span>High-health charger</span></article>
+            <article><i class="codex-sprite"><img src="assets/sprites/idle/mouse-fork.png" alt=""></i><b>Fork Mouse</b><span>Basic melee mouse swarming from the start</span></article><article><i class="codex-sprite"><img src="assets/sprites/idle/mouse-knife.png" alt=""></i><b>Knife Mouse</b><span>A fiercer mouse joining in minute two</span></article>
+            <article><i class="codex-sprite"><img src="assets/sprites/idle/mouse-pen.png" alt=""></i><b>Pen Mouse</b><span>An agile stationery mouse from early waves</span></article><article><i class="codex-sprite"><img src="assets/sprites/idle/mouse-bone.png" alt=""></i><b>Bone Mouse</b><span>Joins the horde during the middle game</span></article>
+            <article><i class="codex-sprite"><img src="assets/sprites/idle/bomb-mouse.png" alt=""></i><b>Bomb Mouse</b><span>Leaves a delayed explosion on defeat</span></article><article><i class="codex-sprite"><img src="assets/sprites/idle/bully-mouse.png" alt=""></i><b>Bully Mouse</b><span>A fast, high-health heavy enemy</span></article>
+            <article><i class="codex-sprite"><img src="assets/sprites/idle/bat.png" alt=""></i><b>Bat Swarm</b><span>Rushes across the screen in formation</span></article>
           </div>
           <h3>Boss Archive</h3>
           <div class="monster-grid bosses">
-            <article><i>🧹</i><b>Vacuum Overlord</b></article><article><i>🦀</i><b>Barrel Crab Bomber</b></article>
-            <article><i>💥</i><b>Turret Mimic</b></article><article><i>🐙</i><b>Captain Deepsea</b></article><article><i>👻</i><b>Ghost Quartermaster</b></article><article><i>👁️</i><b>Starcrown Garden Devourer</b><span>Final Boss at 20 minutes</span></article>
+            <article><i class="codex-sprite boss"><img src="assets/sprites/idle/owl-boss.png" alt=""></i><b>Owl Chieftain</b><span>Feather Fan · Wingstorm · Moon Dive</span></article><article><i class="codex-sprite boss"><img src="assets/sprites/idle/weasel-boss.png" alt=""></i><b>Weasel Chieftain</b><span>Burrow Ambush · Long Charge · Snack Heal</span></article>
+            <article><i class="codex-sprite boss"><img src="assets/sprites/idle/fox-boss.png" alt=""></i><b>Nine-Tail Garden Fox</b><span>Foxfire Fan · Tail Sweep · Flame Ring</span></article><article><i class="codex-sprite boss"><img src="assets/sprites/idle/fox-boss.png" alt=""></i><b>Starcrown Nine-Tail Devourer</b><span>Final Boss at 20 minutes</span></article>
           </div>
         </div>
       </div>
@@ -592,7 +596,7 @@ let enemies = [], shots = [], swings = [], lasers = [], bottles = [], zones = []
 let banishedUpgrades=new Set();
 let visitedFoodChunks=new Set();
 const bossTimes = [120,240,360,480,600,720,840,960,1080];
-const bossNames = ["Rumbling Vacuum King","Duke of Dust","Clockwork Mouse Captain","Garden Sweeper","Nap Wrecker"];
+const bossNames = ["Moonshadow Owl","Burrowing Weasel","Nine-Tail Garden Fox","Stormwing Owl","Glutton Weasel"];
 const keys = new Set();
 const pointer = { active:false, x:0, y:0, ox:0, oy:0 };
 const player = { x:0, y:0, r:20, speed:225, hp:130, maxHp:130, inv:0, damage:18, rate:.64, projectiles:1, magnet:105, size:1, regen:.12, facing:1, pierce:0, crit:0, area:1, cooldown:1, growth:1, armor:0, duration:1, revives:0 };
@@ -1027,8 +1031,8 @@ function startFinalBattle(){
   finalPhase=true;elapsed=1200;
   enemies.forEach(e=>splatter(e));enemies=[];shots=[];swings=[];bottles=[];zones=[];chests=[];
   const a=-Math.PI/2,rad=Math.max(W,H)/cameraZoom*.52+60,hp=12000;
-  enemies.push({type:"vacuum",boss:true,finalBoss:true,bossStyle:5,name:"Starcrown Garden Devourer",x:player.x+Math.cos(a)*rad,y:player.y+Math.sin(a)*rad,r:276,hp,maxHp:hp,speed:48,damage:28,xp:0,orbitHit:0,hitFlash:0,seed:Math.random()*10,aiState:"idle",aiTimer:1.4,attackCycle:0,stateTimer:0,trailClock:0});
-  flash=.72;shake=18;sfx("boss");texts.push({x:player.x,y:player.y-100,text:"⚠ FINAL BATTLE: Starcrown Garden Devourer!",color:"#9c4fd1",life:3.5});
+  enemies.push({type:"vacuum",boss:true,finalBoss:true,bossStyle:5,name:"Starcrown Nine-Tail Devourer",x:player.x+Math.cos(a)*rad,y:player.y+Math.sin(a)*rad,r:276,hp,maxHp:hp,speed:48,damage:28,xp:0,orbitHit:0,hitFlash:0,seed:Math.random()*10,aiState:"idle",aiTimer:1.4,attackCycle:0,stateTimer:0,trailClock:0});
+  flash=.72;shake=18;sfx("boss");texts.push({x:player.x,y:player.y-100,text:"⚠ FINAL BATTLE: Starcrown Nine-Tail Devourer!",color:"#9c4fd1",life:3.5});
   for(let i=0;i<70;i++){const a=Math.random()*Math.PI*2,s=80+Math.random()*260;particles.push({x:player.x,y:player.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1+Math.random(),r:2+Math.random()*6,color:i%3===0?"#9b72e3":i%2?"#ff78b4":"#ffe478"});}
 }
 function fireCarrots(){
@@ -1295,122 +1299,16 @@ function drawPlayer(){
 }
 function drawEnemy(e){
   ctx.save();ctx.translate(e.x,e.y);const phase=elapsed*(e.type==="mouse"?9:6)+e.seed,wob=Math.sin(phase)*3;
-  ctx.translate(0,wob);ctx.rotate(Math.sin(phase*.5)*(e.type==="vacuum"?.035:.07));
+  ctx.translate(0,wob);ctx.rotate(Math.sin(phase*.5)*.07);
   ctx.fillStyle="rgba(67,74,52,.14)";ctx.beginPath();ctx.ellipse(0,e.r*.8,e.r*.85,e.r*.3,0,0,Math.PI*2);ctx.fill();
-  const squash=1+Math.sin(phase)*.045, facing=e.type==="bat"?(e.flyVx<0?-1:1):(player.x<e.x?-1:1);
-  if(drawPixelEnemy(e,facing)){if(e.hp<e.maxHp){ctx.fillStyle="#392f32";ctx.fillRect(-e.r,-e.r-12,e.r*2,5);ctx.fillStyle="#e56f62";ctx.fillRect(-e.r+1,-e.r-11,(e.r*2-2)*(e.hp/e.maxHp),3);}ctx.restore();return;}
-  ctx.save();const bossScale=e.boss?(e.r>45?1.55:1.3):(e.scaleVisual||1);ctx.scale(facing/squash*bossScale,squash*bossScale);ctx.lineJoin="round";ctx.lineCap="round";
-  if(e.hitFlash>0)ctx.globalAlpha=.42;
-  if(e.type==="dust"){
-    // 毛茸茸的灰尘团
-    ctx.fillStyle=e.hitFlash>0?"#fff7da":"#817873";ctx.strokeStyle="#4f4845";ctx.lineWidth=2;
-    ctx.beginPath();for(let i=0;i<14;i++){const a=i*Math.PI*2/14,r=e.r*(i%2?1:.82),x=Math.cos(a)*r,y=Math.sin(a)*r; i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();ctx.fill();ctx.stroke();
-    ctx.fillStyle="#5e5651";for(let i=0;i<5;i++){const a=e.seed+i*1.25;ctx.beginPath();ctx.arc(Math.cos(a)*9,Math.sin(a)*8,2,0,Math.PI*2);ctx.fill();}
-    ctx.fillStyle="#2f2a28";ctx.beginPath();ctx.arc(-5,-2,3,0,Math.PI*2);ctx.arc(6,-2,3,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="white";ctx.beginPath();ctx.arc(-4,-3,1,0,Math.PI*2);ctx.arc(7,-3,1,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle="#392f2c";ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(1,4,4,.2,Math.PI-.2);ctx.stroke();
-    ctx.fillStyle="#b8a9a1";ctx.beginPath();ctx.ellipse(-9,5,3,2,0,0,Math.PI*2);ctx.ellipse(11,5,3,2,0,0,Math.PI*2);ctx.fill();
-  } else if(e.type==="mouse"){
-    // 发条玩具鼠
-    ctx.fillStyle=e.hitFlash>0?"#fff7da":"#aeb9bd";ctx.strokeStyle="#505b5e";ctx.lineWidth=2.2;
-    ctx.beginPath();ctx.ellipse(0,3,21,14,0,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#cad3d5";ctx.beginPath();ctx.ellipse(13,0,11,10,0,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#eaa3a3";ctx.beginPath();ctx.arc(10,-9,6,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#333b3d";ctx.beginPath();ctx.arc(16,-2,2.7,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="white";ctx.beginPath();ctx.arc(17,-3,1,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#e78b83";ctx.beginPath();ctx.arc(23,2,2.5,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle="#687579";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(-18,3,13,1.65,4.6);ctx.stroke();
-    // 黄铜发条与身体接缝
-    ctx.fillStyle="#d7ad52";ctx.strokeStyle="#7b6534";ctx.lineWidth=1.6;ctx.fillRect(-6,-23,6,13);ctx.strokeRect(-6,-23,6,13);ctx.fillRect(-11,-24,16,4);ctx.strokeRect(-11,-24,16,4);
-    ctx.strokeStyle="#758286";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-4,-8);ctx.lineTo(-4,13);ctx.moveTo(-12,2);ctx.lineTo(4,2);ctx.stroke();
-  } else if(e.type==="beetle"){
-    // 高速瓢虫甲虫
-    ctx.fillStyle=e.hitFlash>0?"#fff7da":"#e06b62";ctx.strokeStyle="#573f3d";ctx.lineWidth=2.2;
-    ctx.beginPath();ctx.ellipse(0,2,15,18,0,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.strokeStyle="#74423f";ctx.beginPath();ctx.moveTo(0,-15);ctx.lineTo(0,18);ctx.stroke();
-    ctx.fillStyle="#59433e";for(const [x,y] of [[-7,-7],[7,-7],[-8,5],[8,5]]){ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();}
-    ctx.fillStyle="#554641";ctx.beginPath();ctx.arc(0,-14,8,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle="#554641";ctx.lineWidth=2;for(const s of [-1,1]){ctx.beginPath();ctx.moveTo(s*6,-17);ctx.quadraticCurveTo(s*13,-26,s*15,-20);ctx.stroke();ctx.beginPath();ctx.moveTo(s*12,0);ctx.lineTo(s*22,-5);ctx.moveTo(s*12,8);ctx.lineTo(s*21,15);ctx.stroke();}
-  } else if(e.type==="slime"){
-    // 厚血果冻怪
-    ctx.fillStyle=e.hitFlash>0?"#fff7da":"rgba(119,191,142,.9)";ctx.strokeStyle="#47745a";ctx.lineWidth=2.5;
-    ctx.beginPath();ctx.moveTo(-23,13);ctx.quadraticCurveTo(-22,-19,0,-22);ctx.quadraticCurveTo(23,-19,24,13);ctx.quadraticCurveTo(15,22,7,15);ctx.quadraticCurveTo(0,24,-8,15);ctx.quadraticCurveTo(-15,22,-23,13);ctx.fill();ctx.stroke();
-    ctx.fillStyle="rgba(223,255,215,.55)";ctx.beginPath();ctx.ellipse(-7,-12,7,4,-.4,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#294d3a";ctx.beginPath();ctx.arc(-7,-2,3.5,0,Math.PI*2);ctx.arc(8,-2,3.5,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle="#294d3a";ctx.lineWidth=2;ctx.beginPath();ctx.arc(1,6,6,.2,Math.PI-.2);ctx.stroke();
-    ctx.fillStyle="#d8ee79";ctx.beginPath();ctx.arc(13,9,3,0,Math.PI*2);ctx.arc(-14,7,2,0,Math.PI*2);ctx.fill();
-  } else if(e.type==="moth"){
-    // 曲线飞行的奶油飞蛾
-    ctx.fillStyle=e.hitFlash>0?"#fff7da":"#f3d99a";ctx.strokeStyle="#6d5c48";ctx.lineWidth=2;
-    for(const s of [-1,1]){ctx.beginPath();ctx.ellipse(s*12,1,13,18,s*.5,0,Math.PI*2);ctx.fill();ctx.stroke();}
-    ctx.fillStyle="#9dc68b";for(const s of [-1,1]){ctx.beginPath();ctx.arc(s*15,1,4,0,Math.PI*2);ctx.fill();}
-    ctx.fillStyle="#8c684f";ctx.beginPath();ctx.ellipse(0,3,6,17,0,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#fff0cf";ctx.beginPath();ctx.arc(0,-12,8,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#332d2a";ctx.beginPath();ctx.arc(-3,-13,1.8,0,Math.PI*2);ctx.arc(3,-13,1.8,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle="#6d5c48";ctx.beginPath();ctx.moveTo(-3,-18);ctx.quadraticCurveTo(-10,-26,-13,-21);ctx.moveTo(3,-18);ctx.quadraticCurveTo(10,-26,13,-21);ctx.stroke();
-  } else if(e.type==="hedgehog"){
-    // 冲撞型刺猬
-    ctx.fillStyle=e.hitFlash>0?"#fff7da":"#826b59";ctx.strokeStyle="#4e4037";ctx.lineWidth=2.3;
-    ctx.beginPath();for(let i=0;i<18;i++){const a=i*Math.PI*2/18,r=i%2?23:30;i?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);}ctx.closePath();ctx.fill();ctx.stroke();
-    ctx.fillStyle="#e2bc91";ctx.beginPath();ctx.ellipse(8,4,17,15,0,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#302b28";ctx.beginPath();ctx.arc(14,-2,3.2,0,Math.PI*2);ctx.arc(25,5,3.2,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#ef9d99";ctx.beginPath();ctx.ellipse(11,8,4,2.5,0,0,Math.PI*2);ctx.fill();
-  } else {
-    drawBossVariant(e);
+  const facing=e.type==="bat"?(e.flyVx<0?-1:1):(player.x<e.x?-1:1);
+  if(!drawPixelEnemy(e,facing)){
+    ctx.fillStyle=e.boss?"#845a9f":e.type==="bat"?"#665080":e.type==="bombMouse"?"#bb7150":e.type==="bullyMouse"?"#8d6d59":"#aeb9bd";
+    ctx.strokeStyle="#41353a";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,Math.max(12,e.r),0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(-7,-4,3,0,Math.PI*2);ctx.arc(7,-4,3,0,Math.PI*2);ctx.fill();
   }
+  if(e.hp<e.maxHp){ctx.fillStyle="#392f32";ctx.fillRect(-e.r,-e.r-12,e.r*2,5);ctx.fillStyle="#e56f62";ctx.fillRect(-e.r+1,-e.r-11,(e.r*2-2)*(e.hp/e.maxHp),3);}
   ctx.restore();
-  if(e.hp<e.maxHp){ctx.fillStyle="#5e504b55";ctx.fillRect(-e.r,-e.r-12,e.r*2,4);ctx.fillStyle="#ee7c71";ctx.fillRect(-e.r,-e.r-12,e.r*2*(e.hp/e.maxHp),4);}
-  ctx.restore();
-}
-function drawBossVariant(e){
-  const style=e.bossStyle||0,flashColor=e.hitFlash>0?"#fff7da":null;ctx.lineWidth=3;
-  if(style===5){
-    // 终局 Boss：星冠花园吞噬者
-    const pulse=1+Math.sin(elapsed*5)*.055;ctx.save();ctx.scale(pulse,pulse);
-    ctx.shadowBlur=24;ctx.shadowColor="#b46cff";ctx.fillStyle=flashColor||"#493667";ctx.strokeStyle="#241d39";ctx.lineWidth=4;
-    ctx.beginPath();for(let i=0;i<20;i++){const a=i*Math.PI*2/20,r=i%2?39:51;i?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);}ctx.closePath();ctx.fill();ctx.stroke();
-    ctx.shadowBlur=12;ctx.fillStyle="#7650a8";ctx.beginPath();ctx.arc(0,0,35,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#171323";ctx.beginPath();ctx.arc(0,3,23,0,Math.PI*2);ctx.fill();
-    const eyeGrad=ctx.createRadialGradient(-4,-3,2,0,0,19);eyeGrad.addColorStop(0,"#fff8bc");eyeGrad.addColorStop(.32,"#ff76bb");eyeGrad.addColorStop(1,"#7444c5");ctx.fillStyle=eyeGrad;ctx.beginPath();ctx.ellipse(0,-2,17,22,0,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#fffce2";ctx.beginPath();ctx.ellipse(-5,-8,5,8,-.4,0,Math.PI*2);ctx.fill();
-    // 旋转星冠
-    ctx.save();ctx.rotate(-elapsed*.8);for(let i=0;i<7;i++){const a=i*Math.PI*2/7;ctx.save();ctx.rotate(a);ctx.translate(0,-55);ctx.fillStyle=i%2?"#ff79b6":"#ffe174";ctx.beginPath();ctx.moveTo(0,-10);ctx.lineTo(4,-3);ctx.lineTo(11,0);ctx.lineTo(4,3);ctx.lineTo(0,10);ctx.lineTo(-4,3);ctx.lineTo(-11,0);ctx.lineTo(-4,-3);ctx.closePath();ctx.fill();ctx.restore();}ctx.restore();
-    ctx.shadowBlur=0;ctx.strokeStyle="#cf8cff";ctx.lineWidth=5;for(let i=0;i<6;i++){const a=i*Math.PI/3+elapsed*.35;ctx.beginPath();ctx.moveTo(Math.cos(a)*28,Math.sin(a)*28);ctx.quadraticCurveTo(Math.cos(a+.5)*55,Math.sin(a+.5)*55,Math.cos(a)*66,Math.sin(a)*66);ctx.stroke();}
-    ctx.restore();
-  }else if(style===1){
-    // 桶蟹爆破手
-    ctx.fillStyle=flashColor||"#c9674f";ctx.strokeStyle="#633b34";ctx.beginPath();ctx.roundRect(-27,-28,54,56,12);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#e3a451";ctx.fillRect(-27,-12,54,8);ctx.strokeRect(-27,-12,54,8);ctx.fillRect(-27,13,54,7);ctx.strokeRect(-27,13,54,7);
-    ctx.fillStyle="#fff1ca";ctx.beginPath();ctx.arc(-10,-2,7,0,Math.PI*2);ctx.arc(10,-2,7,0,Math.PI*2);ctx.fill();ctx.fillStyle="#342b29";ctx.beginPath();ctx.arc(-8,-2,3,0,Math.PI*2);ctx.arc(8,-2,3,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle="#633b34";ctx.lineWidth=6;for(const s of [-1,1]){ctx.beginPath();ctx.moveTo(s*24,5);ctx.lineTo(s*39,15);ctx.stroke();ctx.fillStyle="#dc7559";ctx.beginPath();ctx.arc(s*43,18,10,0,Math.PI*2);ctx.fill();ctx.stroke();}
-    ctx.fillStyle="#5e4b42";ctx.beginPath();ctx.arc(0,-30,9,0,Math.PI*2);ctx.fill();ctx.stroke();
-  }else if(style===2){
-    // 炮台宝箱怪
-    ctx.fillStyle=flashColor||"#a86f43";ctx.strokeStyle="#563a2b";ctx.beginPath();ctx.roundRect(-34,-18,68,45,8);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#e7bd55";ctx.fillRect(-34,-3,68,8);ctx.strokeRect(-34,-3,68,8);ctx.beginPath();ctx.arc(0,9,7,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#4d5456";ctx.strokeStyle="#2f3536";ctx.beginPath();ctx.roundRect(-13,-36,50,17,7);ctx.fill();ctx.stroke();ctx.fillStyle="#25292a";ctx.beginPath();ctx.ellipse(37,-27,9,8,0,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#fff4d1";ctx.beginPath();ctx.arc(-16,-11,5,0,Math.PI*2);ctx.arc(5,-11,5,0,Math.PI*2);ctx.fill();ctx.fillStyle="#332b27";ctx.beginPath();ctx.arc(-15,-10,2.5,0,Math.PI*2);ctx.arc(4,-10,2.5,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#745036";for(const x of [-25,25]){ctx.beginPath();ctx.arc(x,27,8,0,Math.PI*2);ctx.fill();ctx.stroke();}
-  }else if(style===3){
-    // 深海章鱼船长
-    ctx.fillStyle=flashColor||"#8d6ab0";ctx.strokeStyle="#4e3b67";ctx.beginPath();ctx.ellipse(0,-9,30,27,0,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#493456";ctx.beginPath();ctx.moveTo(-31,-19);ctx.quadraticCurveTo(0,-48,31,-19);ctx.lineTo(23,-9);ctx.quadraticCurveTo(0,-28,-23,-9);ctx.closePath();ctx.fill();ctx.stroke();
-    ctx.fillStyle="#f0c769";ctx.beginPath();ctx.arc(0,-21,5,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#fff1dc";ctx.beginPath();ctx.arc(-10,-7,7,0,Math.PI*2);ctx.arc(10,-7,7,0,Math.PI*2);ctx.fill();ctx.fillStyle="#29232e";ctx.beginPath();ctx.arc(-8,-6,3,0,Math.PI*2);ctx.arc(8,-6,3,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle="#5d4775";ctx.lineWidth=7;for(let i=0;i<6;i++){const x=-23+i*9;ctx.beginPath();ctx.moveTo(x,13);ctx.quadraticCurveTo(x+(i%2?12:-12),33,x+(i%2?5:-5),43);ctx.stroke();}
-  }else if(style===4){
-    // 幽灵军需官
-    ctx.globalAlpha=e.hitFlash>0?.45:.88;ctx.fillStyle=flashColor||"#83b8b0";ctx.strokeStyle="#426c69";ctx.beginPath();ctx.moveTo(-29,25);ctx.quadraticCurveTo(-34,-23,0,-34);ctx.quadraticCurveTo(34,-23,29,25);ctx.lineTo(18,16);ctx.lineTo(8,27);ctx.lineTo(-2,16);ctx.lineTo(-14,28);ctx.closePath();ctx.fill();ctx.stroke();
-    ctx.fillStyle="#375554";ctx.beginPath();ctx.ellipse(-10,-8,5,8,-.3,0,Math.PI*2);ctx.ellipse(10,-8,5,8,.3,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle="#375554";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,6,9,.2,Math.PI-.2);ctx.stroke();
-    ctx.fillStyle="#e6c26b";ctx.beginPath();ctx.roundRect(-20,-31,40,8,3);ctx.fill();ctx.stroke();ctx.globalAlpha=1;
-  }else{
-    // 吸尘器霸王
-    ctx.fillStyle=flashColor||"#65a67d";ctx.strokeStyle="#355a47";ctx.beginPath();ctx.roundRect(-33,-25,66,52,13);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#e8f3d9";ctx.beginPath();ctx.roundRect(-24,-17,48,27,8);ctx.fill();ctx.stroke();ctx.fillStyle="#31473b";ctx.beginPath();ctx.arc(-11,-5,5,0,Math.PI*2);ctx.arc(11,-5,5,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="white";ctx.beginPath();ctx.arc(-9,-7,1.5,0,Math.PI*2);ctx.arc(13,-7,1.5,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#31473b";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-16,-14);ctx.lineTo(-6,-11);ctx.moveTo(16,-14);ctx.lineTo(6,-11);ctx.moveTo(-8,4);ctx.quadraticCurveTo(0,0,8,4);ctx.stroke();
-    ctx.fillStyle="#f4d36b";ctx.strokeStyle="#806d36";for(const x of [-23,23]){ctx.beginPath();ctx.arc(x,25,8,0,Math.PI*2);ctx.fill();ctx.stroke();}ctx.strokeStyle="#517d63";ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(29,-11);ctx.quadraticCurveTo(49,-25,47,-43);ctx.stroke();
-  }
 }
 function drawCarrot(s){ctx.save();ctx.translate(s.x,s.y);ctx.rotate(s.rot);if(s.kind==="rocket"){ctx.shadowBlur=20;ctx.shadowColor="#ff8a32";}else if(s.kind==="seed"&&evolved.seed){ctx.shadowBlur=24;ctx.shadowColor="#ffd84e";}
   if(s.kind==="hay"){ctx.strokeStyle="#e8d574";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-10,0);ctx.lineTo(11,0);ctx.stroke();ctx.fillStyle="#8eb65c";ctx.beginPath();ctx.ellipse(-2,-3,7,2,-.5,0,Math.PI*2);ctx.ellipse(4,3,7,2,.5,0,Math.PI*2);ctx.fill();}
