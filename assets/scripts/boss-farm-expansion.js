@@ -91,15 +91,27 @@ function drawBossActionFx(e,def){
 drawPixelEnemy=function(e,facing){
   if(!e.boss)return legacyDrawPixelEnemy(e,facing);
   if(e.visible===false||e.lifted)return true;
+  if(!e.visualFacing)e.visualFacing=facing;
+  if(!e.turnTarget)e.turnTarget=e.visualFacing;
+  if(facing!==e.turnTarget){e.turnFrom=e.visualFacing;e.turnTarget=facing;e.turnStarted=elapsed;}
+  let turnScale=1;
+  if(Number.isFinite(e.turnStarted)){
+    const turnDuration={mole:.36,mantis:.25,snake:.44,spider:.38,weasel:.27,wildcat:.3,raccoon:.36,hand:.48,owl:.32,fox:.28,mower:.42,foot:.52}[e.bossId]||.34,p=Math.min(1,Math.max(0,(elapsed-e.turnStarted)/turnDuration));
+    if(p<.5){e.visualFacing=e.turnFrom;turnScale=1-Math.sin(p*Math.PI)*.82;}
+    else{e.visualFacing=e.turnTarget;turnScale=.18+Math.sin((p-.5)*Math.PI)*.82;}
+    if(p>=1){e.visualFacing=e.turnTarget;e.turnStarted=NaN;turnScale=1;}
+  }
+  facing=e.visualFacing;
   const def=BOSS_DEFS[e.bossId];if(!def)return legacyDrawPixelEnemy(e,facing);
   const sw=Math.round(def.drawSize*.58),sh=Math.max(7,Math.round(def.drawSize*.07));ctx.fillStyle="rgba(52,61,40,.24)";ctx.fillRect(-Math.round(sw/2),Math.round(e.r*.65),sw,sh);
   if(e.hitFlash>0&&Math.floor(e.hitFlash*24)%2)return true;
+  ctx.save();ctx.scale(turnScale,1+(1-turnScale)*.08);
   const action=BOSS_ACTIONS[e.bossId];let ok=false;
   if(action){
     if(e.anim){const spec=action.skills[e.anim.skill],frame=frameFromProgress(spec[1],e.anim.t/e.anim.total);ok=drawBossStrip(spec[0],spec[1],frame,def.drawSize,facing);}
     else{const frame=((Math.floor(elapsed*7+e.seed)%action.move[1])+action.move[1])%action.move[1];ok=drawBossStrip(action.move[0],action.move[1],frame,def.drawSize,facing);}
   }else ok=drawProceduralBossPose(e,def,facing);
-  drawBossActionFx(e,def);return ok;
+  drawBossActionFx(e,def);ctx.restore();return ok;
 };
 
 function timingFor(e,skill){
@@ -186,7 +198,7 @@ for(const crop of CROP_DEFS){crop.cd=cropCooldowns[crop.id]||crop.cd;if(crop.id=
 
 function randomShopOffers(){const ids=[...cropIds];for(let i=ids.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]];}return {offers:ids.slice(0,3),specialIndex:Math.floor(Math.random()*3)};}
 function ensureFarmV3(){
-  const f=metaSave.farm=metaSave.farm||freshFarm();f.seeds={...Object.fromEntries(cropIds.map(id=>[id,0])),...(f.seeds||{})};f.inventory={...Object.fromEntries(cropIds.map(id=>[id,0])),...(f.inventory||{})};f.supplies={fertilizer:0,pesticide:0,...(f.supplies||{})};f.plots=Array.from({length:6},(_,i)=>{const p=f.plots?.[i];if(!p)return null;if(p.runsLeft==null){const q=legacyFarmPlotProgress(p);p.runsLeft=q>=1?0:(p.fertilized?1:2);}return p;});if(!f.shop||!Array.isArray(f.shop.offers)||f.shop.offers.length!==3)f.shop=randomShopOffers();f.runSerial=Number(f.runSerial)||0;return f;
+  const f=metaSave.farm=metaSave.farm||freshFarm();f.seeds={...Object.fromEntries(cropIds.map(id=>[id,0])),...(f.seeds||{})};f.mysterySeeds=Math.max(0,Number(f.mysterySeeds)||0);f.inventory={...Object.fromEntries(cropIds.map(id=>[id,0])),...(f.inventory||{})};f.supplies={fertilizer:0,pesticide:0,...(f.supplies||{})};f.plots=Array.from({length:6},(_,i)=>{const p=f.plots?.[i];if(!p)return null;if(p.runsLeft==null){const q=legacyFarmPlotProgress(p);p.runsLeft=q>=1?0:(p.fertilized?1:2);}return p;});if(!f.shop||!Array.isArray(f.shop.offers)||f.shop.offers.length!==3)f.shop=randomShopOffers();f.runSerial=Number(f.runSerial)||0;return f;
 }
 farmPlotProgress=function(p){if(!p)return 0;return Math.max(0,Math.min(1,(2-(Number(p.runsLeft)||0))/2));};
 
@@ -202,8 +214,8 @@ function openFarmBag(index){
     const crop=CROP_DEFS.find(c=>c.id===plot.cropId),ready=plot.runsLeft<=0;
     bag.innerHTML=`<div class="farm-bag-panel"><button class="farm-bag-close">✕</button><img class="farm-bag-crop" src="assets/sprites/farm/crops/${plot.cropId}.png">${plot.pest?'<i class="farm-pest-large"></i>':''}<div class="farm-growth-pips"><i class="on"></i><i class="${plot.runsLeft<=1?"on":""}"></i><i class="${ready?"on":""}"></i></div><div class="farm-bag-actions">${!ready&&!plot.fertilized&&f.supplies.fertilizer>0?`<button data-farm-manage="fertilize">${tr("施肥 ×1","FERTILIZE ×1")}</button>`:""}${plot.pest&&f.supplies.pesticide>0?`<button data-farm-manage="pesticide">${tr("除虫 ×1","PEST CONTROL ×1")}</button>`:""}${ready?`<button data-farm-manage="harvest">${tr("收割","HARVEST")}</button>`:""}<button data-farm-manage="cancel">${tr("取消","CANCEL")}</button></div></div>`;
   }else{
-    farmBagSelection=cropIds.find(id=>(f.seeds[id]||0)>0)||null;
-    bag.innerHTML=`<div class="farm-bag-panel seed-bag"><button class="farm-bag-close">✕</button><div class="farm-seed-grid">${CROP_DEFS.map(c=>`<button class="farm-seed-card ${farmBagSelection===c.id?"selected":""}" data-seed-pick="${c.id}" ${(f.seeds[c.id]||0)<=0?"disabled":""}><img src="assets/sprites/farm/crops/${c.id}.png"><b>${tr(c.name[0],c.name[1])}</b><span>🌱 ${f.seeds[c.id]||0}</span><small>🎒 ${f.inventory[c.id]||0}</small></button>`).join("")}</div><div class="farm-bag-actions"><button data-farm-manage="sow" ${farmBagSelection?"":"disabled"}>${tr("播种","SOW")}</button><button data-farm-manage="cancel">${tr("取消","CANCEL")}</button></div></div>`;
+    farmBagSelection=f.mysterySeeds>0?"mystery":cropIds.find(id=>(f.seeds[id]||0)>0)||null;
+    bag.innerHTML=`<div class="farm-bag-panel seed-bag"><button class="farm-bag-close">✕</button><div class="farm-seed-grid"><button class="farm-seed-card mystery-seed-card ${farmBagSelection==="mystery"?"selected":""}" data-seed-pick="mystery" ${f.mysterySeeds<=0?"disabled":""}><span class="mystery-seed-art"><i></i><b>?</b></span><strong>${tr("未知种子","MYSTERY SEED")}</strong><span>🌱 ${f.mysterySeeds}</span><small>${tr("成熟时揭晓","REVEALS AT HARVEST")}</small></button>${CROP_DEFS.map(c=>`<button class="farm-seed-card ${farmBagSelection===c.id?"selected":""}" data-seed-pick="${c.id}" ${(f.seeds[c.id]||0)<=0?"disabled":""}><img src="assets/sprites/farm/crops/${c.id}.png"><b>${tr(c.name[0],c.name[1])}</b><span>🌱 ${f.seeds[c.id]||0}</span><small>🎒 ${f.inventory[c.id]||0}</small></button>`).join("")}</div><div class="farm-bag-actions"><button data-farm-manage="sow" ${farmBagSelection?"":"disabled"}>${tr("播种","SOW")}</button><button data-farm-manage="cancel">${tr("取消","CANCEL")}</button></div></div>`;
   }
   bag.classList.remove("hidden");bag.querySelector(".farm-bag-close").onclick=closeFarmBag;
   bag.querySelectorAll("[data-seed-pick]").forEach(button=>button.onclick=()=>{farmBagSelection=button.dataset.seedPick;openFarmBag(index);});
@@ -212,7 +224,10 @@ function openFarmBag(index){
 function manageFarmBag(action){
   const f=ensureFarmV3(),plot=f.plots[farmBagPlot];
   if(action==="cancel")return closeFarmBag();
-  if(action==="sow"&&farmBagSelection&&(f.seeds[farmBagSelection]||0)>0){f.seeds[farmBagSelection]--;f.plots[farmBagPlot]={cropId:farmBagSelection,runsLeft:2,fertilized:false,pest:false};spawnFarmFeedback(farmBagPlot,"plant");}
+  if(action==="sow"&&farmBagSelection){
+    if(farmBagSelection==="mystery"&&f.mysterySeeds>0){f.mysterySeeds--;const cropId=cropIds[Math.floor(Math.random()*cropIds.length)];f.plots[farmBagPlot]={cropId,mystery:true,runsLeft:2,fertilized:false,pest:false};spawnFarmFeedback(farmBagPlot,"plant");}
+    else if((f.seeds[farmBagSelection]||0)>0){f.seeds[farmBagSelection]--;f.plots[farmBagPlot]={cropId:farmBagSelection,mystery:false,runsLeft:2,fertilized:false,pest:false};spawnFarmFeedback(farmBagPlot,"plant");}
+  }
   else if(action==="fertilize"&&plot&&!plot.fertilized&&f.supplies.fertilizer>0){f.supplies.fertilizer--;plot.fertilized=true;plot.runsLeft=Math.min(1,plot.runsLeft);spawnFarmFeedback(farmBagPlot,"fertilize");}
   else if(action==="pesticide"&&plot&&plot.pest&&f.supplies.pesticide>0){f.supplies.pesticide--;plot.pest=false;plot.protected=true;spawnFarmFeedback(farmBagPlot,"pesticide");}
   else if(action==="harvest"&&plot&&plot.runsLeft<=0){f.inventory[plot.cropId]=(f.inventory[plot.cropId]||0)+(plot.fertilized?2:1);f.plots[farmBagPlot]=null;spawnFarmFeedback(farmBagPlot,"harvest");sfx("chest");}
@@ -221,7 +236,7 @@ function manageFarmBag(action){
 
 renderFarmPlots=function(){
   const f=ensureFarmV3(),el=document.querySelector("#farmPlots");if(!el)return;
-  el.innerHTML=f.plots.map((p,i)=>{if(!p)return `<button class="farm-plot empty" data-plot="${i}" aria-label="${tr("打开种子背包","Open seed backpack")}"><span class="soil-plus">＋</span></button>`;const stage=p.runsLeft<=0?2:p.runsLeft===1?1:0,accent=CROP_STAGE_COLORS[p.cropId]||"#e4b84f";return `<button class="farm-plot planted stage-${stage} ${stage===2?"ready":""} ${p.pest?"pest":""}" data-plot="${i}" data-crop="${p.cropId}" style="--crop-accent:${accent}"><span class="farm-stage-plant"><i class="stem"></i><i class="leaf leaf-a"></i><i class="leaf leaf-b"></i><i class="leaf leaf-c"></i><i class="leaf leaf-d"></i><i class="crop-bud"></i></span><img src="assets/sprites/farm/crops/${p.cropId}.png"><span class="farm-stage-shadow"></span>${p.fertilized?'<i class="fertilized-spark">✦</i>':''}${p.pest?'<i class="farm-pest-mark"></i>':''}</button>`;}).join("");
+  el.innerHTML=f.plots.map((p,i)=>{if(!p)return `<button class="farm-plot empty" data-plot="${i}" aria-label="${tr("打开种子背包","Open seed backpack")}"><span class="soil-plus">＋</span></button>`;const stage=p.runsLeft<=0?2:p.runsLeft===1?1:0,accent=p.mystery&&stage<2?"#d4c56b":CROP_STAGE_COLORS[p.cropId]||"#e4b84f";return `<button class="farm-plot planted stage-${stage} ${stage===2?"ready":""} ${p.mystery?"mystery-crop":""} ${p.pest?"pest":""}" data-plot="${i}" data-crop="${p.cropId}" style="--crop-accent:${accent}"><span class="farm-stage-plant"><i class="stem"></i><i class="leaf leaf-a"></i><i class="leaf leaf-b"></i><i class="leaf leaf-c"></i><i class="leaf leaf-d"></i><i class="crop-bud"></i></span><img src="assets/sprites/farm/crops/${p.cropId}.png"><span class="farm-stage-shadow"></span>${p.fertilized?'<i class="fertilized-spark">✦</i>':''}${p.pest?'<i class="farm-pest-mark"></i>':''}</button>`;}).join("");
   el.querySelectorAll("[data-plot]").forEach(button=>button.onclick=()=>{const i=Number(button.dataset.plot),p=f.plots[i];if(p&&p.runsLeft<=0){farmBagPlot=i;manageFarmBag("harvest");}else openFarmBag(i);});
 };
 
