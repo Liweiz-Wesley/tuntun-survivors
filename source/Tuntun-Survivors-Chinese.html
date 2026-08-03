@@ -463,6 +463,13 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
             <article><i class="codex-sprite"><img src="assets/sprites/idle/fortress-snail.png" alt=""></i><b>蜗牛堡垒</b><span>慢速高血，甲壳降低42%伤害</span></article><article><i class="codex-sprite"><img src="assets/sprites/idle/honey-slime.png" alt=""></i><b>蜜糖史莱姆</b><span>死亡留下短暂减速蜜糖</span></article>
             <article><i class="codex-sprite"><img src="assets/sprites/idle/silk-spider.png" alt=""></i><b>吐丝蜘蛛</b><span>只在镜头内吐丝，命中造成减速</span></article>
           </div>
+          <h3>精英怪</h3>
+          <div class="monster-grid bosses">
+            <article><i class="codex-sprite"><img src="assets/sprites/idle/mouse-fork.png" alt=""></i><b>餐叉鼠队长</b><span>金边强化鼠，会蓄力高速冲锋；击败必掉宝箱</span></article>
+            <article><i class="codex-sprite"><img src="assets/sprites/idle/bat.png" alt=""></i><b>暗夜蝙蝠王</b><span>召唤环形蝙蝠群与夜色弹幕；击败必掉宝箱</span></article>
+            <article><i class="codex-sprite"><img src="assets/sprites/idle/frog.png" alt=""></i><b>雷鼓青蛙</b><span>跳向玩家，落地释放大范围震波；击败必掉宝箱</span></article>
+            <article><i class="codex-sprite"><img src="assets/sprites/idle/fortress-snail.png" alt=""></i><b>钢壳蜗牛</b><span>钢壳防御与破壳弱点交替；击败必掉宝箱</span></article>
+          </div>
           <h3>Boss 档案</h3>
           <div class="monster-grid bosses">
             <article><i class="codex-sprite boss"><img src="assets/sprites/bosses/mole.png" alt=""></i><b>钻地鼹鼠</b><span>Tier 1 · 潜行、震地、抛石、突顶</span></article><article><i class="codex-sprite boss"><img src="assets/sprites/bosses/mantis.png" alt=""></i><b>巨型螳螂</b><span>Tier 1 · 双斩、叶突、伏击、旋身</span></article>
@@ -613,23 +620,33 @@ function pixelEnemySpec(e){
   if(e.type==="fortressSnail")return {key:"fortressSnail",frames:4,fps:3.5,size:92};
   if(e.type==="honeySlime")return {key:"honeySlime",frames:4,fps:6.5,size:78};
   if(e.type==="silkSpider")return {key:"silkSpider",frames:4,fps:7,size:78};
-  if(e.type==="mouse")return {key:["mouseFork","mouseKnife","mousePen","mouseBone"][e.weaponVariant||0],frames:4,fps:5.5,size:68};
-  return {key:"minion",frames:4,fps:5.5,size:68};
+  if(e.type==="mouse")return {key:["mouseFork","mouseKnife","mousePen","mouseBone"][e.weaponVariant||0],frames:4,fps:5.5,size:e.elite?108:68};
+  return {key:"minion",frames:4,fps:5.5,size:e.elite?108:68};
 }
 function drawPixelEnemy(e,facing){
-  const spec=pixelEnemySpec(e);ctx.fillStyle="rgba(52,61,40,.2)";const sw=Math.round(spec.size*.58),sh=Math.max(5,Math.round(spec.size*.1));ctx.fillRect(-Math.round(sw/2),Math.round(e.r*.66),sw,sh);
+  const raw=pixelEnemySpec(e),spec=e.elite&&e.type!=="mouse"?{...raw,size:Math.round(raw.size*1.58)}:raw;ctx.fillStyle="rgba(52,61,40,.2)";const sw=Math.round(spec.size*.58),sh=Math.max(5,Math.round(spec.size*.1));ctx.fillRect(-Math.round(sw/2),Math.round(e.r*.66),sw,sh);
   if(e.hitFlash>0&&Math.floor(e.hitFlash*24)%2)return true;
-  const charge=e.boss?Math.max(0,Math.min(1,(e.skillCharge||0)/.8)):0,release=e.boss?Math.max(0,Math.min(1,(e.releaseAnim||0)/.28)):0;ctx.save();ctx.translate(0,Math.round(charge*10-Math.sin(release*Math.PI)*14));ctx.scale(1+release*.055,1-charge*.055+release*.035);const ok=drawPixelFrame(spec.key,spec.frames,spec.fps,0,Math.round(spec.size*.52),spec.size,facing,e.seed*2);ctx.restore();return ok;
+  const special=e.boss||e.elite,charge=special?Math.max(0,Math.min(1,(e.skillCharge||0)/.8)):0,release=special?Math.max(0,Math.min(1,(e.releaseAnim||0)/.28)):0;ctx.save();ctx.translate(0,Math.round(charge*10-Math.sin(release*Math.PI)*14));ctx.scale(1+release*.055,1-charge*.055+release*.035);const ok=drawPixelFrame(spec.key,spec.frames,spec.fps,0,Math.round(spec.size*.52),spec.size,facing,e.seed*2);ctx.restore();return ok;
 }
 
 let W = innerWidth, H = innerHeight, dpr = 1;
 const cameraZoom = .78;
 let running = false, paused = false, last = 0, elapsed = 0, score = 0, level = 1, finalPhase = false;
 let xp = 0, xpNeed = 18, spawnClock = 0, shotClock = 0, hayClock = 0, seedClock = 0, laserClock = 0, bottleClock = 0, acornClock=0, meteorClock=0, bubbleClock=0, storyClock=0, bellClock=0, gemMergeClock=0, skillCooldown = 0, cropCooldown=0,cropMaxCooldown=0,cropEffectTimer=0,cropTick=0,equippedCrop=null,runSeedDrops=0,runSeedTarget=1, freezeTimer=0, playerSlowTimer=0, flameTimer=0, flameClock=0, snackRateTimer=0, snackSpeedTimer=0, snackHealTimer=0, snackXpTimer=0, potRespawnClock=12, shake = 0, flash = 0, runBosses=0, runRewardGranted=false;
-let enemies = [], shots = [], swings = [], lasers = [], bottles = [], zones = [], gems = [], chests = [], obstacles=[], pots=[], pickups=[], enemyBombs=[],enemyOrbs=[],bossWaves=[],bossTrails=[],particles = [], texts = [], bossWave = 0,mapAnchorX=0,mapAnchorY=0,mapChunkX=NaN,mapChunkY=NaN,rerollsLeft=0,banishesLeft=0,currentPicks=[],banishMode=false;
+let enemies = [], shots = [], swings = [], lasers = [], bottles = [], zones = [], gems = [], chests = [], obstacles=[], pots=[], pickups=[], enemyBombs=[],enemyOrbs=[],bossWaves=[],bossTrails=[],particles = [], texts = [], bossWave = 0,eliteWave=0,mapAnchorX=0,mapAnchorY=0,mapChunkX=NaN,mapChunkY=NaN,rerollsLeft=0,banishesLeft=0,currentPicks=[],banishMode=false;
 let banishedUpgrades=new Set();
 let visitedFoodChunks=new Set();
-const bossTimes = [120,240,360,480,600,720,840,960,1080];
+const bossTimes = [300,600,900];
+const eliteSchedule=[
+  [120,"forkCaptain"],[240,"batKing"],[390,"thunderFrog"],[510,"steelSnail"],
+  [720,"forkCaptain"],[840,"batKing"],[842,"thunderFrog"],[1020,"steelSnail"],[1110,"random"]
+];
+const ELITE_DEFS={
+  forkCaptain:{type:"mouse",weaponVariant:0,name:["餐叉鼠队长","Fork Mouse Captain"],hp:1050,r:32,speed:65,damage:17,xp:90},
+  batKing:{type:"bat",name:["暗夜蝙蝠王","Night Bat King"],hp:980,r:24,speed:92,damage:15,xp:85},
+  thunderFrog:{type:"frog",name:["雷鼓青蛙","Thunder Drum Frog"],hp:1450,r:37,speed:38,damage:20,xp:105},
+  steelSnail:{type:"fortressSnail",name:["钢壳蜗牛","Steel Shell Snail"],hp:2050,r:43,speed:22,damage:22,xp:130}
+};
 const BOSS_DEFS={
   mole:{tier:1,sprite:"bossMole",drawSize:220,r:68,hp:2800,speed:42,damage:18,name:["钻地鼹鼠","Burrowing Mole"],skills:[["钻地潜行","Burrow"],["震动预警","Quake Warning"],["土石抛掷","Stone Toss"],["塌方突顶","Collapse Uppercut"]]},
   toycar:{tier:1,sprite:"bossToycar",drawSize:250,r:76,hp:3100,speed:54,damage:20,name:["遥控玩具车","Remote Toy Car"],skills:[["高速漂移","Drift"],["轮胎碾压","Crush Charge"],["电池爆火花","Battery Spark"],["玩具小兵释放","Toy Bots"]]},
@@ -900,7 +917,7 @@ function startGame(){
   Object.assign(passives,{speed:0,heart:0,magnet:0,regen:0,power:0,chew:0,luck:0,area:0,cooldown:0,growth:0,armor:0});
   Object.assign(evolved,{carrot:false,dandelion:false,hay:false,seed:false,laser:false,bottle:false,acorn:false,meteor:false,bubble:false,story:false,bell:false});
   elapsed=score=xp=spawnClock=shotClock=hayClock=seedClock=laserClock=bottleClock=acornClock=meteorClock=bubbleClock=storyClock=bellClock=gemMergeClock=skillCooldown=freezeTimer=playerSlowTimer=flameTimer=flameClock=snackRateTimer=snackSpeedTimer=snackHealTimer=snackXpTimer=0;runBosses=0;runRewardGranted=false;potRespawnClock=12; level=1; xpNeed=18;visitedFoodChunks=new Set();
-  enemies=[];shots=[];swings=[];lasers=[];bottles=[];zones=[];gems=[];chests=[];obstacles=[];pots=[];pickups=[];enemyBombs=[];enemyOrbs=[];bossWaves=[];bossTrails=[];particles=[];texts=[];bossWave=0;bossBags={1:[],2:[],3:[],4:[]};finalPhase=false;running=true;paused=false;last=performance.now();buildMap();
+  enemies=[];shots=[];swings=[];lasers=[];bottles=[];zones=[];gems=[];chests=[];obstacles=[];pots=[];pickups=[];enemyBombs=[];enemyOrbs=[];bossWaves=[];bossTrails=[];particles=[];texts=[];bossWave=0;eliteWave=0;bossBags={1:[],2:[],3:[],4:[]};finalPhase=false;running=true;paused=false;last=performance.now();buildMap();
   ui.start.classList.add("hidden");ui.pause.classList.add("hidden");ui.codex.classList.add("hidden");ui.shop.classList.add("hidden");ui.farm.classList.add("hidden");ui.end.classList.add("hidden");ui.level.classList.add("hidden");ui.hud.classList.remove("hidden");updateCoinUI();const skillIcon=selectedCharacter==="rabbit"?"roll":selectedCharacter==="chinchilla"?"watermelon":"squeal";ui.skillName.innerHTML=pixelIcon(skillIcon)+" "+char.skill;ui.skillBar.setAttribute("aria-label",char.skill);
   renderTray(); requestAnimationFrame(loop);
 }
@@ -1030,9 +1047,10 @@ function update(dt){
   if(cropEffectTimer>0&&cropTick<=0&&equippedCrop==="garlic"){cropTick=.34;const aim=player.facing>0?0:Math.PI,range=185;enemies.forEach(e=>{const dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),a=Math.atan2(dy,dx),delta=Math.abs(Math.atan2(Math.sin(a-aim),Math.cos(a-aim)));if(d<range+e.r){hitEnemy(e,player.damage*.28);e.kx=dx/(d||1)*260;e.ky=dy/(d||1)*260;}});for(let i=0;i<5;i++){const a=Math.random()*Math.PI*2,sp=90+Math.random()*150;particles.push({x:player.x+Math.cos(a)*30,y:player.y+Math.sin(a)*30,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:.35,r:3+Math.random()*4,color:i%2?"#e9e1a2":"#b9d36b"});}}
 
   spawnClock-=dt;
-  const midPressure=Math.max(0,Math.min(1,(elapsed-180)/360)),intensity=Math.min(6.4,1.2+elapsed/165+midPressure*1.35);
-  if(!finalPhase&&spawnClock<=0){if(enemies.length<245){spawnEnemy();if(midPressure>.22&&Math.random()<.12+midPressure*.38)spawnEnemy();}spawnClock=Math.max(.105,.66/intensity);}
+  const runPhase=Math.min(1,elapsed/1200),midPressure=Math.max(0,Math.min(1,(elapsed-180)/500)),intensity=1.05+runPhase*4.3+midPressure*.9;
+  if(!finalPhase&&spawnClock<=0){if(enemies.length<220){spawnEnemy();if(elapsed>240&&Math.random()<.08+runPhase*.42)spawnEnemy();}spawnClock=Math.max(.13,.72/intensity);}
   if(!finalPhase&&bossWave<bossTimes.length&&elapsed>=bossTimes[bossWave]){spawnBoss(bossWave);bossWave++;}
+  while(!finalPhase&&eliteWave<eliteSchedule.length&&elapsed>=eliteSchedule[eliteWave][0]){spawnElite(eliteSchedule[eliteWave][1]);eliteWave++;}
   if(!finalPhase&&elapsed>=1200){elapsed=1200;startFinalBattle();}
   shotClock-=dt;
   if(shotClock<=0&&enemies.length){ fireCarrots();shotClock=player.rate*player.cooldown*(snackRateTimer>0?.72:1)*(equippedCrop==="sunflower"&&cropEffectTimer>0?.65:1); }
@@ -1052,8 +1070,8 @@ function update(dt){
   });
   enemies.forEach(e=>{
     e.orbitHit=Math.max(0,e.orbitHit-dt);e.hitFlash=Math.max(0,e.hitFlash-dt);
-    if(!e.boss&&e.type!=="bat"){const rx=e.x-player.x,ry=e.y-player.y,farX=W/cameraZoom*.82,farY=H/cameraZoom*.82;if(Math.abs(rx)>farX||Math.abs(ry)>farY){const a=Math.atan2(ry,rx)+Math.PI+(Math.random()-.5)*.3,d=Math.max(W,H)/cameraZoom*.57+90;e.x=player.x+Math.cos(a)*d;e.y=player.y+Math.sin(a)*d;e.kx=e.ky=0;}}
-    if(e.finalBoss)updateFinalBoss(e,dt);else if(e.boss)updateAnimalBoss(e,dt);else if(e.type==="bat"){e.kx=e.kx||0;e.ky=e.ky||0;e.flyLife-=dt;if(freezeTimer<=0){e.x+=(e.flyVx+e.kx)*dt;e.y+=e.ky*dt;}e.kx*=Math.pow(.05,dt);e.ky*=Math.pow(.05,dt);if(e.flyLife<=0)e.dead=true;}else{
+    if(!e.boss&&!e.elite&&e.type!=="bat"){const rx=e.x-player.x,ry=e.y-player.y,farX=W/cameraZoom*.82,farY=H/cameraZoom*.82;if(Math.abs(rx)>farX||Math.abs(ry)>farY){const a=Math.atan2(ry,rx)+Math.PI+(Math.random()-.5)*.3,d=Math.max(W,H)/cameraZoom*.57+90;e.x=player.x+Math.cos(a)*d;e.y=player.y+Math.sin(a)*d;e.kx=e.ky=0;}}
+    if(e.finalBoss)updateFinalBoss(e,dt);else if(e.boss)updateAnimalBoss(e,dt);else if(e.elite)updateElite(e,dt);else if(e.type==="bat"){e.kx=e.kx||0;e.ky=e.ky||0;e.flyLife-=dt;if(freezeTimer<=0){e.x+=(e.flyVx+e.kx)*dt;e.y+=e.ky*dt;}e.kx*=Math.pow(.05,dt);e.ky*=Math.pow(.05,dt);if(e.flyLife<=0)e.dead=true;}else{
       const a=Math.atan2(player.y-e.y,player.x-e.x);e.kx=e.kx||0;e.ky=e.ky||0;const ex=e.x,ey=e.y;
       if(e.type==="frog"){e.jumpClock=(e.jumpClock||1.4)-dt;e.jumpTime=Math.max(0,(e.jumpTime||0)-dt);if(e.jumpClock<=0&&isOnScreen(e.x,e.y,120)){e.jumpClock=2.1+Math.random()*.7;e.jumpTime=.42;e.kx=Math.cos(a)*430;e.ky=Math.sin(a)*430;}}
       if(e.type==="silkSpider"){e.silkClock=(e.silkClock||2.2)-dt;if(e.silkClock<=0&&isOnScreen(e.x,e.y,80)){e.silkClock=3.1+Math.random()*1.2;const sp=175;enemyOrbs.push({x:e.x,y:e.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:9,life:4,phase:0,turn:0,damage:5,slow:1.35,silk:true});}}
@@ -1096,8 +1114,8 @@ function spawnEnemy(){
   for(let i=0;i<count;i++){const regular=pool.filter(v=>v!=="bomb"),token=Math.random()<.05&&minute>3?"bomb":regular[Math.floor(Math.random()*regular.length)];if(token==="bat"){spawnBatSwarm();continue;}const mouseMap={fork:0,knife:1,pen:2,bone:3},type=typeMap[token]||"mouse",a=Math.random()*Math.PI*2,rad=Math.max(W,H)/cameraZoom*.62+100;pushScaledEnemy(type,player.x+Math.cos(a)*rad,player.y+Math.sin(a)*rad,token in mouseMap?{weaponVariant:mouseMap[token]}:{});}
 }
 function pushScaledEnemy(type,x,y,extra={}){
-  const stats={mouse:{r:20,hp:40,speed:56,damage:8,xp:9},bombMouse:{r:21,hp:46,speed:60,damage:9,xp:12},bullyMouse:{r:30,hp:190,speed:86,damage:20,xp:32},bat:{r:14,hp:24,speed:165,damage:9,xp:7},sparrow:{r:17,hp:31,speed:126,damage:10,xp:10},frog:{r:23,hp:82,speed:43,damage:13,xp:17},fortressSnail:{r:27,hp:235,speed:25,damage:15,xp:25,armor:.42},honeySlime:{r:24,hp:118,speed:48,damage:12,xp:20},silkSpider:{r:21,hp:94,speed:54,damage:11,xp:19}},data=stats[type],mid=Math.max(0,Math.min(1,(elapsed-240)/480)),scale=1+elapsed/520+mid*.24,elite=type==="mouse"&&Math.random()<Math.min(.3,.035+elapsed/1500),hp=data.hp*scale*(elite?2.05:1);
-  enemies.push({type,x,y,...data,r:data.r,hp,maxHp:hp,damage:Math.round(data.damage*(1+mid*.28)),xp:Math.round(data.xp*(1+Math.min(1.1,elapsed/950))*(elite?2.4:1)),speed:data.speed*(1+Math.min(.36,elapsed/4200)+mid*.1)*(elite?.95:1),elite,weaponVariant:type==="mouse"?Math.floor(Math.random()*4):0,orbitHit:0,hitFlash:0,seed:Math.random()*10,...extra});
+  const stats={mouse:{r:20,hp:40,speed:56,damage:8,xp:9},bombMouse:{r:21,hp:46,speed:60,damage:9,xp:12},bullyMouse:{r:30,hp:190,speed:86,damage:20,xp:32},bat:{r:14,hp:24,speed:165,damage:9,xp:7},sparrow:{r:17,hp:31,speed:126,damage:10,xp:10},frog:{r:23,hp:82,speed:43,damage:13,xp:17},fortressSnail:{r:27,hp:235,speed:25,damage:15,xp:25,armor:.42},honeySlime:{r:24,hp:118,speed:48,damage:12,xp:20},silkSpider:{r:21,hp:94,speed:54,damage:11,xp:19}},data=stats[type],pressure=Math.max(0,Math.min(1,(elapsed-180)/1020)),scale=1+elapsed/480+pressure*.55,hp=data.hp*scale;
+  enemies.push({type,x,y,...data,r:data.r,hp,maxHp:hp,damage:Math.round(data.damage*(1+Math.min(.48,elapsed/2500)+pressure*.18)),xp:Math.round(data.xp*(1+Math.min(1.1,elapsed/950))),speed:data.speed*(1+Math.min(.36,elapsed/4200)+pressure*.1),weaponVariant:type==="mouse"?Math.floor(Math.random()*4):0,orbitHit:0,hitFlash:0,seed:Math.random()*10,...extra});
 }
 function spawnBatSwarm(){
   const side=Math.random()<.5?-1:1,x=player.x+side*(W/(cameraZoom*2)+150),centerY=player.y+(Math.random()-.5)*H/cameraZoom*.58,flyVx=-side*(165+Math.min(70,elapsed/18));
@@ -1109,8 +1127,33 @@ function bossBlast(e,radius,damage,color="#e7a55f",x=e.x,y=e.y){particles.push({
 function bossHazard(x,y,r,life,color,damage){bossTrails.push({x,y,life,maxLife:life,r,color,danger:true,damage});}
 function bossDash(e,aim,force,trailColor){e.kx=Math.cos(aim)*force;e.ky=Math.sin(aim)*force;if(trailColor)bossHazard(e.x,e.y,e.r*.7,.85,trailColor,12);}
 function bossAdds(e,type,count){const stats={toyBot:[18,145,78,10,18],snakeClone:[22,220,66,13,24],spiderling:[16,95,88,9,14]}[type];for(let i=0;i<count;i++){const a=i*Math.PI*2/count+Math.random()*.4,x=e.x+Math.cos(a)*(e.r+45),y=e.y+Math.sin(a)*(e.r+45),hp=stats[1]*(1+elapsed/900);enemies.push({type,x,y,r:stats[0],hp,maxHp:hp,speed:stats[2],damage:stats[3],xp:stats[4],orbitHit:0,hitFlash:0,seed:Math.random()*10,kx:0,ky:0});}}
+function spawnElite(id){
+  if(id==="random")id=["forkCaptain","batKing","thunderFrog","steelSnail"][Math.floor(Math.random()*4)];
+  const def=ELITE_DEFS[id],a=Math.random()*Math.PI*2,rad=Math.max(W,H)/cameraZoom*.55+250,hp=Math.round(def.hp*(1+elapsed/900)),name=tr(def.name[0],def.name[1]);
+  enemies.push({type:def.type,elite:true,eliteId:id,eliteName:name,weaponVariant:def.weaponVariant||0,x:player.x+Math.cos(a)*rad,y:player.y+Math.sin(a)*rad,r:def.r,hp,maxHp:hp,speed:def.speed*(1+elapsed/5000),damage:def.damage,xp:def.xp,orbitHit:0,hitFlash:0,seed:Math.random()*10,kx:0,ky:0,eliteTimer:1.7,eliteState:"hunt",armor:id==="steelSnail"?.48:0});
+  texts.push({x:player.x,y:player.y-90,text:`◆ ${tr("精英来袭：","ELITE: ")}${name}`,color:"#f2c94c",life:2.5,size:27});shake=5;sfx("boss");
+}
+function updateElite(e,dt){
+  if(freezeTimer>0)return;const aim=Math.atan2(player.y-e.y,player.x-e.x);e.eliteTimer-=dt;e.releaseAnim=Math.max(0,(e.releaseAnim||0)-dt);let speed=e.speed;
+  if(e.eliteId==="forkCaptain"){
+    if(e.eliteState==="warn"){e.skillCharge=Math.max(0,e.eliteTimer);speed=0;if(e.eliteTimer<=0){e.eliteState="charge";e.eliteTimer=.62;e.chargeAngle=aim;e.releaseAnim=.28;sfx("skill");}}
+    else if(e.eliteState==="charge"){speed=0;e.x+=Math.cos(e.chargeAngle)*560*dt;e.y+=Math.sin(e.chargeAngle)*560*dt;if(e.eliteTimer<=0){e.eliteState="hunt";e.eliteTimer=2.5;}}
+    else if(e.eliteTimer<=0&&isOnScreen(e.x,e.y,140)){e.eliteState="warn";e.eliteTimer=.7;texts.push({x:e.x,y:e.y-e.r-20,text:tr("餐叉冲锋！","FORK CHARGE!"),color:"#f2c94c",life:.8});}
+  }else if(e.eliteId==="batKing"&&e.eliteTimer<=0&&isOnScreen(e.x,e.y,160)){
+    e.eliteTimer=4.8;for(let i=0;i<6;i++){const a=i*Math.PI/3;pushScaledEnemy("bat",e.x+Math.cos(a)*55,e.y+Math.sin(a)*55,{flyVx:Math.cos(a)*185,flyLife:7});}bossRadial(e,8,125,8,.04,9);texts.push({x:e.x,y:e.y-e.r-20,text:tr("夜群召唤！","NIGHT SWARM!"),color:"#dcb8ff",life:.9});
+  }else if(e.eliteId==="thunderFrog"){
+    if(e.eliteState==="jump"){speed=0;e.x+=e.kx*dt;e.y+=e.ky*dt;e.kx*=Math.pow(.18,dt);e.ky*=Math.pow(.18,dt);if(e.eliteTimer<=0){e.eliteState="hunt";e.eliteTimer=2.5;bossBlast(e,190,16,"#f5d84d");shake=6;}}
+    else if(e.eliteTimer<=0&&isOnScreen(e.x,e.y,160)){e.eliteState="jump";e.eliteTimer=.55;e.jumpTime=.55;e.kx=Math.cos(aim)*480;e.ky=Math.sin(aim)*480;texts.push({x:e.x,y:e.y-e.r-20,text:tr("雷鼓震地！","THUNDER LANDING!"),color:"#ffe66a",life:.8});}
+  }else if(e.eliteId==="steelSnail"&&e.eliteTimer<=0){
+    if(e.eliteState==="shell"){e.eliteState="weak";e.eliteTimer=1.5;e.armor=.12;texts.push({x:e.x,y:e.y-e.r-20,text:tr("破壳弱点！","SHELL BROKEN!"),color:"#ff9b72",life:1});}
+    else if(e.eliteState==="weak"){e.eliteState="hunt";e.eliteTimer=2.7;e.armor=.48;}
+    else{e.eliteState="shell";e.eliteTimer=1.8;e.armor=.82;bossBlast(e,125,12,"#b7c3a1");texts.push({x:e.x,y:e.y-e.r-20,text:tr("钢壳防御！","STEEL SHELL!"),color:"#dce8ca",life:1});}
+  }
+  if(e.eliteId==="steelSnail"&&e.eliteState==="shell")speed*=.12;
+  if(e.eliteState!=="charge"&&e.eliteState!=="jump"){const ox=e.x,oy=e.y;e.x+=(Math.cos(aim)*speed+(e.kx||0))*dt;e.y+=(Math.sin(aim)*speed+(e.ky||0))*dt;if(isOnScreen(e.x,e.y,240))resolveWorldCollision(e,ox,oy);e.kx*=Math.pow(.05,dt);e.ky*=Math.pow(.05,dt);}
+}
 function spawnBoss(index){
-  const tier=index<3?1:index<6?2:index<8?3:4,id=takeTierBoss(tier),def=BOSS_DEFS[id];
+  const tier=Math.min(3,index+1),id=takeTierBoss(tier),def=BOSS_DEFS[id];
   const a=Math.random()*Math.PI*2,rad=Math.max(W,H)/cameraZoom*.55+340,hp=Math.round(def.hp*(1+index*.08)),name=`Tier ${tier} · ${tr(def.name[0],def.name[1])}`;
   enemies.push({type:"vacuum",boss:true,bossId:id,bossTier:tier,bossStyle:0,major:tier===4,name,x:player.x+Math.cos(a)*rad,y:player.y+Math.sin(a)*rad,r:def.r,hp,maxHp:hp,speed:def.speed,damage:def.damage,xp:160+tier*70+index*12,orbitHit:0,hitFlash:0,seed:Math.random()*10,aiTimer:2.2,skillCycle:Math.floor(Math.random()*4),skillCharge:0,pendingSkill:-1,kx:0,ky:0});
   texts.push({x:player.x,y:player.y-90,text:`⚠ ${name} ${tr("出现！","APPEARS!")}`,color:"#c8504c",life:2.5});shake=8;sfx("boss");
@@ -1247,7 +1290,7 @@ function critProfile(source){
   const profiles={carrot:[.1,2],rocket:[.16,2.5],stone:[.14,2.1],carrotClub:[.18,2.25],hay:[.18,evolved.hay?2.55:2.2],seed:[.09,evolved.seed?2.7:2.35],seedShard:[.07,2],acorn:[.14,evolved.acorn?2.4:2.05],meteor:[.11,evolved.meteor?2.5:2.25],dandelionEvolved:[.07,1.75],laserEvolved:[.16,2.25],storyEvolved:[.13,2.2],bellEvolved:[.1,2]};
   if(source==="bubble"&&evolved.bubble)return [.08,1.8];return profiles[source]||null;
 }
-function hitEnemy(e,dmg,source=null){const profile=critProfile(source),blueberry=equippedCrop==="blueberry"&&cropEffectTimer>0?.25:0,chance=profile?Math.min(.75,profile[0]*(1+player.crit)+blueberry):0,crit=chance>0&&Math.random()<chance;if(crit)dmg*=profile[1];if(e.armor)dmg*=1-e.armor;e.hp-=dmg;e.hitFlash=.11;sfx(crit?"crit":"hit");burst(e.x,e.y,crit?"#ffe45c":"#fff0a8",crit?9:3);if(crit){shake=Math.max(shake,2.2);particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.3,ring:true,r:4,maxR:e.r+24,color:"#ffd84a",duration:.3});for(let i=0;i<8;i++){const a=i*Math.PI/4;particles.push({x:e.x,y:e.y,vx:Math.cos(a)*150,vy:Math.sin(a)*150,life:.28,r:3,color:i%2?"#fff6ac":"#ffbd36"});}texts.push({x:e.x,y:e.y-e.r-6,text:`✦ ${Math.round(dmg)} 暴击!`,color:"#ffc52e",life:.75,size:25,crit:true});}if(e.hp<=0&&!e.dead){e.dead=true;score++;sfx(e.boss?"boss":"kill");shake=Math.max(shake,e.type==="vacuum"?7:2.5);if(e.type==="bombMouse")enemyBombs.push({x:e.x,y:e.y,timer:1.35,maxTimer:1.35,dead:false,r:122,phase:Math.random()*6});if(e.type==="honeySlime")bossTrails.push({x:e.x,y:e.y,life:4.5,maxLife:4.5,r:78,color:"#e6ad3c",danger:false,slowPlayer:true});if(!e.finalBoss)gems.push({x:e.x,y:e.y,value:e.xp,dead:false,bob:Math.random()*6});if(!e.finalBoss&&runSeedDrops<runSeedTarget&&(e.boss||Math.random()<.0018)){pickups.push({x:e.x-22,y:e.y,type:"farmSeed",dead:false,bob:0});runSeedDrops++;}if(e.boss&&!e.finalBoss){runBosses++;chests.push({x:e.x,y:e.y,bob:0,dead:false});pickups.push({x:e.x+24,y:e.y,type:"coin",value:10,dead:false,bob:0});}splatter(e);if(e.finalBoss)endGame(true);}}
+function hitEnemy(e,dmg,source=null){const profile=critProfile(source),blueberry=equippedCrop==="blueberry"&&cropEffectTimer>0?.25:0,chance=profile?Math.min(.75,profile[0]*(1+player.crit)+blueberry):0,crit=chance>0&&Math.random()<chance;if(crit)dmg*=profile[1];if(e.armor)dmg*=1-e.armor;e.hp-=dmg;e.hitFlash=.11;sfx(crit?"crit":"hit");burst(e.x,e.y,crit?"#ffe45c":"#fff0a8",crit?9:3);if(crit){shake=Math.max(shake,2.2);particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.3,ring:true,r:4,maxR:e.r+24,color:"#ffd84a",duration:.3});for(let i=0;i<8;i++){const a=i*Math.PI/4;particles.push({x:e.x,y:e.y,vx:Math.cos(a)*150,vy:Math.sin(a)*150,life:.28,r:3,color:i%2?"#fff6ac":"#ffbd36"});}texts.push({x:e.x,y:e.y-e.r-6,text:`✦ ${Math.round(dmg)} 暴击!`,color:"#ffc52e",life:.75,size:25,crit:true});}if(e.hp<=0&&!e.dead){e.dead=true;score++;sfx(e.boss||e.elite?"boss":"kill");shake=Math.max(shake,e.boss?7:e.elite?5:2.5);if(e.type==="bombMouse")enemyBombs.push({x:e.x,y:e.y,timer:1.35,maxTimer:1.35,dead:false,r:122,phase:Math.random()*6});if(e.type==="honeySlime")bossTrails.push({x:e.x,y:e.y,life:4.5,maxLife:4.5,r:78,color:"#e6ad3c",danger:false,slowPlayer:true});if(!e.finalBoss)gems.push({x:e.x,y:e.y,value:e.xp,dead:false,bob:Math.random()*6});if(!e.finalBoss&&runSeedDrops<runSeedTarget&&(e.boss||Math.random()<.0018)){pickups.push({x:e.x-22,y:e.y,type:"farmSeed",dead:false,bob:0});runSeedDrops++;}if((e.boss&&!e.finalBoss)||e.elite){chests.push({x:e.x,y:e.y,bob:0,dead:false});if(e.boss){runBosses++;pickups.push({x:e.x+24,y:e.y,type:"coin",value:10,dead:false,bob:0});}}splatter(e);if(e.finalBoss)endGame(true);}}
 function explodeEnemyBomb(b){
   b.dead=true;sfx("boss");shake=Math.max(shake,5);pixelExplosion(b.x,b.y,b.r);
   particles.push({x:b.x,y:b.y,vx:0,vy:0,life:.5,ring:true,r:8,maxR:b.r,color:"#ff704f",duration:.5});
@@ -1258,7 +1301,7 @@ function explodeEnemyBomb(b){
 }
 function openChest(c){
   sfx("chest");
-  const possibleEvolutions=evolutionRecipes.filter(r=>weapons[r.weapon]>=8&&passives[r.passive]>0&&!evolved[r.weapon]);
+  const possibleEvolutions=elapsed>=300?evolutionRecipes.filter(r=>weapons[r.weapon]>=8&&passives[r.passive]>0&&!evolved[r.weapon]):[];
   if(possibleEvolutions.length){
     const recipe=possibleEvolutions[Math.floor(Math.random()*possibleEvolutions.length)];
     return showChestReward({icon:recipe.icon,name:recipe.name,desc:"武器进化成功！",apply(){evolved[recipe.weapon]=true;}});
@@ -1356,7 +1399,7 @@ function draw(){
   drawGround();drawGardenFeatures();obstacles.forEach(drawObstacle);zones.forEach(drawZone);gems.forEach(drawGem);pickups.forEach(drawPickup);pots.forEach(drawPot);chests.forEach(drawChest);bottles.forEach(drawBottle);lasers.forEach(drawLaser);bossTrails.forEach(drawBossTrail);enemyBombs.forEach(drawEnemyBomb);particles.forEach(drawParticle);shots.forEach(drawCarrot);swings.forEach(drawSwing);enemies.forEach(drawEnemy);enemyOrbs.forEach(drawEnemyOrb);bossWaves.forEach(drawBossWave);
   if(weapons.dandelion)drawOrbit();if(flameTimer>0)drawFlameAura();drawPlayer();texts.forEach(drawText);ctx.restore();
   if(flash){ctx.fillStyle=`rgba(255,239,159,${flash})`;ctx.fillRect(0,0,W,H);}
-  drawChestIndicators();
+  drawChestIndicators();drawEliteIndicators();
 }
 function drawBossTrail(t){
   ctx.save();ctx.globalAlpha=Math.max(0,t.life/t.maxLife)*.55;ctx.shadowBlur=24;ctx.shadowColor=t.color;ctx.fillStyle=t.color;ctx.beginPath();ctx.arc(t.x,t.y,t.r*(.6+t.life/t.maxLife*.4),0,Math.PI*2);ctx.fill();ctx.restore();
@@ -1421,12 +1464,13 @@ function drawEnemy(e){
   ctx.fillStyle="rgba(67,74,52,.14)";ctx.beginPath();ctx.ellipse(0,e.r*.8,e.r*.85,e.r*.3,0,0,Math.PI*2);ctx.fill();
   const moveDx=e.x-(Number.isFinite(e.lastDrawX)?e.lastDrawX:e.x);if(Math.abs(moveDx)>.16)e.moveFacing=moveDx<0?-1:1;e.lastDrawX=e.x;
   const facing=e.boss?(player.x<e.x?-1:1):e.type==="bat"?(e.flyVx<0?-1:1):(e.moveFacing||(player.x<e.x?-1:1));
+  if(e.elite){ctx.save();ctx.rotate(-elapsed*.65);ctx.strokeStyle="rgba(247,207,74,.82)";ctx.lineWidth=4;ctx.setLineDash([12,8]);ctx.beginPath();ctx.arc(0,0,e.r*1.42,0,Math.PI*2);ctx.stroke();ctx.restore();ctx.filter="drop-shadow(2px 0 0 #f7cf4a) drop-shadow(-2px 0 0 #f7cf4a) drop-shadow(0 2px 0 #f7cf4a) drop-shadow(0 -2px 0 #f7cf4a)";ctx.shadowBlur=14;ctx.shadowColor="#f7cf4a";}
   if(!drawPixelEnemy(e,facing)){
     ctx.fillStyle=e.boss?"#845a9f":e.type==="bat"?"#665080":e.type==="bombMouse"?"#bb7150":e.type==="bullyMouse"?"#8d6d59":"#aeb9bd";
     ctx.strokeStyle="#41353a";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,Math.max(12,e.r),0,Math.PI*2);ctx.fill();ctx.stroke();
     ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(-7,-4,3,0,Math.PI*2);ctx.arc(7,-4,3,0,Math.PI*2);ctx.fill();
   }
-  if(e.hp<e.maxHp){ctx.fillStyle="#392f32";ctx.fillRect(-e.r,-e.r-12,e.r*2,5);ctx.fillStyle="#e56f62";ctx.fillRect(-e.r+1,-e.r-11,(e.r*2-2)*(e.hp/e.maxHp),3);}
+  ctx.filter="none";ctx.shadowBlur=0;if(e.elite){const bw=e.r*2.8,y=-e.r-26;ctx.fillStyle="#392f32";ctx.fillRect(-bw/2,y,bw,8);ctx.fillStyle="#f1c84b";ctx.fillRect(-bw/2+2,y+2,(bw-4)*Math.max(0,e.hp/e.maxHp),4);ctx.font="bold 13px system-ui";ctx.textAlign="center";ctx.fillStyle="#fff2a8";ctx.strokeStyle="#4b3823";ctx.lineWidth=3;ctx.strokeText(e.eliteName,0,y-7);ctx.fillText(e.eliteName,0,y-7);}else if(e.hp<e.maxHp){ctx.fillStyle="#392f32";ctx.fillRect(-e.r,-e.r-12,e.r*2,5);ctx.fillStyle="#e56f62";ctx.fillRect(-e.r+1,-e.r-11,(e.r*2-2)*(e.hp/e.maxHp),3);}
   ctx.restore();
 }
 function drawCarrot(s){const iconKey={carrot:"projCarrot",rocket:"projCarrot",stone:"projStone",hay:"projHay",seed:"projSeed",seedShard:"projSeed",acorn:"projAcorn",bubble:"projBubble"}[s.kind],iconSize=s.kind==="bubble"?s.r*2.8:s.kind==="rocket"?38:s.kind==="seed"?34:s.kind==="acorn"?30:26;if(iconKey&&drawPixelProjectile(iconKey,s.x,s.y,iconSize,s.rot,s.kind==="bubble"?.86:1))return;ctx.save();ctx.translate(s.x,s.y);ctx.rotate(s.rot);if(s.kind==="rocket"){ctx.shadowBlur=20;ctx.shadowColor="#ff8a32";}else if(s.kind==="seed"&&evolved.seed){ctx.shadowBlur=24;ctx.shadowColor="#ffd84e";}
@@ -1469,6 +1513,11 @@ function drawChestIndicators(){
     if(on){const y=sy-38-Math.sin(performance.now()/125)*5;ctx.save();ctx.translate(sx,y);ctx.scale(pulse,pulse);ctx.fillStyle="#ffe15d";ctx.strokeStyle="#7a5420";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(0,10);ctx.lineTo(-10,-6);ctx.lineTo(-4,-6);ctx.lineTo(-4,-14);ctx.lineTo(4,-14);ctx.lineTo(4,-6);ctx.lineTo(10,-6);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();}
     else{const cx=W/2,cy=H/2,dx=sx-cx,dy=sy-cy,a=Math.atan2(dy,dx),margin=58,tx=Math.max(margin,Math.min(W-margin,cx+Math.cos(a)*W)),ty=Math.max(margin,Math.min(H-margin,cy+Math.sin(a)*H));ctx.save();ctx.translate(tx,ty);ctx.scale(pulse,pulse);ctx.fillStyle="rgba(67,52,30,.82)";ctx.strokeStyle="#fff2a5";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,22,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.rotate(a);ctx.fillStyle="#ffd84e";ctx.beginPath();ctx.moveTo(18,0);ctx.lineTo(-6,-11);ctx.lineTo(-2,0);ctx.lineTo(-6,11);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();}
   }ctx.restore();
+}
+function drawEliteIndicators(){
+  if(!running)return;const elites=enemies.filter(e=>e.elite&&!e.dead);if(!elites.length)return;ctx.save();ctx.textAlign="center";ctx.textBaseline="middle";
+  for(const e of elites){const sx=W/2+(e.x-player.x)*cameraZoom,sy=H/2+(e.y-player.y)*cameraZoom,on=sx>55&&sx<W-55&&sy>60&&sy<H-55,pulse=1+Math.sin(performance.now()/170+e.seed)*.08;if(on)continue;const cx=W/2,cy=H/2,a=Math.atan2(sy-cy,sx-cx),margin=66,tx=Math.max(margin,Math.min(W-margin,cx+Math.cos(a)*W)),ty=Math.max(margin,Math.min(H-margin,cy+Math.sin(a)*H));ctx.save();ctx.translate(tx,ty);ctx.scale(pulse,pulse);ctx.fillStyle="rgba(67,52,30,.9)";ctx.strokeStyle="#f7cf4a";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,27,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.rotate(a);ctx.fillStyle="#ffe36d";ctx.beginPath();ctx.moveTo(22,0);ctx.lineTo(-8,-13);ctx.lineTo(-3,0);ctx.lineTo(-8,13);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();}
+  ctx.restore();
 }
 function drawOrbit(){
   const n=weapons.dandelion*2+(evolved.dandelion?8:0),base=70+weapons.dandelion*5;
