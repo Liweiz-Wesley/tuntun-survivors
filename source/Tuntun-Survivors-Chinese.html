@@ -454,10 +454,12 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
           </div>
           <h3>花园怪物</h3>
           <div class="monster-grid">
-            <article><i class="codex-sprite"><img src="assets/sprites/idle/mouse-fork.png" alt=""></i><b>餐叉鼠</b><span>开局成群出现的基础近战鼠</span></article><article><i class="codex-sprite"><img src="assets/sprites/idle/mouse-knife.png" alt=""></i><b>小刀鼠</b><span>第二分钟加入，行动更加凶猛</span></article>
-            <article><i class="codex-sprite"><img src="assets/sprites/idle/mouse-pen.png" alt=""></i><b>钢笔鼠</b><span>中前期出现的敏捷文具鼠</span></article><article><i class="codex-sprite"><img src="assets/sprites/idle/mouse-bone.png" alt=""></i><b>骨头鼠</b><span>中期开始混入鼠群</span></article>
+            <article><i class="codex-sprite"><img src="assets/sprites/idle/mouse-fork.png" alt=""></i><b>工具鼠群</b><span>餐叉、小刀、钢笔和骨头四种波次外观</span></article>
             <article><i class="codex-sprite"><img src="assets/sprites/idle/bomb-mouse.png" alt=""></i><b>炸弹鼠</b><span>死亡后留下延迟爆炸</span></article><article><i class="codex-sprite"><img src="assets/sprites/idle/bully-mouse.png" alt=""></i><b>壮壮鼠</b><span>高生命、高速度的重型敌人</span></article>
             <article><i class="codex-sprite"><img src="assets/sprites/idle/bat.png" alt=""></i><b>蝙蝠群</b><span>从屏幕侧面高速编队穿过</span></article>
+            <article><i class="codex-sprite"><img src="assets/sprites/idle/sparrow.png" alt=""></i><b>偷粮麻雀</b><span>高速曲线俯冲，打乱安全走位</span></article><article><i class="codex-sprite"><img src="assets/sprites/idle/frog.png" alt=""></i><b>弹弹青蛙</b><span>周期蓄力并向玩家跳扑</span></article>
+            <article><i class="codex-sprite"><img src="assets/sprites/idle/fortress-snail.png" alt=""></i><b>蜗牛堡垒</b><span>慢速高血，甲壳降低42%伤害</span></article><article><i class="codex-sprite"><img src="assets/sprites/idle/honey-slime.png" alt=""></i><b>蜜糖史莱姆</b><span>死亡留下短暂减速蜜糖</span></article>
+            <article><i class="codex-sprite"><img src="assets/sprites/idle/silk-spider.png" alt=""></i><b>吐丝蜘蛛</b><span>只在镜头内吐丝，命中造成减速</span></article>
           </div>
           <h3>Boss 档案</h3>
           <div class="monster-grid bosses">
@@ -548,6 +550,8 @@ const pixelArtSources = {
   bomb:"assets/sprites/idle/bomb-mouse.png",
   bully:"assets/sprites/idle/bully-mouse.png",
   bat:"assets/sprites/idle/bat.png",
+  sparrow:"assets/sprites/idle/sparrow.png",frog:"assets/sprites/idle/frog.png",fortressSnail:"assets/sprites/idle/fortress-snail.png",
+  honeySlime:"assets/sprites/idle/honey-slime.png",silkSpider:"assets/sprites/idle/silk-spider.png",
   mouseFork:"assets/sprites/idle/mouse-fork.png",mouseKnife:"assets/sprites/idle/mouse-knife.png",mousePen:"assets/sprites/idle/mouse-pen.png",mouseBone:"assets/sprites/idle/mouse-bone.png",
   archerAttack:"assets/sprites/idle/archer-attack.png",archerRoll:"assets/sprites/idle/archer-roll.png",melonAttack:"assets/sprites/idle/melon-attack.png",melonEat:"assets/sprites/idle/melon-eat.png",
   pot:"assets/sprites/props/pot.png",chest:"assets/sprites/props/chest.png",coin:"assets/sprites/props/coin.png",xp:"assets/sprites/props/xp-crystal.png",
@@ -600,6 +604,11 @@ function pixelEnemySpec(e){
   if(e.type==="bombMouse")return {key:"bomb",frames:4,fps:6,size:92};
   if(e.type==="bullyMouse")return {key:"bully",frames:4,fps:8,size:94};
   if(e.type==="bat")return {key:"bat",frames:4,fps:10,size:62};
+  if(e.type==="sparrow")return {key:"sparrow",frames:4,fps:9,size:68};
+  if(e.type==="frog")return {key:"frog",frames:4,fps:e.jumpTime>0?12:5,size:76};
+  if(e.type==="fortressSnail")return {key:"fortressSnail",frames:4,fps:3.5,size:92};
+  if(e.type==="honeySlime")return {key:"honeySlime",frames:4,fps:6.5,size:78};
+  if(e.type==="silkSpider")return {key:"silkSpider",frames:4,fps:7,size:78};
   if(e.type==="mouse")return {key:["mouseFork","mouseKnife","mousePen","mouseBone"][e.weaponVariant||0],frames:4,fps:5.5,size:68};
   return {key:"minion",frames:4,fps:5.5,size:68};
 }
@@ -612,7 +621,7 @@ function drawPixelEnemy(e,facing){
 let W = innerWidth, H = innerHeight, dpr = 1;
 const cameraZoom = .78;
 let running = false, paused = false, last = 0, elapsed = 0, score = 0, level = 1, finalPhase = false;
-let xp = 0, xpNeed = 18, spawnClock = 0, shotClock = 0, hayClock = 0, seedClock = 0, laserClock = 0, bottleClock = 0, acornClock=0, meteorClock=0, bubbleClock=0, storyClock=0, bellClock=0, gemMergeClock=0, skillCooldown = 0, cropCooldown=0,cropMaxCooldown=0,cropEffectTimer=0,cropTick=0,equippedCrop=null,runSeedDrops=0,runSeedTarget=1, freezeTimer=0, flameTimer=0, flameClock=0, snackRateTimer=0, snackSpeedTimer=0, snackHealTimer=0, snackXpTimer=0, potRespawnClock=12, shake = 0, flash = 0, runBosses=0, runRewardGranted=false;
+let xp = 0, xpNeed = 18, spawnClock = 0, shotClock = 0, hayClock = 0, seedClock = 0, laserClock = 0, bottleClock = 0, acornClock=0, meteorClock=0, bubbleClock=0, storyClock=0, bellClock=0, gemMergeClock=0, skillCooldown = 0, cropCooldown=0,cropMaxCooldown=0,cropEffectTimer=0,cropTick=0,equippedCrop=null,runSeedDrops=0,runSeedTarget=1, freezeTimer=0, playerSlowTimer=0, flameTimer=0, flameClock=0, snackRateTimer=0, snackSpeedTimer=0, snackHealTimer=0, snackXpTimer=0, potRespawnClock=12, shake = 0, flash = 0, runBosses=0, runRewardGranted=false;
 let enemies = [], shots = [], swings = [], lasers = [], bottles = [], zones = [], gems = [], chests = [], obstacles=[], pots=[], pickups=[], enemyBombs=[],enemyOrbs=[],bossWaves=[],bossTrails=[],particles = [], texts = [], bossWave = 0,mapAnchorX=0,mapAnchorY=0,mapChunkX=NaN,mapChunkY=NaN,rerollsLeft=0,banishesLeft=0,currentPicks=[],banishMode=false;
 let banishedUpgrades=new Set();
 let visitedFoodChunks=new Set();
@@ -885,7 +894,7 @@ function startGame(){
   Object.keys(weapons).forEach(id=>weapons[id]=0);weapons[char.starter]=1;
   Object.assign(passives,{speed:0,heart:0,magnet:0,regen:0,power:0,chew:0,luck:0,area:0,cooldown:0,growth:0,armor:0});
   Object.assign(evolved,{carrot:false,dandelion:false,hay:false,seed:false,laser:false,bottle:false,acorn:false,meteor:false,bubble:false,story:false,bell:false});
-  elapsed=score=xp=spawnClock=shotClock=hayClock=seedClock=laserClock=bottleClock=acornClock=meteorClock=bubbleClock=storyClock=bellClock=gemMergeClock=skillCooldown=freezeTimer=flameTimer=flameClock=snackRateTimer=snackSpeedTimer=snackHealTimer=snackXpTimer=0;runBosses=0;runRewardGranted=false;potRespawnClock=12; level=1; xpNeed=18;visitedFoodChunks=new Set();
+  elapsed=score=xp=spawnClock=shotClock=hayClock=seedClock=laserClock=bottleClock=acornClock=meteorClock=bubbleClock=storyClock=bellClock=gemMergeClock=skillCooldown=freezeTimer=playerSlowTimer=flameTimer=flameClock=snackRateTimer=snackSpeedTimer=snackHealTimer=snackXpTimer=0;runBosses=0;runRewardGranted=false;potRespawnClock=12; level=1; xpNeed=18;visitedFoodChunks=new Set();
   enemies=[];shots=[];swings=[];lasers=[];bottles=[];zones=[];gems=[];chests=[];obstacles=[];pots=[];pickups=[];enemyBombs=[];enemyOrbs=[];bossWaves=[];bossTrails=[];particles=[];texts=[];bossWave=0;bossBags={1:[],2:[],3:[],4:[]};finalPhase=false;running=true;paused=false;last=performance.now();buildMap();
   ui.start.classList.add("hidden");ui.pause.classList.add("hidden");ui.codex.classList.add("hidden");ui.shop.classList.add("hidden");ui.farm.classList.add("hidden");ui.end.classList.add("hidden");ui.level.classList.add("hidden");ui.hud.classList.remove("hidden");updateCoinUI();const skillIcon=selectedCharacter==="rabbit"?"roll":selectedCharacter==="chinchilla"?"watermelon":"squeal";ui.skillName.innerHTML=pixelIcon(skillIcon)+" "+char.skill;ui.skillBar.setAttribute("aria-label",char.skill);
   renderTray(); requestAnimationFrame(loop);
@@ -1003,13 +1012,13 @@ function loop(t){
 }
 
 function update(dt){
-  if(!finalPhase)elapsed+=dt;player.inv=Math.max(0,player.inv-dt);skillCooldown=Math.max(0,skillCooldown-dt);cropCooldown=Math.max(0,cropCooldown-dt);cropEffectTimer=Math.max(0,cropEffectTimer-dt);cropTick-=dt;freezeTimer=Math.max(0,freezeTimer-dt);flameTimer=Math.max(0,flameTimer-dt);snackRateTimer=Math.max(0,snackRateTimer-dt);snackSpeedTimer=Math.max(0,snackSpeedTimer-dt);snackHealTimer=Math.max(0,snackHealTimer-dt);snackXpTimer=Math.max(0,snackXpTimer-dt);flameClock-=dt;shake=Math.max(0,shake-dt*18); flash=Math.max(0,flash-dt);
+  if(!finalPhase)elapsed+=dt;player.inv=Math.max(0,player.inv-dt);skillCooldown=Math.max(0,skillCooldown-dt);cropCooldown=Math.max(0,cropCooldown-dt);cropEffectTimer=Math.max(0,cropEffectTimer-dt);cropTick-=dt;freezeTimer=Math.max(0,freezeTimer-dt);playerSlowTimer=Math.max(0,playerSlowTimer-dt);flameTimer=Math.max(0,flameTimer-dt);snackRateTimer=Math.max(0,snackRateTimer-dt);snackSpeedTimer=Math.max(0,snackSpeedTimer-dt);snackHealTimer=Math.max(0,snackHealTimer-dt);snackXpTimer=Math.max(0,snackXpTimer-dt);flameClock-=dt;shake=Math.max(0,shake-dt*18); flash=Math.max(0,flash-dt);
   if(playerAction.timer>0){playerAction.timer=Math.max(0,playerAction.timer-dt);if(playerAction.timer===0)playerAction.type="";}
   if(player.regen||snackHealTimer>0) player.hp=Math.min(player.maxHp,player.hp+(player.regen+(snackHealTimer>0?3.5:0))*dt);
   let dx=(keys.has("d")||keys.has("arrowright")?1:0)-(keys.has("a")||keys.has("arrowleft")?1:0);
   let dy=(keys.has("s")||keys.has("arrowdown")?1:0)-(keys.has("w")||keys.has("arrowup")?1:0);
   if(pointer.active){ dx=(pointer.x-pointer.ox)/55;dy=(pointer.y-pointer.oy)/55; const l=Math.hypot(dx,dy);if(l>1){dx/=l;dy/=l;} }
-  const len=Math.hypot(dx,dy)||1,oldPX=player.x,oldPY=player.y,moveBoost=snackSpeedTimer>0?1.25:1;if(playerAction.type==="roll"){player.x+=playerAction.dirX*525*dt;player.y+=playerAction.dirY*525*dt;if(Math.abs(playerAction.dirX)>.1)player.facing=playerAction.dirX<0?-1:1;resolveWorldCollision(player,oldPX,oldPY);}else if(Math.abs(dx)+Math.abs(dy)>0){player.x+=dx/len*player.speed*moveBoost*dt;player.y+=dy/len*player.speed*moveBoost*dt;if(Math.abs(dx)>.1)player.facing=dx<0?-1:1;resolveWorldCollision(player,oldPX,oldPY);}
+  const len=Math.hypot(dx,dy)||1,oldPX=player.x,oldPY=player.y,moveBoost=(snackSpeedTimer>0?1.25:1)*(playerSlowTimer>0?.62:1);if(playerAction.type==="roll"){player.x+=playerAction.dirX*525*dt;player.y+=playerAction.dirY*525*dt;if(Math.abs(playerAction.dirX)>.1)player.facing=playerAction.dirX<0?-1:1;resolveWorldCollision(player,oldPX,oldPY);}else if(Math.abs(dx)+Math.abs(dy)>0){player.x+=dx/len*player.speed*moveBoost*dt;player.y+=dy/len*player.speed*moveBoost*dt;if(Math.abs(dx)>.1)player.facing=dx<0?-1:1;resolveWorldCollision(player,oldPX,oldPY);}
   updateGardenChunks();
   pots.forEach(p=>{if(dist(p.x,p.y,player.x,player.y)>Math.max(W,H)/cameraZoom*1.45){const a=Math.random()*Math.PI*2,d=Math.max(W,H)/cameraZoom*.62+140;p.x=player.x+Math.cos(a)*d;p.y=player.y+Math.sin(a)*d;}});
   if(flameTimer>0&&flameClock<=0){flameClock=.3;const fireDamage=24+player.damage*.47;enemies.forEach(e=>{const dx=e.x-player.x,dy=e.y-player.y,r=145+e.r;if(dx*dx+dy*dy<r*r)hitEnemy(e,fireDamage);});pots.forEach(p=>{if(!p.dead){const dx=p.x-player.x,dy=p.y-player.y,r=145+p.r;if(dx*dx+dy*dy<r*r)hitPot(p,30);}});}
@@ -1039,7 +1048,13 @@ function update(dt){
   enemies.forEach(e=>{
     e.orbitHit=Math.max(0,e.orbitHit-dt);e.hitFlash=Math.max(0,e.hitFlash-dt);
     if(!e.boss&&e.type!=="bat"){const rx=e.x-player.x,ry=e.y-player.y,farX=W/cameraZoom*.82,farY=H/cameraZoom*.82;if(Math.abs(rx)>farX||Math.abs(ry)>farY){const a=Math.atan2(ry,rx)+Math.PI+(Math.random()-.5)*.3,d=Math.max(W,H)/cameraZoom*.57+90;e.x=player.x+Math.cos(a)*d;e.y=player.y+Math.sin(a)*d;e.kx=e.ky=0;}}
-    if(e.finalBoss)updateFinalBoss(e,dt);else if(e.boss)updateAnimalBoss(e,dt);else if(e.type==="bat"){e.kx=e.kx||0;e.ky=e.ky||0;e.flyLife-=dt;if(freezeTimer<=0){e.x+=(e.flyVx+e.kx)*dt;e.y+=e.ky*dt;}e.kx*=Math.pow(.05,dt);e.ky*=Math.pow(.05,dt);if(e.flyLife<=0)e.dead=true;}else{const a=Math.atan2(player.y-e.y,player.x-e.x);e.kx=e.kx||0;e.ky=e.ky||0;const ex=e.x,ey=e.y;if(freezeTimer<=0){e.x+=(Math.cos(a)*e.speed+e.kx)*dt;e.y+=(Math.sin(a)*e.speed+e.ky)*dt;if(!e.boss&&isOnScreen(e.x,e.y,220))resolveWorldCollision(e,ex,ey);}e.kx*=Math.pow(.035,dt);e.ky*=Math.pow(.035,dt);}
+    if(e.finalBoss)updateFinalBoss(e,dt);else if(e.boss)updateAnimalBoss(e,dt);else if(e.type==="bat"){e.kx=e.kx||0;e.ky=e.ky||0;e.flyLife-=dt;if(freezeTimer<=0){e.x+=(e.flyVx+e.kx)*dt;e.y+=e.ky*dt;}e.kx*=Math.pow(.05,dt);e.ky*=Math.pow(.05,dt);if(e.flyLife<=0)e.dead=true;}else{
+      const a=Math.atan2(player.y-e.y,player.x-e.x);e.kx=e.kx||0;e.ky=e.ky||0;const ex=e.x,ey=e.y;
+      if(e.type==="frog"){e.jumpClock=(e.jumpClock||1.4)-dt;e.jumpTime=Math.max(0,(e.jumpTime||0)-dt);if(e.jumpClock<=0&&isOnScreen(e.x,e.y,120)){e.jumpClock=2.1+Math.random()*.7;e.jumpTime=.42;e.kx=Math.cos(a)*430;e.ky=Math.sin(a)*430;}}
+      if(e.type==="silkSpider"){e.silkClock=(e.silkClock||2.2)-dt;if(e.silkClock<=0&&isOnScreen(e.x,e.y,80)){e.silkClock=3.1+Math.random()*1.2;const sp=175;enemyOrbs.push({x:e.x,y:e.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:9,life:4,phase:0,turn:0,damage:5,slow:1.35,silk:true});}}
+      if(freezeTimer<=0){if(e.type==="sparrow"){const curve=Math.sin(elapsed*5+e.seed)*.72;e.x+=(Math.cos(a+curve)*e.speed+e.kx)*dt;e.y+=(Math.sin(a+curve)*e.speed+e.ky)*dt;}else{e.x+=(Math.cos(a)*e.speed+e.kx)*dt;e.y+=(Math.sin(a)*e.speed+e.ky)*dt;}if(isOnScreen(e.x,e.y,220))resolveWorldCollision(e,ex,ey);}
+      e.kx*=Math.pow(.035,dt);e.ky*=Math.pow(.035,dt);
+    }
     if(!e.dead&&dist(e.x,e.y,player.x,player.y)<e.r+player.r*.7)hurtPlayer(e.damage);
   });
   shots.forEach(s=>{s.age=(s.age||0)+dt;if(s.kind==="acorn"&&s.age>(evolved.acorn?.42:.58)){const a=Math.atan2(player.y-s.y,player.x-s.x),sp=evolved.acorn?440:355;s.vx=Math.cos(a)*sp;s.vy=Math.sin(a)*sp;if(s.age>.72&&dist(s.x,s.y,player.x,player.y)<player.r+14)s.dead=true;}if(s.kind==="bubble")s.r+=dt*(evolved.bubble?15:9);s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;s.rot+=dt*(s.kind==="seed"?2:10);s.trail=(s.trail||0)-dt;if((s.kind==="rocket"||s.kind==="seed"&&evolved.seed)&&s.trail<=0){s.trail=.045;particles.push({x:s.x-s.vx*.025,y:s.y-s.vy*.025,vx:-s.vx*.035+(Math.random()-.5)*25,vy:-s.vy*.035+(Math.random()-.5)*25,life:.28,r:s.kind==="rocket"?4:3,color:s.kind==="rocket"?(Math.random()>.5?"#ffb52e":"#ff6d38"):"#ffe56b"});}if(!isOnScreen(s.x,s.y,s.kind==="carrot"?190:120))s.dead=true;});
@@ -1052,8 +1067,8 @@ function update(dt){
   gems.forEach(g=>{let d=dist(g.x,g.y,player.x,player.y);if(g.vacuum){g.vacuumDelay-=dt;if(g.vacuumDelay<=0){const a=Math.atan2(player.y-g.y,player.x-g.x),pull=900+Math.min(1500,d*1.5);g.vx=(g.vx||0)*Math.pow(.08,dt)+Math.cos(a)*pull*dt;g.vy=(g.vy||0)*Math.pow(.08,dt)+Math.sin(a)*pull*dt;const sp=Math.hypot(g.vx,g.vy),cap=780;if(sp>cap){g.vx=g.vx/sp*cap;g.vy=g.vy/sp*cap;}g.x+=g.vx*dt;g.y+=g.vy*dt;d=dist(g.x,g.y,player.x,player.y);}}else if(d<player.magnet){const a=Math.atan2(player.y-g.y,player.x-g.x);const sp=240+(player.magnet-d)*3;g.x+=Math.cos(a)*sp*dt;g.y+=Math.sin(a)*sp*dt;}if(d<player.r+10){g.dead=true;sfx("pickup");gainXp(g.value);}});
   chests.forEach(c=>{c.bob+=dt;if(dist(c.x,c.y,player.x,player.y)<player.r+22){c.dead=true;openChest(c);}});
   pickups.forEach(p=>{let d=dist(p.x,p.y,player.x,player.y),range=p.type==="coin"?player.magnet:player.magnet*.8;if(d<range){const a=Math.atan2(player.y-p.y,player.x-p.x),sp=230+(range-d)*2.4;p.x+=Math.cos(a)*sp*dt;p.y+=Math.sin(a)*sp*dt;d=dist(p.x,p.y,player.x,player.y);}if(d<player.r+15)collectPickup(p);});
-  enemyOrbs.forEach(o=>{const a=Math.atan2(o.vy,o.vx)+o.turn*dt,sp=Math.hypot(o.vx,o.vy);o.vx=Math.cos(a)*sp;o.vy=Math.sin(a)*sp;o.x+=o.vx*dt;o.y+=o.vy*dt;o.life-=dt;o.phase+=dt*7;if(dist(o.x,o.y,player.x,player.y)<o.r+player.r*.65){hurtPlayer(o.damage||14);o.dead=true;}});
-  bossTrails.forEach(t=>{t.life-=dt;if(t.danger&&t.life>.25&&dist(t.x,t.y,player.x,player.y)<t.r+player.r*.5)hurtPlayer(t.damage||10);});
+  enemyOrbs.forEach(o=>{const a=Math.atan2(o.vy,o.vx)+o.turn*dt,sp=Math.hypot(o.vx,o.vy);o.vx=Math.cos(a)*sp;o.vy=Math.sin(a)*sp;o.x+=o.vx*dt;o.y+=o.vy*dt;o.life-=dt;o.phase+=dt*7;if(dist(o.x,o.y,player.x,player.y)<o.r+player.r*.65){hurtPlayer(o.damage||14);if(o.slow)playerSlowTimer=Math.max(playerSlowTimer,o.slow);o.dead=true;}});
+  bossTrails.forEach(t=>{t.life-=dt;const touching=t.life>.25&&dist(t.x,t.y,player.x,player.y)<t.r+player.r*.5;if(t.danger&&touching)hurtPlayer(t.damage||10);if(t.slowPlayer&&touching)playerSlowTimer=Math.max(playerSlowTimer,.18);});
   bossWaves.forEach(w=>{w.life-=dt;w.hitCooldown=Math.max(0,(w.hitCooldown||0)-dt);if(w.charge>0){w.charge-=dt;}else{w.angle+=w.spin*dt;const len=1050,x2=w.x+Math.cos(w.angle)*len,y2=w.y+Math.sin(w.angle)*len;if(w.hitCooldown<=0&&pointSegmentDistance(player.x,player.y,w.x,w.y,x2,y2)<25+player.r*.45){hurtPlayer(w.damage||22);w.hitCooldown=.9;}}});
   enemyBombs.forEach(b=>{b.timer-=dt;if(b.timer<=0&&!b.dead)explodeEnemyBomb(b);});
   gemMergeClock-=dt;if(gemMergeClock<=0){gemMergeClock=.8;compactGems();}
@@ -1065,11 +1080,18 @@ function update(dt){
 }
 
 function spawnEnemy(){
-  const minute=Math.min(19,Math.floor(elapsed/60)),waves=[["fork"],["fork","knife"],["knife","fork","bat"],["knife","pen","bomb"],["pen","bat","fork"],["bone","pen","bomb"],["bone","bat","knife"],["bully","fork","knife"],["bully","bomb","pen"],["bat","bone","bomb"],["bully","knife","pen"],["bomb","bone","bat"],["bully","bomb","fork"],["bat","pen","bone"],["bully","knife","bomb"],["bone","bully","bat"],["bomb","pen","bully"],["bat","knife","bone","bomb"],["bully","bomb","pen","bat"],["bully","bomb","bone","bat"]],pool=waves[minute],count=minute>0&&elapsed%60<7?2:1;
-  for(let i=0;i<count;i++){const regular=pool.filter(v=>v!=="bomb"),token=Math.random()<.05?"bomb":regular[Math.floor(Math.random()*regular.length)];if(token==="bat"){spawnBatSwarm();continue;}const map={fork:0,knife:1,pen:2,bone:3},type=token==="bomb"?"bombMouse":token==="bully"?"bullyMouse":"mouse",a=Math.random()*Math.PI*2,rad=Math.max(W,H)/cameraZoom*.62+100;pushScaledEnemy(type,player.x+Math.cos(a)*rad,player.y+Math.sin(a)*rad,token in map?{weaponVariant:map[token]}:{});}
+  const minute=Math.min(19,Math.floor(elapsed/60)),waves=[
+    ["fork"],["fork","knife"],["knife","sparrow"],["fork","bat","sparrow"],["pen","frog","bomb"],
+    ["frog","sparrow","knife"],["bone","snail","fork"],["snail","frog","bat"],["slime","pen","bomb"],
+    ["slime","snail","sparrow"],["spider","bone","frog"],["spider","slime","bat"],["bully","snail","bomb"],
+    ["sparrow","spider","pen"],["bully","frog","slime"],["snail","bully","bat"],["spider","bomb","slime"],
+    ["sparrow","frog","snail","bully"],["spider","slime","bomb","bat"],["bully","spider","snail","slime","bat"]
+  ],pool=waves[minute],count=minute>0&&elapsed%60<7?2:1;
+  const typeMap={bomb:"bombMouse",bully:"bullyMouse",sparrow:"sparrow",frog:"frog",snail:"fortressSnail",slime:"honeySlime",spider:"silkSpider"};
+  for(let i=0;i<count;i++){const regular=pool.filter(v=>v!=="bomb"),token=Math.random()<.05&&minute>3?"bomb":regular[Math.floor(Math.random()*regular.length)];if(token==="bat"){spawnBatSwarm();continue;}const mouseMap={fork:0,knife:1,pen:2,bone:3},type=typeMap[token]||"mouse",a=Math.random()*Math.PI*2,rad=Math.max(W,H)/cameraZoom*.62+100;pushScaledEnemy(type,player.x+Math.cos(a)*rad,player.y+Math.sin(a)*rad,token in mouseMap?{weaponVariant:mouseMap[token]}:{});}
 }
 function pushScaledEnemy(type,x,y,extra={}){
-  const stats={mouse:{r:20,hp:40,speed:56,damage:8,xp:9},bombMouse:{r:21,hp:46,speed:60,damage:9,xp:12},bullyMouse:{r:30,hp:190,speed:86,damage:20,xp:32},bat:{r:14,hp:24,speed:165,damage:9,xp:7}},data=stats[type],mid=Math.max(0,Math.min(1,(elapsed-240)/480)),scale=1+elapsed/520+mid*.24,elite=type==="mouse"&&Math.random()<Math.min(.3,.035+elapsed/1500),hp=data.hp*scale*(elite?2.05:1);
+  const stats={mouse:{r:20,hp:40,speed:56,damage:8,xp:9},bombMouse:{r:21,hp:46,speed:60,damage:9,xp:12},bullyMouse:{r:30,hp:190,speed:86,damage:20,xp:32},bat:{r:14,hp:24,speed:165,damage:9,xp:7},sparrow:{r:17,hp:31,speed:126,damage:10,xp:10},frog:{r:23,hp:82,speed:43,damage:13,xp:17},fortressSnail:{r:27,hp:235,speed:25,damage:15,xp:25,armor:.42},honeySlime:{r:24,hp:118,speed:48,damage:12,xp:20},silkSpider:{r:21,hp:94,speed:54,damage:11,xp:19}},data=stats[type],mid=Math.max(0,Math.min(1,(elapsed-240)/480)),scale=1+elapsed/520+mid*.24,elite=type==="mouse"&&Math.random()<Math.min(.3,.035+elapsed/1500),hp=data.hp*scale*(elite?2.05:1);
   enemies.push({type,x,y,...data,r:data.r,hp,maxHp:hp,damage:Math.round(data.damage*(1+mid*.28)),xp:Math.round(data.xp*(1+Math.min(1.1,elapsed/950))*(elite?2.4:1)),speed:data.speed*(1+Math.min(.36,elapsed/4200)+mid*.1)*(elite?.95:1),elite,weaponVariant:type==="mouse"?Math.floor(Math.random()*4):0,orbitHit:0,hitFlash:0,seed:Math.random()*10,...extra});
 }
 function spawnBatSwarm(){
@@ -1220,7 +1242,7 @@ function critProfile(source){
   const profiles={carrot:[.1,2],rocket:[.16,2.5],stone:[.14,2.1],carrotClub:[.18,2.25],hay:[.18,evolved.hay?2.55:2.2],seed:[.09,evolved.seed?2.7:2.35],seedShard:[.07,2],acorn:[.14,evolved.acorn?2.4:2.05],meteor:[.11,evolved.meteor?2.5:2.25],dandelionEvolved:[.07,1.75],laserEvolved:[.16,2.25],storyEvolved:[.13,2.2],bellEvolved:[.1,2]};
   if(source==="bubble"&&evolved.bubble)return [.08,1.8];return profiles[source]||null;
 }
-function hitEnemy(e,dmg,source=null){const profile=critProfile(source),blueberry=equippedCrop==="blueberry"&&cropEffectTimer>0?.25:0,chance=profile?Math.min(.75,profile[0]*(1+player.crit)+blueberry):0,crit=chance>0&&Math.random()<chance;if(crit)dmg*=profile[1];e.hp-=dmg;e.hitFlash=.11;sfx(crit?"crit":"hit");burst(e.x,e.y,crit?"#ffe45c":"#fff0a8",crit?9:3);if(crit){shake=Math.max(shake,2.2);particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.3,ring:true,r:4,maxR:e.r+24,color:"#ffd84a",duration:.3});for(let i=0;i<8;i++){const a=i*Math.PI/4;particles.push({x:e.x,y:e.y,vx:Math.cos(a)*150,vy:Math.sin(a)*150,life:.28,r:3,color:i%2?"#fff6ac":"#ffbd36"});}texts.push({x:e.x,y:e.y-e.r-6,text:`✦ ${Math.round(dmg)} 暴击!`,color:"#ffc52e",life:.75,size:25,crit:true});}if(e.hp<=0&&!e.dead){e.dead=true;score++;sfx(e.boss?"boss":"kill");shake=Math.max(shake,e.type==="vacuum"?7:2.5);if(e.type==="bombMouse")enemyBombs.push({x:e.x,y:e.y,timer:1.35,maxTimer:1.35,dead:false,r:122,phase:Math.random()*6});if(!e.finalBoss)gems.push({x:e.x,y:e.y,value:e.xp,dead:false,bob:Math.random()*6});if(!e.finalBoss&&runSeedDrops<runSeedTarget&&(e.boss||Math.random()<.0018)){const cropId=cropIds[Math.floor(Math.random()*cropIds.length)];pickups.push({x:e.x-22,y:e.y,type:"farmSeed",cropId,dead:false,bob:0});runSeedDrops++;}if(e.boss&&!e.finalBoss){runBosses++;chests.push({x:e.x,y:e.y,bob:0,dead:false});pickups.push({x:e.x+24,y:e.y,type:"coin",value:10,dead:false,bob:0});}splatter(e);if(e.finalBoss)endGame(true);}}
+function hitEnemy(e,dmg,source=null){const profile=critProfile(source),blueberry=equippedCrop==="blueberry"&&cropEffectTimer>0?.25:0,chance=profile?Math.min(.75,profile[0]*(1+player.crit)+blueberry):0,crit=chance>0&&Math.random()<chance;if(crit)dmg*=profile[1];if(e.armor)dmg*=1-e.armor;e.hp-=dmg;e.hitFlash=.11;sfx(crit?"crit":"hit");burst(e.x,e.y,crit?"#ffe45c":"#fff0a8",crit?9:3);if(crit){shake=Math.max(shake,2.2);particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.3,ring:true,r:4,maxR:e.r+24,color:"#ffd84a",duration:.3});for(let i=0;i<8;i++){const a=i*Math.PI/4;particles.push({x:e.x,y:e.y,vx:Math.cos(a)*150,vy:Math.sin(a)*150,life:.28,r:3,color:i%2?"#fff6ac":"#ffbd36"});}texts.push({x:e.x,y:e.y-e.r-6,text:`✦ ${Math.round(dmg)} 暴击!`,color:"#ffc52e",life:.75,size:25,crit:true});}if(e.hp<=0&&!e.dead){e.dead=true;score++;sfx(e.boss?"boss":"kill");shake=Math.max(shake,e.type==="vacuum"?7:2.5);if(e.type==="bombMouse")enemyBombs.push({x:e.x,y:e.y,timer:1.35,maxTimer:1.35,dead:false,r:122,phase:Math.random()*6});if(e.type==="honeySlime")bossTrails.push({x:e.x,y:e.y,life:4.5,maxLife:4.5,r:78,color:"#e6ad3c",danger:false,slowPlayer:true});if(!e.finalBoss)gems.push({x:e.x,y:e.y,value:e.xp,dead:false,bob:Math.random()*6});if(!e.finalBoss&&runSeedDrops<runSeedTarget&&(e.boss||Math.random()<.0018)){const cropId=cropIds[Math.floor(Math.random()*cropIds.length)];pickups.push({x:e.x-22,y:e.y,type:"farmSeed",cropId,dead:false,bob:0});runSeedDrops++;}if(e.boss&&!e.finalBoss){runBosses++;chests.push({x:e.x,y:e.y,bob:0,dead:false});pickups.push({x:e.x+24,y:e.y,type:"coin",value:10,dead:false,bob:0});}splatter(e);if(e.finalBoss)endGame(true);}}
 function explodeEnemyBomb(b){
   b.dead=true;sfx("boss");shake=Math.max(shake,5);pixelExplosion(b.x,b.y,b.r);
   particles.push({x:b.x,y:b.y,vx:0,vy:0,life:.5,ring:true,r:8,maxR:b.r,color:"#ff704f",duration:.5});
@@ -1335,6 +1357,7 @@ function drawBossTrail(t){
   ctx.save();ctx.globalAlpha=Math.max(0,t.life/t.maxLife)*.55;ctx.shadowBlur=24;ctx.shadowColor=t.color;ctx.fillStyle=t.color;ctx.beginPath();ctx.arc(t.x,t.y,t.r*(.6+t.life/t.maxLife*.4),0,Math.PI*2);ctx.fill();ctx.restore();
 }
 function drawEnemyOrb(o){
+  if(o.silk){ctx.save();ctx.translate(o.x,o.y);ctx.rotate(Math.atan2(o.vy,o.vx));ctx.strokeStyle="#fffaf0";ctx.lineWidth=3;ctx.shadowBlur=10;ctx.shadowColor="#d8f4ff";ctx.beginPath();for(let i=0;i<3;i++){const r=o.r*(.7+i*.45);ctx.arc(0,0,r,0,Math.PI*2);ctx.moveTo(-r,0);ctx.lineTo(r,0);ctx.moveTo(0,-r);ctx.lineTo(0,r);}ctx.stroke();ctx.restore();return;}
   ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.phase);ctx.shadowBlur=22;ctx.shadowColor="#6feaff";
   const g=ctx.createRadialGradient(-3,-3,1,0,0,o.r*1.5);g.addColorStop(0,"#fff");g.addColorStop(.28,"#65f5ff");g.addColorStop(.7,"#714dff");g.addColorStop(1,"rgba(55,20,160,0)");
   ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,o.r*1.55,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#d9fbff";ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,0,o.r*1.9,o.r*.62,0,0,Math.PI*2);ctx.stroke();ctx.restore();
