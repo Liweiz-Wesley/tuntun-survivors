@@ -540,7 +540,7 @@ for(const [key,src] of Object.entries(pixelArtSources)){const image=new Image();
 const pixelIconNames={
   carrot:"carrot",dandelion:"dandelion",hay:"hay",seed:"seed",laser:"laser",bottle:"bottle",acorn:"acorn",meteor:"meteor",bubble:"bubble",
   health:"meta-health",heart:"meta-health",damage:"meta-damage",power:"meta-damage",speed:"meta-speed",magnet:"meta-magnet",regen:"meta-regen",fortune:"meta-fortune",luck:"meta-fortune",reroll:"meta-reroll",banish:"meta-banish",
-  chew:"carrot",area:"bubble",cooldown:"dandelion",roll:"roll",watermelon:"watermelon",squeal:"squeal",stone:"stone",carrotClub:"carrot-club"
+  chew:"chew",area:"area",cooldown:"cooldown",roll:"roll",watermelon:"watermelon",squeal:"squeal",stone:"stone",carrotClub:"carrot-club"
 };
 function pixelIcon(id,fallback="",className="pixel-ui-icon"){
   const name=pixelIconNames[id];return name?`<img class="${className}" src="assets/sprites/icons/${name}.png" alt="">`:fallback;
