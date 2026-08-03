@@ -27,6 +27,8 @@ const merged = `<!doctype html>
     const pages={zh:"${zh64}",en:"${en64}"};
     const decode=value=>new TextDecoder().decode(Uint8Array.from(atob(value),c=>c.charCodeAt(0)));
     const frame=document.querySelector('#gameFrame'),select=document.querySelector('#languageSelect');
+    const testCoins=Math.min(100000,Math.max(0,Number(new URLSearchParams(location.search).get('testCoins'))||0));
+    if(testCoins){try{const key='tuntun-survivors-save-v2',save=JSON.parse(localStorage.getItem(key)||'{}');save.coins=Math.max(Number(save.coins)||0,testCoins);localStorage.setItem(key,JSON.stringify(save));}catch(e){localStorage.setItem('tuntun-survivors-save-v2',JSON.stringify({coins:testCoins}));}}
     let language=localStorage.getItem('tuntun-language')||'zh';
     if(!pages[language])language='zh';
     select.value=language;
