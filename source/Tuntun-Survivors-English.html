@@ -164,6 +164,9 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
   border-radius: 10px; color: #39734f; background: #eaf5df;
   font-size: 11px; line-height: 1.45;
 }
+.evolution-hint { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:8px; padding:5px 8px; border:2px solid #e4b84f; border-radius:10px; color:#795321; background:#fff2b8; box-shadow:0 2px 0 rgba(139,93,31,.18); font-size:10px; font-weight:900; }
+.evolution-hint .pixel-ui-icon { width:27px; height:27px; }
+.evolution-hint em { max-width:92px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-style:normal; }
 .choice small { display: block; margin-top: 7px; color: #a39483; font: 800 10px inherit; }
 .level-build { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:14px 0 4px; padding:10px; border:2px solid #e6d9bf; border-radius:17px; background:rgba(255,255,255,.58); }
 .level-build-group { display:flex; align-items:center; gap:8px; min-width:0; }
@@ -1168,9 +1171,16 @@ function rollUpgradePicks(){
   currentPicks=[];const remaining=[...pool];while(currentPicks.length<3&&remaining.length){const pick=weightedPick(remaining);currentPicks.push(pick);remaining.splice(remaining.indexOf(pick),1);}
   if(!currentPicks.length)currentPicks=[{id:"bonusCoins",icon:"🪙",name:"COIN POUCH",desc:"All equipment is maxed out.",preview(){return "Gain 30 coins";},apply(){addCoins(30);}}];
 }
+function upgradeEvolutionHint(u){
+  const pairs=[];
+  if(u.id in passives)evolutionRecipes.filter(r=>r.passive===u.id&&weapons[r.weapon]>0&&!evolved[r.weapon]).forEach(r=>pairs.push(r.weapon));
+  else if(u.id in weapons)evolutionRecipes.filter(r=>r.weapon===u.id&&passives[r.passive]>0&&!evolved[r.weapon]).forEach(r=>pairs.push(r.passive));
+  if(!pairs.length)return "";
+  return pairs.map(id=>{const mate=upgrades.find(x=>x.id===id);return `<div class="evolution-hint"><b>${tr("进化配套","EVO PAIR")}</b>${pixelIcon(id,mate?.icon||"✨")}<em>${mate?.name||id}</em></div>`;}).join("");
+}
 function renderUpgradeChoices(){
   renderLevelBuild();
-  ui.choices.innerHTML=currentPicks.map((u,i)=>`<button class="choice" data-i="${i}"><span class="icon">${pixelIcon(u.id,u.icon)}</span><h3>${u.name}</h3><p>${typeof u.desc==="function"?u.desc():u.desc}</p><b class="effect">${u.preview()}</b><small>${banishMode?"CLICK TO BANISH":"CLICK TO CHOOSE"}</small></button>`).join("");
+  ui.choices.innerHTML=currentPicks.map((u,i)=>`<button class="choice" data-i="${i}"><span class="icon">${pixelIcon(u.id,u.icon)}</span><h3>${u.name}</h3><p>${typeof u.desc==="function"?u.desc():u.desc}</p><b class="effect">${u.preview()}</b>${upgradeEvolutionHint(u)}<small>${banishMode?"CLICK TO BANISH":"CLICK TO CHOOSE"}</small></button>`).join("");
   ui.choices.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{const u=currentPicks[+b.dataset.i];if(banishMode&&u.id!=="bonusCoins"){banishedUpgrades.add(u.id);banishesLeft--;banishMode=false;rollUpgradePicks();renderUpgradeChoices();return;}u.apply();ui.level.classList.add("hidden");paused=false;banishMode=false;renderTray();});
   const rr=document.querySelector("#rerollBtn"),bn=document.querySelector("#banishBtn");document.querySelector("#rerollCount").textContent=rerollsLeft;document.querySelector("#banishCount").textContent=banishesLeft;rr.disabled=rerollsLeft<=0;bn.disabled=banishesLeft<=0;bn.classList.toggle("active",banishMode);
 }
