@@ -633,7 +633,7 @@ let W = innerWidth, H = innerHeight, dpr = 1;
 const cameraZoom = .78;
 let running = false, paused = false, last = 0, elapsed = 0, score = 0, level = 1, finalPhase = false;
 let xp = 0, xpNeed = 18, spawnClock = 0, shotClock = 0, hayClock = 0, seedClock = 0, laserClock = 0, bottleClock = 0, acornClock=0, meteorClock=0, bubbleClock=0, storyClock=0, bellClock=0, gemMergeClock=0, skillCooldown = 0, cropCooldown=0,cropMaxCooldown=0,cropEffectTimer=0,cropTick=0,equippedCrop=null,runSeedDrops=0,runSeedTarget=1, freezeTimer=0, playerSlowTimer=0, flameTimer=0, flameClock=0, snackRateTimer=0, snackSpeedTimer=0, snackHealTimer=0, snackXpTimer=0, potRespawnClock=12, shake = 0, flash = 0, runBosses=0, runRewardGranted=false;
-let enemies = [], shots = [], swings = [], lasers = [], bottles = [], zones = [], gems = [], chests = [], obstacles=[], pots=[], pickups=[], enemyBombs=[],enemyOrbs=[],bossWaves=[],bossTrails=[],particles = [], texts = [], bossWave = 0,eliteWave=0,mapAnchorX=0,mapAnchorY=0,mapChunkX=NaN,mapChunkY=NaN,rerollsLeft=0,banishesLeft=0,currentPicks=[],banishMode=false;
+let enemies = [], shots = [], swings = [], lasers = [], bottles = [], zones = [], gems = [], chests = [], obstacles=[], pots=[], pickups=[], enemyBombs=[],enemyOrbs=[],bossWaves=[],bossTrails=[],weaponFx=[],particles = [], texts = [], bossWave = 0,eliteWave=0,mapAnchorX=0,mapAnchorY=0,mapChunkX=NaN,mapChunkY=NaN,rerollsLeft=0,banishesLeft=0,currentPicks=[],banishMode=false;
 let banishedUpgrades=new Set();
 let visitedFoodChunks=new Set();
 const bossTimes = [300,600,900];
@@ -919,7 +919,7 @@ function startGame(){
   Object.assign(passives,{speed:0,heart:0,magnet:0,regen:0,power:0,chew:0,luck:0,area:0,cooldown:0,growth:0,armor:0});
   Object.assign(evolved,{carrot:false,dandelion:false,hay:false,seed:false,laser:false,bottle:false,acorn:false,meteor:false,bubble:false,story:false,bell:false});
   elapsed=score=xp=spawnClock=shotClock=hayClock=seedClock=laserClock=bottleClock=acornClock=meteorClock=bubbleClock=storyClock=bellClock=gemMergeClock=skillCooldown=freezeTimer=playerSlowTimer=flameTimer=flameClock=snackRateTimer=snackSpeedTimer=snackHealTimer=snackXpTimer=0;runBosses=0;runRewardGranted=false;potRespawnClock=12; level=1; xpNeed=18;visitedFoodChunks=new Set();
-  enemies=[];shots=[];swings=[];lasers=[];bottles=[];zones=[];gems=[];chests=[];obstacles=[];pots=[];pickups=[];enemyBombs=[];enemyOrbs=[];bossWaves=[];bossTrails=[];particles=[];texts=[];bossWave=0;eliteWave=0;bossBags={1:[],2:[],3:[],4:[]};finalPhase=false;running=true;paused=false;last=performance.now();buildMap();
+  enemies=[];shots=[];swings=[];lasers=[];bottles=[];zones=[];gems=[];chests=[];obstacles=[];pots=[];pickups=[];enemyBombs=[];enemyOrbs=[];bossWaves=[];bossTrails=[];weaponFx=[];particles=[];texts=[];bossWave=0;eliteWave=0;bossBags={1:[],2:[],3:[],4:[]};finalPhase=false;running=true;paused=false;last=performance.now();buildMap();
   ui.start.classList.add("hidden");ui.pause.classList.add("hidden");ui.codex.classList.add("hidden");ui.shop.classList.add("hidden");ui.farm.classList.add("hidden");ui.end.classList.add("hidden");ui.level.classList.add("hidden");ui.hud.classList.remove("hidden");updateCoinUI();const skillIcon=selectedCharacter==="rabbit"?"roll":selectedCharacter==="chinchilla"?"watermelon":"squeal";ui.skillName.innerHTML=pixelIcon(skillIcon)+" "+char.skill;ui.skillBar.setAttribute("aria-label",char.skill);
   renderTray(); requestAnimationFrame(loop);
 }
@@ -1096,10 +1096,11 @@ function update(dt){
   bossTrails.forEach(t=>{t.life-=dt;const touching=t.life>.25&&dist(t.x,t.y,player.x,player.y)<t.r+player.r*.5;if(t.danger&&touching)hurtPlayer(t.damage||10);if(t.slowPlayer&&touching)playerSlowTimer=Math.max(playerSlowTimer,.18);});
   bossWaves.forEach(w=>{w.life-=dt;w.hitCooldown=Math.max(0,(w.hitCooldown||0)-dt);if(w.charge>0){w.charge-=dt;}else{w.angle+=w.spin*dt;const len=1050,x2=w.x+Math.cos(w.angle)*len,y2=w.y+Math.sin(w.angle)*len;if(w.hitCooldown<=0&&pointSegmentDistance(player.x,player.y,w.x,w.y,x2,y2)<25+player.r*.45){hurtPlayer(w.damage||22);w.hitCooldown=.9;}}});
   enemyBombs.forEach(b=>{b.timer-=dt;if(b.timer<=0&&!b.dead)explodeEnemyBomb(b);});
+  weaponFx.forEach(f=>{f.life-=dt;f.rot=(f.rot||0)+dt*(f.spin||0);});
   gemMergeClock-=dt;if(gemMergeClock<=0){gemMergeClock=.8;compactGems();}
   particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.96;p.vy*=.96;if(p.kind==="splat"){p.vy+=95*dt;p.rot=(p.rot||0)+dt*7;}p.life-=dt;});
   texts.forEach(x=>{x.y-=28*dt;x.life-=dt;});
-  enemies=enemies.filter(e=>!e.dead);shots=shots.filter(s=>!s.dead&&s.life>0).slice(-180);swings=swings.filter(s=>s.life>0);lasers=lasers.filter(l=>l.life>0);bottles=bottles.filter(b=>!b.dead);zones=zones.filter(z=>z.life>0);gems=gems.filter(g=>!g.dead).slice(-500);chests=chests.filter(c=>!c.dead);pots=pots.filter(p=>!p.dead);pickups=pickups.filter(p=>!p.dead).slice(-120);enemyBombs=enemyBombs.filter(b=>!b.dead).slice(-40);enemyOrbs=enemyOrbs.filter(o=>!o.dead&&o.life>0).slice(-80);bossTrails=bossTrails.filter(t=>t.life>0).slice(-100);bossWaves=bossWaves.filter(w=>w.life>0);particles=particles.filter(p=>p.life>0).slice(-650);texts=texts.filter(x=>x.life>0).slice(-80);
+  enemies=enemies.filter(e=>!e.dead);shots=shots.filter(s=>!s.dead&&s.life>0).slice(-180);swings=swings.filter(s=>s.life>0);lasers=lasers.filter(l=>l.life>0);bottles=bottles.filter(b=>!b.dead);zones=zones.filter(z=>z.life>0);gems=gems.filter(g=>!g.dead).slice(-500);chests=chests.filter(c=>!c.dead);pots=pots.filter(p=>!p.dead);pickups=pickups.filter(p=>!p.dead).slice(-120);enemyBombs=enemyBombs.filter(b=>!b.dead).slice(-40);enemyOrbs=enemyOrbs.filter(o=>!o.dead&&o.life>0).slice(-80);bossTrails=bossTrails.filter(t=>t.life>0).slice(-100);bossWaves=bossWaves.filter(w=>w.life>0);weaponFx=weaponFx.filter(f=>f.life>0).slice(-90);particles=particles.filter(p=>p.life>0).slice(-650);texts=texts.filter(x=>x.life>0).slice(-80);
   potRespawnClock-=dt;if(potRespawnClock<=0){spawnOffscreenPot();potRespawnClock=7+Math.random()*5;}
   updateUI();
 }
@@ -1194,12 +1195,14 @@ function startFinalBattle(){
   flash=.72;shake=18;sfx("boss");texts.push({x:player.x,y:player.y-100,text:"⚠ FINAL BATTLE: Starcrown Garden Devourer!",color:"#9c4fd1",life:3.5});
   for(let i=0;i<70;i++){const a=Math.random()*Math.PI*2,s=80+Math.random()*260;particles.push({x:player.x,y:player.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1+Math.random(),r:2+Math.random()*6,color:i%3===0?"#9b72e3":i%2?"#ff78b4":"#ffe478"});}
 }
+function emitWeaponFx(kind,x,y,r,evo=false,angle=0){const life=evo?.95:.58;weaponFx.push({kind,x,y,r,angle,evo,life,maxLife:life,rot:0,spin:evo?2.2:1.1,seed:Math.random()*10});}
 function fireCarrots(){
   if(selectedCharacter==="rabbit"){firePebbles();return;}
   if(selectedCharacter==="chinchilla"){swingCarrotClub();return;}
   const sorted=[...enemies.filter(e=>isOnScreen(e.x,e.y,10)),...pots.filter(p=>!p.dead&&isOnScreen(p.x,p.y,10))].sort((a,b)=>dist(a.x,a.y,player.x,player.y)-dist(b.x,b.y,player.x,player.y));
   const target=sorted[0];if(!target)return;
   const base=Math.atan2(target.y-player.y,target.x-player.x);
+  emitWeaponFx("carrot",player.x,player.y,70,evolved.carrot,base);
   sfx("shot");for(let i=0;i<player.projectiles;i++){const spread=(i-(player.projectiles-1)/2)*.13,kind=evolved.carrot?"rocket":"carrot",speed=evolved.carrot?540:470;shots.push({kind,x:player.x,y:player.y,vx:Math.cos(base+spread)*speed,vy:Math.sin(base+spread)*speed,r:(evolved.carrot?13:8)*player.size*player.area,damage:player.damage*(evolved.carrot?1.65:1),life:2.5,rot:base+spread,pierce:evolved.carrot?0:(weapons.carrot>=5?1:0)+player.pierce,blast:(evolved.carrot?72:0)*player.area});}
 }
 function firePebbles(){
@@ -1213,6 +1216,7 @@ function swingCarrotClub(){
 function fireHay(){
   const angle=player.facing>0?0:Math.PI,radius=(125+weapons.hay*12)*player.area,damage=20+weapons.hay*7.5,arc=1.65;
   swings.push({x:player.x,y:player.y,angle,radius:evolved.hay?radius+35:radius,life:.42,maxLife:.42,full:evolved.hay,scythe:!evolved.hay});
+  emitWeaponFx("hay",player.x,player.y,radius,evolved.hay,angle);
   if(!evolved.hay){for(let i=0;i<9;i++){const a=angle-arc+i*arc*2/8,r=radius*(.72+Math.random()*.25);particles.push({x:player.x+Math.cos(a)*r,y:player.y+Math.sin(a)*r,vx:Math.cos(a)*55,vy:Math.sin(a)*55,life:.26,r:2+Math.random()*3,color:i%2?"#e6f2b0":"#a9d46f",pixel:true});}}
   enemies.forEach(e=>{const dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),a=Math.atan2(dy,dx),delta=Math.atan2(Math.sin(a-angle),Math.cos(a-angle));if(d<(evolved.hay?radius+35:radius)+e.r&&(evolved.hay||Math.abs(delta)<arc))hitEnemy(e,damage*(evolved.hay?1.5:1),"hay");});
   pots.forEach(p=>{if(p.dead)return;const dx=p.x-player.x,dy=p.y-player.y,d=Math.hypot(dx,dy),a=Math.atan2(dy,dx),delta=Math.atan2(Math.sin(a-angle),Math.cos(a-angle));if(d<(evolved.hay?radius+35:radius)+p.r&&(evolved.hay||Math.abs(delta)<arc))hitPot(p,damage*(evolved.hay?1.5:1));});
@@ -1220,6 +1224,7 @@ function fireHay(){
 function fireSeeds(){
   const targets=enemies.filter(e=>isOnScreen(e.x,e.y,20));if(!targets.length)return;
   const target=targets.sort((a,b)=>dist(a.x,a.y,player.x,player.y)-dist(b.x,b.y,player.x,player.y))[0],a=Math.atan2(target.y-player.y,target.x-player.x);
+  emitWeaponFx("seed",player.x,player.y,80,evolved.seed,a);
   shots.push({kind:"seed",x:player.x,y:player.y,vx:Math.cos(a)*(evolved.seed?125:155+weapons.seed*7),vy:Math.sin(a)*(evolved.seed?125:155+weapons.seed*7),r:(12+weapons.seed*2)*(evolved.seed?1.55:1)*player.area,damage:(24+weapons.seed*10)*(evolved.seed?1.8:1),life:4.8,rot:a,pierce:0,blast:(48+weapons.seed*9)*(evolved.seed?1.75:1)*player.area});
 }
 function explodeSeed(s){
@@ -1238,30 +1243,31 @@ function explodeSeed(s){
 function fireLaser(){
   const targets=enemies.filter(e=>isOnScreen(e.x,e.y,0));if(!targets.length)return;
   const count=evolved.laser?3:Math.min(3,1+Math.floor((weapons.laser-1)/2));
-  [...targets].sort(()=>Math.random()-.5).slice(0,count).forEach(t=>lasers.push({kind:evolved.laser?"laserEvolved":null,x:t.x,y:t.y,radius:(35+weapons.laser*4)*(evolved.laser?1.45:1)*player.area,damage:(28+weapons.laser*12)*(evolved.laser?1.7:1),life:.48,maxLife:.48,hit:false,rainbow:evolved.laser}));
+  [...targets].sort(()=>Math.random()-.5).slice(0,count).forEach(t=>{lasers.push({kind:evolved.laser?"laserEvolved":null,x:t.x,y:t.y,radius:(35+weapons.laser*4)*(evolved.laser?1.45:1)*player.area,damage:(28+weapons.laser*12)*(evolved.laser?1.7:1),life:.48,maxLife:.48,hit:false,rainbow:evolved.laser});emitWeaponFx("laser",t.x,t.y,70,evolved.laser,0);});
 }
 function throwBottle(){
   const targets=enemies.filter(e=>isOnScreen(e.x,e.y,0));if(!targets.length)return;
-  const t=targets[Math.floor(Math.random()*targets.length)],count=evolved.bottle?2:1;for(let i=0;i<count;i++)bottles.push({x:player.x,y:player.y,tx:t.x+(i?55:-25),ty:t.y+(i?25:-15),t:0,duration:.75,garden:evolved.bottle});
+  const t=targets[Math.floor(Math.random()*targets.length)],count=evolved.bottle?2:1;for(let i=0;i<count;i++){const tx=t.x+(i?55:-25),ty=t.y+(i?25:-15);bottles.push({x:player.x,y:player.y,tx,ty,t:0,duration:.75,garden:evolved.bottle});emitWeaponFx("bottle",tx,ty,80,evolved.bottle,0);}
 }
 function fireAcorns(){
   const targets=enemies.filter(e=>isOnScreen(e.x,e.y,20));if(!targets.length)return;const target=targets.sort((a,b)=>dist(a.x,a.y,player.x,player.y)-dist(b.x,b.y,player.x,player.y))[0],base=Math.atan2(target.y-player.y,target.x-player.x),count=(1+Math.floor((weapons.acorn-1)/3))+(evolved.acorn?2:0);
-  for(let i=0;i<count;i++){const a=base+(i-(count-1)/2)*.24,sp=evolved.acorn?410:330;shots.push({kind:"acorn",x:player.x,y:player.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:(9+weapons.acorn*.7)*player.area,damage:(14+weapons.acorn*6)*(evolved.acorn?1.55:1),life:2.1,rot:a,pierce:2+Math.floor(weapons.acorn/2)+(evolved.acorn?3:0),hitIds:new Set(),age:0});}
+  emitWeaponFx("acorn",player.x,player.y,76,evolved.acorn,base);for(let i=0;i<count;i++){const a=base+(i-(count-1)/2)*.24,sp=evolved.acorn?410:330;shots.push({kind:"acorn",x:player.x,y:player.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:(9+weapons.acorn*.7)*player.area,damage:(14+weapons.acorn*6)*(evolved.acorn?1.55:1),life:2.1,rot:a,pierce:2+Math.floor(weapons.acorn/2)+(evolved.acorn?3:0),hitIds:new Set(),age:0});}
 }
 function fireMeteor(){
   const targets=enemies.filter(e=>isOnScreen(e.x,e.y,0));if(!targets.length)return;const count=evolved.meteor?3:1+Math.floor((weapons.meteor-1)/3),picked=[...targets].sort(()=>Math.random()-.5).slice(0,count);
-  picked.forEach((t,i)=>lasers.push({kind:"meteor",x:t.x,y:t.y,radius:(40+weapons.meteor*6)*player.area*(evolved.meteor?1.35:1),damage:(30+weapons.meteor*11)*(evolved.meteor?1.6:1),life:.95+i*.08,maxLife:.95+i*.08,delay:.38+i*.08,hit:false,meteor:true}));
+  picked.forEach((t,i)=>{lasers.push({kind:"meteor",x:t.x,y:t.y,radius:(40+weapons.meteor*6)*player.area*(evolved.meteor?1.35:1),damage:(30+weapons.meteor*11)*(evolved.meteor?1.6:1),life:.95+i*.08,maxLife:.95+i*.08,delay:.38+i*.08,hit:false,meteor:true});emitWeaponFx("meteor",t.x,t.y,85,evolved.meteor,0);});
 }
 function fireBubbles(){
   const targets=enemies.filter(e=>isOnScreen(e.x,e.y,20));if(!targets.length)return;const target=targets.sort((a,b)=>dist(a.x,a.y,player.x,player.y)-dist(b.x,b.y,player.x,player.y))[0],base=Math.atan2(target.y-player.y,target.x-player.x),count=1+Math.floor((weapons.bubble-1)/3)+(evolved.bubble?2:0);
-  for(let i=0;i<count;i++){const a=base+(i-(count-1)/2)*.2,sp=evolved.bubble?205:165;shots.push({kind:"bubble",x:player.x,y:player.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:(11+weapons.bubble)*player.area*(evolved.bubble?1.35:1),damage:(10+weapons.bubble*5)*(evolved.bubble?1.45:1),life:evolved.bubble?4.5:3.6,rot:a,pierce:2+weapons.bubble+(evolved.bubble?5:0),hitIds:new Set(),age:0});}
+  emitWeaponFx("bubble",player.x,player.y,74,evolved.bubble,base);for(let i=0;i<count;i++){const a=base+(i-(count-1)/2)*.2,sp=evolved.bubble?230:185;shots.push({kind:"bubble",x:player.x,y:player.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:(13+weapons.bubble*1.25)*player.area*(evolved.bubble?1.4:1),damage:(11+weapons.bubble*5.5)*(evolved.bubble?1.5:1),life:evolved.bubble?4.7:3.8,rot:a,pierce:2+weapons.bubble+(evolved.bubble?5:0),hitIds:new Set(),age:0});}
 }
 function fireStorybook(){
   const targets=enemies.filter(e=>isOnScreen(e.x,e.y,0));if(!targets.length)return;const count=1+Math.floor((weapons.story-1)/2)+(evolved.story?3:0);
-  [...targets].sort(()=>Math.random()-.5).slice(0,count).forEach((t,i)=>lasers.push({kind:evolved.story?"storyEvolved":null,x:t.x,y:t.y,radius:(28+weapons.story*3)*(evolved.story?1.55:1)*player.area,damage:(22+weapons.story*8)*(evolved.story?1.7:1),life:.72+i*.06,maxLife:.72+i*.06,delay:.24+i*.04,hit:false,story:true}));
+  [...targets].sort(()=>Math.random()-.5).slice(0,count).forEach((t,i)=>{lasers.push({kind:evolved.story?"storyEvolved":null,x:t.x,y:t.y,radius:(28+weapons.story*3)*(evolved.story?1.55:1)*player.area,damage:(22+weapons.story*8)*(evolved.story?1.7:1),life:.72+i*.06,maxLife:.72+i*.06,delay:.24+i*.04,hit:false,story:true});emitWeaponFx("story",t.x,t.y,62,evolved.story,i*.7);});
 }
 function ringBell(){
-  const radius=(90+weapons.bell*13)*(evolved.bell?1.55:1)*player.area,damage=(12+weapons.bell*5)*(evolved.bell?1.65:1);
+  const radius=(145+weapons.bell*15)*(evolved.bell?1.72:1)*player.area,damage=(14+weapons.bell*5.5)*(evolved.bell?1.72:1);
+  emitWeaponFx("bell",player.x,player.y,radius,evolved.bell,0);
   particles.push({x:player.x,y:player.y,vx:0,vy:0,life:.65,ring:true,r:10,maxR:radius,color:evolved.bell?"#a98cff":"#f3c75b",duration:.65});
   enemies.forEach(e=>{if(dist(e.x,e.y,player.x,player.y)<radius+e.r)hitEnemy(e,damage,evolved.bell?"bellEvolved":null);});
 }
@@ -1399,7 +1405,7 @@ function isOnScreen(x,y,pad=0){return Math.abs(x-player.x)<=W/(2*cameraZoom)+pad
 function draw(){
   ctx.save();ctx.clearRect(0,0,W,H);const sx=shake?(Math.random()-.5)*shake:0,sy=shake?(Math.random()-.5)*shake:0;
   ctx.translate(W/2+sx,H/2+sy);ctx.scale(cameraZoom,cameraZoom);ctx.translate(-player.x,-player.y);
-  drawGround();drawGardenFeatures();obstacles.forEach(drawObstacle);zones.forEach(drawZone);gems.forEach(drawGem);pickups.forEach(drawPickup);pots.forEach(drawPot);chests.forEach(drawChest);bottles.forEach(drawBottle);lasers.forEach(drawLaser);bossTrails.forEach(drawBossTrail);enemyBombs.forEach(drawEnemyBomb);particles.forEach(drawParticle);shots.forEach(drawCarrot);swings.forEach(drawSwing);enemies.forEach(drawEnemy);enemyOrbs.forEach(drawEnemyOrb);bossWaves.forEach(drawBossWave);
+  drawGround();drawGardenFeatures();obstacles.forEach(drawObstacle);zones.forEach(drawZone);gems.forEach(drawGem);pickups.forEach(drawPickup);pots.forEach(drawPot);chests.forEach(drawChest);bottles.forEach(drawBottle);lasers.forEach(drawLaser);bossTrails.forEach(drawBossTrail);enemyBombs.forEach(drawEnemyBomb);weaponFx.forEach(drawWeaponFx);particles.forEach(drawParticle);shots.forEach(drawCarrot);swings.forEach(drawSwing);enemies.forEach(drawEnemy);enemyOrbs.forEach(drawEnemyOrb);bossWaves.forEach(drawBossWave);
   if(weapons.dandelion)drawOrbit();if(flameTimer>0)drawFlameAura();drawPlayer();texts.forEach(drawText);ctx.restore();
   if(flash){ctx.fillStyle=`rgba(255,239,159,${flash})`;ctx.fillRect(0,0,W,H);}
   drawChestIndicators();drawEliteIndicators();
@@ -1407,6 +1413,18 @@ function draw(){
 function drawBossTrail(t){
   ctx.save();ctx.globalAlpha=Math.max(0,t.life/t.maxLife)*.55;ctx.shadowBlur=24;ctx.shadowColor=t.color;ctx.fillStyle=t.color;ctx.beginPath();ctx.arc(t.x,t.y,t.r*(.6+t.life/t.maxLife*.4),0,Math.PI*2);ctx.fill();ctx.restore();
 }
+function drawWeaponFx(f){const p=1-f.life/f.maxLife,a=Math.max(0,1-p),r=f.r*(.34+p*.72);ctx.save();ctx.translate(f.x,f.y);ctx.rotate(f.angle+(f.rot||0));ctx.globalAlpha=a;ctx.lineCap="round";ctx.lineJoin="round";if(f.evo){ctx.globalCompositeOperation="lighter";ctx.shadowBlur=22;}
+  if(f.kind==="carrot"){ctx.shadowColor="#ff9b3d";for(let i=0;i<(f.evo?7:4);i++){const q=(i-(f.evo?3:1.5))*.16;ctx.strokeStyle=i%2?"#ffcf55":"#74bd62";ctx.lineWidth=f.evo?7:4;ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(18+r*.55,Math.sin(q)*r*.5);ctx.stroke();}}
+  else if(f.kind==="hay"){ctx.strokeStyle=f.evo?"#fff3a0":"#bfe17c";ctx.lineWidth=f.evo?8:4;ctx.setLineDash(f.evo?[20,9]:[9,7]);ctx.beginPath();ctx.arc(0,0,r,-1.7,1.7);ctx.stroke();ctx.setLineDash([]);}
+  else if(f.kind==="seed"){ctx.shadowColor="#ffd84d";for(let i=0;i<(f.evo?12:7);i++){const q=i*Math.PI*2/(f.evo?12:7),rr=r*(f.evo?.72:.5);ctx.fillStyle=i%2?"#ff9c3e":"#ffe875";ctx.beginPath();ctx.ellipse(Math.cos(q)*rr,Math.sin(q)*rr,f.evo?11:7,f.evo?4:3,q,0,Math.PI*2);ctx.fill();}ctx.fillStyle="#573f31";ctx.beginPath();ctx.arc(0,0,f.evo?12:8,0,Math.PI*2);ctx.fill();}
+  else if(f.kind==="laser"){const cs=f.evo?["#6de8ff","#ffe86a","#ff75bd"]:["#fff4a2"];for(let i=0;i<cs.length;i++){ctx.strokeStyle=cs[i];ctx.lineWidth=f.evo?5:3;ctx.beginPath();ctx.arc(0,0,r*(.48+i*.2),0,Math.PI*2);ctx.stroke();}for(let i=0;i<4;i++){ctx.rotate(Math.PI/2);ctx.fillStyle=cs[i%cs.length];ctx.fillRect(r*.72,-3,f.evo?18:10,6);}}
+  else if(f.kind==="bottle"){ctx.shadowColor="#89ee86";ctx.strokeStyle=f.evo?"#e8ff8c":"#c5a5dc";ctx.lineWidth=f.evo?6:3;ctx.beginPath();ctx.ellipse(0,0,r,r*.55,0,0,Math.PI*2);ctx.stroke();for(let i=0;i<(f.evo?12:6);i++){const q=i*2.4+f.rot,rr=r*(.28+(i%3)*.18);ctx.fillStyle=i%3?"#80d56e":"#ff9ec6";ctx.fillRect(Math.cos(q)*rr-3,Math.sin(q)*rr*.55-3,f.evo?8:6,f.evo?8:6);}}
+  else if(f.kind==="acorn"){ctx.shadowColor="#ffd452";ctx.strokeStyle=f.evo?"#ffe66e":"#a9d16c";ctx.lineWidth=f.evo?7:4;for(let i=0;i<(f.evo?3:1);i++){ctx.beginPath();ctx.arc(0,0,r*(.42+i*.2),-1.2,1.2);ctx.stroke();}if(f.evo){for(let i=0;i<5;i++){const q=i*Math.PI*2/5;ctx.fillStyle="#fff3a2";ctx.fillRect(Math.cos(q)*r*.85-4,Math.sin(q)*r*.85-4,8,8);}}}
+  else if(f.kind==="meteor"){ctx.shadowColor="#ffb64b";ctx.strokeStyle=f.evo?"#fff2a3":"#ffcb63";ctx.lineWidth=f.evo?6:4;ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(0,0,r*.55,0,Math.PI*2);ctx.stroke();for(let i=0;i<(f.evo?10:6);i++){ctx.rotate(Math.PI*2/(f.evo?10:6));ctx.fillStyle=i%2?"#fff1a0":"#f48b45";ctx.fillRect(r*.7,-3,f.evo?22:13,6);}}
+  else if(f.kind==="bubble"){ctx.shadowColor="#5df5ec";ctx.strokeStyle=f.evo?"#9cfff2":"#9eeaff";ctx.lineWidth=f.evo?5:3;for(let i=0;i<(f.evo?7:4);i++){const q=i*2.2+f.rot,rr=r*(.25+(i%3)*.2),sz=(f.evo?10:7)+i%2*4;ctx.beginPath();ctx.arc(Math.cos(q)*rr,Math.sin(q)*rr,sz,0,Math.PI*2);ctx.stroke();}}
+  else if(f.kind==="story"){ctx.shadowColor="#c9a5ff";ctx.strokeStyle=f.evo?"#fff1a7":"#d7b8ff";ctx.lineWidth=f.evo?6:3;ctx.strokeRect(-r*.55,-r*.4,r*1.1,r*.8);ctx.beginPath();ctx.moveTo(0,-r*.4);ctx.lineTo(0,r*.4);ctx.stroke();for(let i=0;i<(f.evo?8:4);i++){const q=i*Math.PI*2/(f.evo?8:4);ctx.fillStyle=i%2?"#ffdf6d":"#bb91ff";ctx.fillRect(Math.cos(q)*r*.78-3,Math.sin(q)*r*.65-3,7,7);}}
+  else if(f.kind==="bell"){ctx.shadowColor=f.evo?"#bf7cff":"#ffd35e";for(let i=0;i<(f.evo?4:2);i++){ctx.strokeStyle=f.evo?(i%2?"#ffe880":"#c58cff"):"#ffd45e";ctx.lineWidth=Math.max(3,(f.evo?9:6)-i);ctx.beginPath();ctx.arc(0,0,r*(.28+p*.55+i*.1),0,Math.PI*2);ctx.stroke();}for(let i=0;i<(f.evo?8:4);i++){const q=i*Math.PI*2/(f.evo?8:4)+f.rot;ctx.save();ctx.translate(Math.cos(q)*r*.72,Math.sin(q)*r*.72);ctx.rotate(-f.rot);ctx.fillStyle=i%2?"#fff1a0":"#d09aff";ctx.font=`${f.evo?24:17}px sans-serif`;ctx.fillText(i%2?"♪":"♫",0,0);ctx.restore();}}
+  ctx.restore();}
 function drawEnemyOrb(o){
   if(o.silk){ctx.save();ctx.translate(o.x,o.y);ctx.rotate(Math.atan2(o.vy,o.vx));ctx.strokeStyle="#fffaf0";ctx.lineWidth=3;ctx.shadowBlur=10;ctx.shadowColor="#d8f4ff";ctx.beginPath();for(let i=0;i<3;i++){const r=o.r*(.7+i*.45);ctx.arc(0,0,r,0,Math.PI*2);ctx.moveTo(-r,0);ctx.lineTo(r,0);ctx.moveTo(0,-r);ctx.lineTo(0,r);}ctx.stroke();ctx.restore();return;}
   ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.phase);ctx.shadowBlur=22;ctx.shadowColor="#6feaff";
