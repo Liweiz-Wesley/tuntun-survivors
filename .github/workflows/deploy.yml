@@ -1,0 +1,36 @@
+name: Pages artifact validation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-static-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm build
+      - name: Ensure generated entry is committed
+        run: git diff --exit-code -- index.html
+      - name: Upload branch-Pages-compatible site
+        uses: actions/upload-artifact@v4
+        with:
+          name: tuntun-survivors-static-site
+          path: |
+            index.html
+            assets
+          retention-days: 7
+
+# Deployment intentionally remains GitHub Pages "Deploy from a branch" on main/root.
+# Switch to actions/upload-pages-artifact + actions/deploy-pages only after changing
+# the repository Pages source setting and validating the new route separately.

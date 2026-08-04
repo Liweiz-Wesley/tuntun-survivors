@@ -1,0 +1,21 @@
+{
+  "name": "tuntun-survivors",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/merge-bilingual.mjs",
+    "check": "node scripts/check-source.mjs",
+    "serve": "node scripts/serve.mjs",
+    "test": "playwright test",
+    "test:smoke": "playwright test tests/game-smoke.spec.js tests/ui-navigation.spec.js tests/gameplay-basic.spec.js",
+    "test:visual": "playwright test tests/visual-capture.spec.js",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
