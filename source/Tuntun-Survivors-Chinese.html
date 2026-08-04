@@ -1332,18 +1332,23 @@ function explodeEnemyBomb(b){
   enemies.forEach(e=>{if(!e.dead&&dist(b.x,b.y,e.x,e.y)<b.r+e.r)hitEnemy(e,e.boss?220:Math.max(9999,e.hp+1));});
   pots.forEach(p=>{if(!p.dead&&dist(b.x,b.y,p.x,p.y)<b.r+p.r)hitPot(p,9999);});
 }
+function rollChestGold(){return 60+Math.floor(Math.pow(Math.random(),4)*441);}
+function chestRewardWithGold(reward,extra=0){
+  const gold=rollChestGold()+extra,desc=`${reward.desc} · ${tr("宝箱金币","CHEST GOLD")} +${gold}`;
+  return {...reward,desc,apply(){reward.apply();addCoins(gold);}};
+}
 function openChest(c){
   sfx("chest");
   const possibleEvolutions=elapsed>=300?evolutionRecipes.filter(r=>weapons[r.weapon]>=8&&passives[r.passive]>0&&!evolved[r.weapon]):[];
   if(possibleEvolutions.length){
     const recipe=possibleEvolutions[Math.floor(Math.random()*possibleEvolutions.length)];
-    return showChestReward({icon:recipe.icon,name:recipe.name,desc:"武器进化成功！",apply(){evolved[recipe.weapon]=true;}});
+    return showChestReward(chestRewardWithGold({icon:recipe.icon,name:recipe.name,desc:"武器进化成功！",apply(){evolved[recipe.weapon]=true;}}));
   }
   const owned=u=>u.id==="carrot"||(u.id in weapons&&weapons[u.id]>0)||(u.id in passives&&passives[u.id]>0);
   const available=upgrades.filter(u=>owned(u)&&(!u.available||u.available()));
-  if(!available.length)return showChestReward({icon:"💖",name:"活力点心",desc:"恢复 60 点生命",apply(){player.hp=Math.min(player.maxHp,player.hp+60);}});
+  if(!available.length)return showChestReward(chestRewardWithGold({icon:"💰",name:"大金币袋",desc:"所有已持有装备已满级",apply(){}},25));
   const reward=available[Math.floor(Math.random()*available.length)];
-  showChestReward({icon:reward.id,fallback:reward.icon,name:reward.name,desc:typeof reward.desc==="function"?reward.desc():reward.desc,apply(){reward.apply();}});
+  showChestReward(chestRewardWithGold({icon:reward.id,fallback:reward.icon,name:reward.name,desc:typeof reward.desc==="function"?reward.desc():reward.desc,apply(){reward.apply();}}));
 }
 function showChestReward(reward){
   pendingChestReward=reward;paused=true;keys.clear();ui.chest.classList.remove("hidden","revealed");
