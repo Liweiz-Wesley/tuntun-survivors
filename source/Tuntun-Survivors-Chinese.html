@@ -1042,12 +1042,21 @@ function nearbyEnemies(grid,x,y,r){
   return found;
 }
 
+let frameErrorCount=0,lastFrameErrorAt=0;
+function reportFrameError(stage,error){
+  const now=performance.now();frameErrorCount++;
+  if(now-lastFrameErrorAt>1000){console.error(`Recovered ${stage} frame error #${frameErrorCount}`,error);lastFrameErrorAt=now;}
+}
+function resetCanvasState(){
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation="source-over";ctx.shadowBlur=0;ctx.setLineDash([]);ctx.lineCap="butt";ctx.lineJoin="miter";
+}
+function recoverCanvasAfterError(){canvas.width=W*dpr;canvas.height=H*dpr;ctx.imageSmoothingEnabled=false;resetCanvasState();}
 function loop(t){
   if(!running)return;
-  const dt=Math.min((t-last)/1000,.034);last=t;
-  if(!paused) update(dt);
-  draw();
-  requestAnimationFrame(loop);
+  const dt=Math.min(Math.max(0,(t-last)/1000),.034);last=t;
+  try{if(!paused)update(dt);}catch(error){reportFrameError("update",error);}
+  try{resetCanvasState();draw();}catch(error){reportFrameError("draw",error);try{recoverCanvasAfterError();}catch{}}
+  finally{if(running)requestAnimationFrame(loop);}
 }
 
 function update(dt){
