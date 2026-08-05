@@ -86,6 +86,11 @@
   - Author: hippo
   - License: CC0
   - Local files: `assets/third_party/oga/pixel-chest-and-coin/`
+- CC0 Food Icons: `https://opengameart.org/content/cc0-food-icons`
+  - Submitter/curator: AntumDeluge
+  - License: CC0
+  - Local files used in the game: selected 32x32 PNGs under `assets/third_party/oga/food/food-ocal/32x32/`
+  - Usage: every player weapon, evolved weapon, projectile, upgrade icon, build tray and codex recipe now uses this single food set. Only referenced PNGs are shipped, not the full source archive.
 - Crazy Critters movement reference: `https://opengameart.org/content/crazy-critters`
   - Author: GrafxKid
   - License: CC0; credit requested by the author.
