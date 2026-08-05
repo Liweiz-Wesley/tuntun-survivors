@@ -1,6 +1,8 @@
 import { readFile, writeFile } from "node:fs/promises";
 
-const removeUnusedEmbeddedCover = source => source.replace(/url\("data:image\/png;base64,[^"]+"\)/g, "none");
+const removeUnusedEmbeddedCover = source => source
+  .replace(/\r\n?/g, "\n")
+  .replace(/url\("data:image\/png;base64,[^"]+"\)/g, "none");
 const chinese = removeUnusedEmbeddedCover(await readFile("source/Tuntun-Survivors-Chinese.html", "utf8"));
 const english = removeUnusedEmbeddedCover(await readFile("source/Tuntun-Survivors-English.html", "utf8"));
 const zh64 = Buffer.from(chinese).toString("base64");
