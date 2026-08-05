@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/merge-bilingual.mjs",
+    "build:cloudflare": "pnpm build && node scripts/build-cloudflare.mjs",
     "check": "node scripts/check-source.mjs",
     "serve": "node scripts/serve.mjs",
     "test": "playwright test",

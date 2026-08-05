@@ -1,5 +1,35 @@
 # Progress
 
+## Cloudflare Pages preview preparation
+
+Status: repository configuration complete; dashboard authorization pending  
+Completed: 2026-08-05
+
+### Completed
+
+- Added a framework-free Cloudflare Pages build that regenerates the bilingual entry and publishes only `index.html` plus `assets/` to `dist/`.
+- Documented the one-time GitHub OAuth connection, `main` production branch, preview branch behavior, PR checks, test query parameters, GitHub Pages coexistence, and build-log troubleshooting.
+- Kept the existing GitHub Pages workflow unchanged.
+
+### Changed files
+
+- `package.json`
+- `.gitignore`
+- `scripts/build-cloudflare.mjs`
+- `docs/CLOUDFLARE_SETUP.md`
+- Generated `index.html`
+
+### Validation
+
+- `pnpm check`: passed.
+- `pnpm build:cloudflare`: passed; generated `dist/index.html` and `dist/assets/`.
+- `pnpm test`: 12 passed and 4 configured skips across desktop Chromium and Pixel 7 emulation.
+
+### Pending owner action
+
+- Complete Cloudflare OAuth and GitHub repository authorization in the Cloudflare dashboard.
+- Create the Pages project with production branch `main`, build command `pnpm build:cloudflare`, and output directory `dist`.
+
 ## Phase 1 — audit and infrastructure
 
 Status: complete  

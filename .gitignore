@@ -13,3 +13,4 @@ assets/sprites/watermelon-guinea-64.png
 node_modules/
 playwright-report/
 test-results/
+dist/
