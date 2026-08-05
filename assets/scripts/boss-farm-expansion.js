@@ -109,7 +109,7 @@ drawPixelEnemy=function(e,facing){
   const action=BOSS_ACTIONS[e.bossId];let ok=false;
   if(action){
     if(e.anim){const spec=action.skills[e.anim.skill],frame=frameFromProgress(spec[1],e.anim.t/e.anim.total);ok=drawBossStrip(spec[0],spec[1],frame,def.drawSize,facing);}
-    else{const frame=((Math.floor(elapsed*7+e.seed)%action.move[1])+action.move[1])%action.move[1];ok=drawBossStrip(action.move[0],action.move[1],frame,def.drawSize,facing);}
+    else{const frame=critterWalkFrame(e.walkPhase||0,action.move[1]);ok=drawBossStrip(action.move[0],action.move[1],frame,def.drawSize,facing);}
   }else ok=drawProceduralBossPose(e,def,facing);
   drawBossActionFx(e,def);ctx.restore();return ok;
 };

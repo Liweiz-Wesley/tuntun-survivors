@@ -208,7 +208,8 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
 .chest-screen { overflow:hidden; background:radial-gradient(circle,rgba(255,224,104,.28),rgba(35,43,28,.82) 62%); }
 .chest-card { position:relative; width:min(560px,92vw); min-height:520px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; text-align:center; }
 .chest-rays { position:absolute; width:560px; height:560px; opacity:0; pointer-events:none; background:repeating-conic-gradient(from 0deg,rgba(255,239,150,.72) 0deg 8deg,transparent 8deg 18deg); border-radius:50%; animation:chestSpin 7s linear infinite; transition:opacity .35s; }
-.chest-stage { position:relative; z-index:2; pointer-events:none; font-size:116px; filter:drop-shadow(0 18px 16px rgba(30,22,10,.35)); animation:chestDrop .55s cubic-bezier(.18,.9,.32,1.2) both,chestShake .12s .65s 7 alternate; }
+.chest-stage { position:relative; z-index:2; pointer-events:none; width:128px; height:128px; margin:auto; filter:drop-shadow(0 18px 10px rgba(30,22,10,.38)); animation:chestDrop .55s cubic-bezier(.18,.9,.32,1.2) both,chestShake .12s .65s 7 alternate; }
+.chest-stage img { width:100%; height:100%; object-fit:contain; image-rendering:pixelated; image-rendering:crisp-edges; }
 .chest-burst { position:absolute; z-index:1; width:30px; height:30px; opacity:0; pointer-events:none; border-radius:50%; background:#fff7ad; box-shadow:0 0 35px 20px #ffd65a,0 0 90px 50px rgba(255,184,54,.65); transition:.32s; }
 .chest-reward { position:relative; z-index:3; max-width:470px; opacity:0; transform:translateY(25px) scale(.8); transition:.45s cubic-bezier(.18,.9,.32,1.2); pointer-events:none; }
 .chest-reward .reward-icon { display:block; font-size:82px; filter:drop-shadow(0 8px 10px rgba(61,37,10,.3)); }
@@ -308,15 +309,15 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
   image-rendering:pixelated;
 }
 .start h1 em { color:#ffd873; font-size:.72em; }
-.start .main-actions { width:min(300px,34vw); display:grid; gap:0; }
+.start .main-actions { position:relative; width:min(320px,36vw); display:grid; gap:0; padding:7px; border:4px solid #ffe39a; outline:3px solid #2b251c; background:#173f38e8; box-shadow:7px 7px 0 #172f2b,inset 0 0 0 2px #7f9c62; }
 .start .primary,.start .secondary {
-  width:100%; min-width:0; margin:0; padding:13px 10px 12px 30px;
-  border:0; border-bottom:3px solid rgba(255,220,128,.55); border-radius:0 !important;
-  color:#ffe8a6; background:transparent; box-shadow:none;
+  width:100%; min-width:0; margin:0; padding:13px 10px 12px 24px;
+  border:2px solid #a9c27a; border-bottom-color:#ffe39a; border-radius:0 !important;
+  color:#fff0b8; background:linear-gradient(#285e4f,#1c493f); box-shadow:inset 0 -3px 0 #15372f;
   font:900 clamp(18px,2vw,27px) "STKaiti","KaiTi","FangSong",serif;
   text-align:left; letter-spacing:.08em; text-shadow:2px 2px 0 #172f2b;
 }
-.start .primary { color:#ff8a32; padding-left:16px; font-size:clamp(21px,2.25vw,31px); }
+.start .primary { color:#ffab43; padding-left:16px; font-size:clamp(21px,2.25vw,31px); background:linear-gradient(#376e4e,#23533e); }
 .start .primary span { float:right; margin:0; }
 .start .primary:hover,.start .secondary:hover { color:#fff5c9; background:rgba(255,209,104,.08); transform:translateX(6px); }
 .start .primary:active,.start .secondary:active { transform:translateX(9px); box-shadow:none; }
@@ -341,6 +342,11 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
 .character-screen,.shop-screen,.codex-screen,.modal { background:rgba(48,58,45,.72); backdrop-filter:none; }
 .character-avatar,.shop-icon,.choice .icon,.mini-grid article,.monster-grid article { image-rendering:pixelated; }
 .pixel-ui-icon { width:1.55em; height:1.55em; object-fit:contain; image-rendering:pixelated; vertical-align:middle; }
+.crop-stage { display:inline-block; width:64px; height:64px; flex:0 0 64px; background-image:url("assets/third_party/oga/crops-lpc/crops-v2.1/crops-v2/crops.png"); background-size:2048px 2048px; background-repeat:no-repeat; image-rendering:pixelated; filter:drop-shadow(3px 4px 0 rgba(51,45,27,.28)); }
+.farm-growth-stage { transform-origin:center bottom; animation:farmCropIdle 1.45s steps(2,end) infinite; }
+.farm-plot.ready .farm-growth-stage { filter:drop-shadow(0 0 7px rgba(255,231,104,.9)) drop-shadow(3px 4px 0 rgba(51,45,27,.28)); animation:farmCropReady .8s steps(2,end) infinite; }
+@keyframes farmCropIdle { 50% { transform:translateY(-2px) rotate(-1deg); } }
+@keyframes farmCropReady { 50% { transform:translateY(-4px) scale(1.05); } }
 .shop-icon .pixel-ui-icon { width:48px; height:48px; }
 .choice .icon .pixel-ui-icon { width:68px; height:68px; }
 .weapon-chip .pixel-ui-icon { width:42px; height:42px; }
@@ -495,7 +501,7 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
     <section id="chestScreen" class="screen modal chest-screen hidden">
       <div class="chest-card">
         <div class="chest-rays"></div><div class="chest-burst"></div>
-        <div class="chest-stage">🎁</div>
+        <div class="chest-stage"><img src="assets/third_party/oga/pixel-chest-and-coin/ChestYellow.png" alt="Boss宝箱"></div>
         <div class="chest-reward"><span id="chestRewardIcon" class="reward-icon">⭐</span><h2 id="chestRewardName"></h2><p id="chestRewardDesc"></p></div>
         <button id="chestClaimBtn" class="primary chest-claim">领取奖励 <span>→</span></button>
       </div>
@@ -564,7 +570,7 @@ const pixelArtSources = {
   honeySlime:"assets/sprites/idle/honey-slime.png",silkSpider:"assets/sprites/idle/silk-spider.png",
   mouseFork:"assets/sprites/idle/mouse-fork.png",mouseKnife:"assets/sprites/idle/mouse-knife.png",mousePen:"assets/sprites/idle/mouse-pen.png",mouseBone:"assets/sprites/idle/mouse-bone.png",
   archerAttack:"assets/sprites/idle/archer-attack.png",archerRoll:"assets/sprites/idle/archer-roll.png",melonAttack:"assets/sprites/idle/melon-attack.png",melonEat:"assets/sprites/idle/melon-eat.png",
-  pot:"assets/sprites/props/pot.png",chest:"assets/sprites/props/chest.png",coin:"assets/sprites/props/coin.png",xp:"assets/sprites/props/xp-crystal.png",
+  pot:"assets/sprites/props/pot.png",chest:"assets/third_party/oga/pixel-chest-and-coin/ChestYellow.png",coin:"assets/third_party/oga/coin-rotating/files/coin_01.png",coinSpin:"assets/third_party/oga/coin-rotating/files/Full Coins.png",xp:"assets/sprites/props/xp-crystal.png",
   heal:"assets/sprites/props/heart.png",freeze:"assets/sprites/props/freeze.png",flame:"assets/sprites/props/flame.png",magnet:"assets/sprites/props/magnet.png",
   rock:"assets/sprites/props/rock.png",fence:"assets/sprites/props/fence.png",bush:"assets/sprites/props/berry-bush.png",crate:"assets/sprites/props/supply-crate.png"
   ,snackCarrot:"assets/sprites/garden/snack-carrot.png",snackPea:"assets/sprites/garden/snack-pea.png",snackApple:"assets/sprites/garden/snack-apple.png",snackCookie:"assets/sprites/garden/snack-cookie.png"
@@ -580,8 +586,22 @@ const pixelIconNames={
   carrotEvolved:"carrot-rocket",dandelionEvolved:"flower-crown-storm",hayEvolved:"golden-mower",seedEvolved:"seed-supernova",laserEvolved:"rainbow-sun-cannon",bottleEvolved:"dream-vegetable-garden",acornEvolved:"golden-acorn-flood",meteorEvolved:"full-moon-cheese-rain",bubbleEvolved:"deep-sea-pearl-tide",storyEvolved:"endless-storybook",bellEvolved:"dream-grand-bell",
   chew:"chew",area:"area",cooldown:"cooldown",roll:"roll",watermelon:"watermelon",squeal:"squeal",stone:"stone",carrotClub:"carrot-club"
 };
+const pixelIconSources={
+  bonusCoins:"assets/third_party/oga/coin-rotating/files/coin_01.png",
+  "crop-chili":"assets/third_party/oga/food/food-ocal/32x32/vegetable/pepper_chili.png",
+  "crop-carrot":"assets/third_party/oga/food/food-ocal/32x32/vegetable/carrot.png",
+  "crop-pumpkin":"assets/sprites/farm/crops/pumpkin.png",
+  "crop-tomato":"assets/third_party/oga/food/food-ocal/32x32/fruit/tomato.png",
+  "crop-blueberry":"assets/third_party/oga/food/food-ocal/32x32/fruit/blueberries.png",
+  "crop-garlic":"assets/sprites/farm/crops/garlic.png",
+  "crop-watermelon":"assets/third_party/oga/food/food-ocal/32x32/fruit/watermelon_slice.png",
+  "crop-corn":"assets/third_party/oga/food/food-ocal/32x32/grain/corn.png",
+  "crop-mushroom":"assets/third_party/oga/food/food-ocal/32x32/misc/mushroom.png",
+  "crop-sunflower":"assets/sprites/farm/crops/sunflower.png"
+};
+function pixelIconSrc(id){const direct=pixelIconSources[id];if(direct)return direct;const name=pixelIconNames[id];return name?`assets/sprites/icons/${name}.png`:"";}
 function pixelIcon(id,fallback="",className="pixel-ui-icon"){
-  const name=pixelIconNames[id];return name?`<img class="${className}" src="assets/sprites/icons/${name}.png" alt="">`:fallback;
+  const src=pixelIconSrc(id);return src?`<img class="${className}" src="${src}" alt="">`:fallback;
 }
 document.querySelectorAll("[data-pixel-icon]").forEach(el=>{el.innerHTML=pixelIcon(el.dataset.pixelIcon,el.textContent);});
 function drawPixelFrame(key,frames,fps,x,y,size,facing=1,phase=0){
@@ -598,13 +618,15 @@ function drawPixelProp(key,x,y,size,bob=0){
   const image=pixelArt[key];if(!image||!image.complete||!image.naturalWidth)return false;
   ctx.save();ctx.imageSmoothingEnabled=false;ctx.translate(Math.round(x),Math.round(y+bob));ctx.drawImage(image,Math.round(-size/2),Math.round(-size),Math.round(size),Math.round(size));ctx.restore();return true;
 }
+function critterWalkFrame(phase,frames){if(frames<=1)return 0;if(frames===4)return [0,1,2,3,2,1][Math.floor(phase)%6];return Math.floor(phase)%frames;}
 function drawPixelPlayer(){
   ctx.save();ctx.fillStyle="rgba(52,61,40,.22)";ctx.fillRect(Math.round(player.x-21),Math.round(player.y+17),42,7);ctx.restore();
   if(player.inv>0&&playerAction.type!=="roll"&&Math.floor(player.inv*14)%2)return true;
   const progress=playerAction.duration?1-playerAction.timer/playerAction.duration:0,frame=Math.min(5,Math.max(0,Math.floor(progress*6)));
-  if(selectedCharacter==="rabbit")return drawPixelFrameAt(playerAction.type==="roll"?"archerRoll":"archerAttack",6,playerAction.type?frame:0,player.x,player.y+36,90,player.facing);
-  if(selectedCharacter==="chinchilla")return drawPixelFrameAt(playerAction.type==="eat"?"melonEat":"melonAttack",6,playerAction.type?frame:0,player.x,player.y+36,90,player.facing);
-  return drawPixelFrame("nugget",4,4.5,player.x,player.y+31,78,player.facing);
+  if(selectedCharacter==="rabbit")return playerAction.type?drawPixelFrameAt(playerAction.type==="roll"?"archerRoll":"archerAttack",6,frame,player.x,player.y+36,90,player.facing):drawPixelFrameAt("archer",4,player.moving?critterWalkFrame(player.walkPhase,4):0,player.x,player.y+31,82,player.facing);
+  if(selectedCharacter==="chinchilla")return playerAction.type?drawPixelFrameAt(playerAction.type==="eat"?"melonEat":"melonAttack",6,frame,player.x,player.y+36,90,player.facing):drawPixelFrameAt("gatherer",4,player.moving?critterWalkFrame(player.walkPhase,4):0,player.x,player.y+31,84,player.facing);
+  const walkFrame=player.moving?critterWalkFrame(player.walkPhase,4):0;
+  return drawPixelFrameAt("nugget",4,walkFrame,player.x,player.y+31,78,player.facing);
 }
 function pixelEnemySpec(e){
   if(e.finalBoss)return {key:"finalBoss",frames:1,fps:1,size:620};
@@ -626,14 +648,14 @@ function pixelEnemySpec(e){
 function drawPixelEnemy(e,facing){
   const raw=pixelEnemySpec(e),spec=e.elite&&e.type!=="mouse"?{...raw,size:Math.round(raw.size*1.58)}:raw;ctx.fillStyle="rgba(52,61,40,.2)";const sw=Math.round(spec.size*.58),sh=Math.max(5,Math.round(spec.size*.1));ctx.fillRect(-Math.round(sw/2),Math.round(e.r*.66),sw,sh);
   if(e.hitFlash>0&&Math.floor(e.hitFlash*24)%2)return true;
-  const special=e.boss||e.elite,charge=special?Math.max(0,Math.min(1,(e.skillCharge||0)/.8)):0,release=special?Math.max(0,Math.min(1,(e.releaseAnim||0)/.28)):0;ctx.save();ctx.translate(0,Math.round(charge*10-Math.sin(release*Math.PI)*14));ctx.scale(1+release*.055,1-charge*.055+release*.035);const ok=drawPixelFrame(spec.key,spec.frames,spec.fps,0,Math.round(spec.size*.52),spec.size,facing,e.seed*2);ctx.restore();return ok;
+  const special=e.boss||e.elite,charge=special?Math.max(0,Math.min(1,(e.skillCharge||0)/.8)):0,release=special?Math.max(0,Math.min(1,(e.releaseAnim||0)/.28)):0,frame=critterWalkFrame(e.walkPhase||0,spec.frames);ctx.save();ctx.translate(0,Math.round(charge*10-Math.sin(release*Math.PI)*14));ctx.scale(1+release*.055,1-charge*.055+release*.035);const ok=drawPixelFrameAt(spec.key,spec.frames,frame,0,Math.round(spec.size*.52),spec.size,facing);ctx.restore();return ok;
 }
 
 let W = innerWidth, H = innerHeight, dpr = 1;
 const cameraZoom = .78;
 let running = false, paused = false, last = 0, elapsed = 0, score = 0, level = 1, finalPhase = false;
 let xp = 0, xpNeed = 18, spawnClock = 0, shotClock = 0, hayClock = 0, seedClock = 0, laserClock = 0, bottleClock = 0, acornClock=0, meteorClock=0, bubbleClock=0, storyClock=0, bellClock=0, gemMergeClock=0, skillCooldown = 0, cropCooldown=0,cropMaxCooldown=0,cropEffectTimer=0,cropTick=0,equippedCrop=null,runSeedDrops=0,runSeedTarget=1, freezeTimer=0, playerSlowTimer=0, flameTimer=0, flameClock=0, snackRateTimer=0, snackSpeedTimer=0, snackHealTimer=0, snackXpTimer=0, potRespawnClock=12, shake = 0, flash = 0, runBosses=0, runRewardGranted=false;
-let enemies = [], shots = [], swings = [], lasers = [], bottles = [], zones = [], gems = [], chests = [], obstacles=[], pots=[], pickups=[], enemyBombs=[],enemyOrbs=[],bossWaves=[],bossTrails=[],weaponFx=[],particles = [], texts = [], bossWave = 0,eliteWave=0,mapAnchorX=0,mapAnchorY=0,mapChunkX=NaN,mapChunkY=NaN,rerollsLeft=0,banishesLeft=0,currentPicks=[],banishMode=false;
+let enemies = [], shots = [], swings = [], lasers = [], bottles = [], zones = [], gems = [], chests = [], obstacles=[], pots=[], pickups=[], enemyBombs=[],enemyOrbs=[],bossWaves=[],bossTrails=[],weaponFx=[],spriteFx=[],particles = [], texts = [], bossWave = 0,eliteWave=0,mapAnchorX=0,mapAnchorY=0,mapChunkX=NaN,mapChunkY=NaN,rerollsLeft=0,banishesLeft=0,currentPicks=[],banishMode=false;
 let banishedUpgrades=new Set();
 let visitedFoodChunks=new Set();
 const bossTimes = [300,600,900];
@@ -667,7 +689,7 @@ let bossBags={1:[],2:[],3:[],4:[]};
 function takeTierBoss(tier){if(!bossBags[tier].length){bossBags[tier]=[...BOSS_POOLS[tier]];for(let i=bossBags[tier].length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[bossBags[tier][i],bossBags[tier][j]]=[bossBags[tier][j],bossBags[tier][i]];}}return bossBags[tier].pop();}
 const keys = new Set();
 const pointer = { active:false, x:0, y:0, ox:0, oy:0 };
-const player = { x:0, y:0, r:20, speed:225, hp:130, maxHp:130, inv:0, damage:18, rate:.64, projectiles:1, magnet:105, size:1, regen:.12, facing:1, pierce:0, crit:0, area:1, cooldown:1, growth:1, armor:0, duration:1, revives:0 };
+const player = { x:0, y:0, r:20, speed:225, hp:130, maxHp:130, inv:0, damage:18, rate:.64, projectiles:1, magnet:105, size:1, regen:.12, facing:1, pierce:0, crit:0, area:1, cooldown:1, growth:1, armor:0, duration:1, revives:0, walkPhase:0, moving:false };
 const SAVE_KEY="tuntun-survivors-save-v2";
 let selectedCharacter="tuntun",skillMaxCooldown=10,playerAction={type:"",timer:0,duration:0,dirX:0,dirY:0};
 const characterDefs=[
@@ -697,6 +719,12 @@ const CROP_DEFS=[
 ];
 CROP_DEFS[0].desc=["辣椒火焰持续 5 秒，效果结束后才开始计算冷却。","Chili flame lasts 5 seconds; cooldown begins after the effect ends."];
 const cropIds=CROP_DEFS.map(c=>c.id);function freshFarm(){return {seeds:Object.fromEntries(cropIds.map(id=>[id,id==="carrot"?2:0])),mysterySeeds:0,inventory:Object.fromEntries(cropIds.map(id=>[id,id==="chili"?2:0])),equipped:"chili",selectedSeed:"carrot",supplies:{fertilizer:1,pesticide:1},plots:[null,null,null,null,null,null]};}
+const cropSheetSlots={
+  chili:{col:21,rows:[9,1,3,5,7]},carrot:{col:8,rows:[9,1,3,5,7]},pumpkin:{col:27,rows:[9,1,3,5,7]},tomato:{col:17,rows:[9,1,3,5,7]},blueberry:{col:21,rows:[19,11,13,15,17]},
+  garlic:{col:12,rows:[19,11,13,15,17]},watermelon:{col:23,rows:[9,1,3,5,7]},corn:{col:30,rows:[9,1,3,5,7]},mushroom:{col:16,rows:[19,11,13,15,17]},sunflower:{col:9,rows:[19,11,13,15,17]}
+};
+function farmGrowthStage(progress,watered=true){if(!watered)return 0;if(progress>=1)return 4;return Math.min(3,1+Math.floor(Math.max(0,progress)*3));}
+function cropStageMarkup(cropId,progress=0,watered=true){const slot=cropSheetSlots[cropId]||cropSheetSlots.carrot,stage=farmGrowthStage(progress,watered),col=slot.col,row=slot.rows[stage];return `<span class="crop-stage farm-growth-stage" role="img" aria-label="${cropId}" style="background-position:${-col*64}px ${-row*64}px"></span>`;}
 function normalizeFarm(f){const base=freshFarm();return {seeds:{...base.seeds,...(f?.seeds||{})},mysterySeeds:Math.max(0,Number(f?.mysterySeeds)||0),inventory:{...base.inventory,...(f?.inventory||{})},equipped:cropIds.includes(f?.equipped)?f.equipped:base.equipped,selectedSeed:cropIds.includes(f?.selectedSeed)?f.selectedSeed:base.selectedSeed,supplies:{...base.supplies,...(f?.supplies||{})},plots:Array.from({length:6},(_,i)=>f?.plots?.[i]||null)};}
 function freshSave(){return {coins:0,earned:0,characters:{tuntun:true,rabbit:false,chinchilla:false},upgrades:{health:0,damage:0,armor:0,cooldown:0,area:0,growth:0,amount:0,luck:0,revival:0,speed:0,magnet:0,regen:0,fortune:0,reroll:0,banish:0},farm:freshFarm()};}
 function loadSave(){try{const raw=localStorage.getItem(SAVE_KEY),data=raw?JSON.parse(raw):freshSave();return {coins:+data.coins||0,earned:+data.earned||0,characters:{...freshSave().characters,...(data.characters||{})},upgrades:{...freshSave().upgrades,...(data.upgrades||{})},farm:normalizeFarm(data.farm)};}catch(e){return freshSave();}}
@@ -713,9 +741,9 @@ function buyMeta(id){const d=metaDefs.find(x=>x.id===id),lv=metaSave.upgrades[id
 function exportSave(){prompt("复制下面的存档代码并妥善保存：",btoa(unescape(encodeURIComponent(JSON.stringify(metaSave)))));}
 function importSave(){const code=prompt("粘贴存档代码：");if(!code)return;try{const data=JSON.parse(decodeURIComponent(escape(atob(code.trim()))));metaSave={coins:+data.coins||0,earned:+data.earned||0,characters:{...freshSave().characters,...(data.characters||{})},upgrades:{...freshSave().upgrades,...(data.upgrades||{})},farm:normalizeFarm(data.farm)};persistSave();renderShop();alert("存档导入成功！");}catch(e){alert("存档代码无效。");}}
 function resetSave(){if(confirm("确定要清空金币和全部永久升级吗？")){metaSave=freshSave();persistSave();renderShop();}}
-function renderFarm(){const f=metaSave.farm=normalizeFarm(metaSave.farm),grid=document.querySelector("#cropGrid");grid.innerHTML=CROP_DEFS.map(c=>{const stock=f.inventory[c.id]||0;return `<button class="crop-card ${f.equipped===c.id?"selected":""} ${stock?"":"locked"}" data-crop="${c.id}"><img src="assets/sprites/farm/crops/${c.id}.png" alt=""><span><h4>${tr(c.name[0],c.name[1])} · ${c.cd}s</h4><p>${tr(c.desc[0],c.desc[1])}</p><small>${tr("库存","STOCK")} ${stock} · ${tr("种子","SEEDS")} ${f.seeds[c.id]||0}</small></span></button>`;}).join("");grid.querySelectorAll(".crop-card").forEach(b=>b.onclick=()=>{f.selectedSeed=b.dataset.crop;if((f.inventory[b.dataset.crop]||0)>0)f.equipped=b.dataset.crop;persistSave();renderFarm();});renderFarmPlots();const c=CROP_DEFS.find(c=>c.id===f.equipped),seed=CROP_DEFS.find(c=>c.id===f.selectedSeed);const current=document.querySelector("#currentCropLoadout");if(current)current.innerHTML=`<img src="assets/sprites/farm/crops/${c.id}.png" alt=""><div><b>${tr("当前出战技能","EQUIPPED CROP SKILL")}：${tr(c.name[0],c.name[1])}</b><p>${tr(c.desc[0],c.desc[1])} · CD ${c.cd}s · ${tr("库存","STOCK")} ${f.inventory[c.id]||0}</p></div>`;const status=document.querySelector("#farmStatus");if(status)status.textContent=tr(`携带：${c?.name[0]||"无"} · 选种：${seed?.name[0]||"无"} · 肥料 ${f.supplies.fertilizer} · 杀虫剂 ${f.supplies.pesticide}`,`EQUIPPED: ${c?.name[1]||"NONE"} · SEED: ${seed?.name[1]||"NONE"} · FERTILIZER ${f.supplies.fertilizer} · PESTICIDE ${f.supplies.pesticide}`);const bank=document.querySelector("#farmCoinBank");if(bank)bank.textContent="🪙 "+metaSave.coins;}
+function renderFarm(){const f=metaSave.farm=normalizeFarm(metaSave.farm),grid=document.querySelector("#cropGrid");grid.innerHTML=CROP_DEFS.map(c=>{const stock=f.inventory[c.id]||0;return `<button class="crop-card ${f.equipped===c.id?"selected":""} ${stock?"":"locked"}" data-crop="${c.id}">${pixelIcon(`crop-${c.id}`,"", "pixel-ui-icon crop-inventory-icon")}<span><h4>${tr(c.name[0],c.name[1])} · ${c.cd}s</h4><p>${tr(c.desc[0],c.desc[1])}</p><small>${tr("库存","STOCK")} ${stock} · ${tr("种子","SEEDS")} ${f.seeds[c.id]||0}</small></span></button>`;}).join("");grid.querySelectorAll(".crop-card").forEach(b=>b.onclick=()=>{f.selectedSeed=b.dataset.crop;if((f.inventory[b.dataset.crop]||0)>0)f.equipped=b.dataset.crop;persistSave();renderFarm();});renderFarmPlots();const c=CROP_DEFS.find(c=>c.id===f.equipped),seed=CROP_DEFS.find(c=>c.id===f.selectedSeed);const current=document.querySelector("#currentCropLoadout");if(current)current.innerHTML=`${pixelIcon(`crop-${c.id}`,"", "pixel-ui-icon crop-loadout-icon")}<div><b>${tr("当前出战技能","EQUIPPED CROP SKILL")}：${tr(c.name[0],c.name[1])}</b><p>${tr(c.desc[0],c.desc[1])} · CD ${c.cd}s · ${tr("库存","STOCK")} ${f.inventory[c.id]||0}</p></div>`;const status=document.querySelector("#farmStatus");if(status)status.textContent=tr(`携带：${c?.name[0]||"无"} · 选种：${seed?.name[0]||"无"} · 肥料 ${f.supplies.fertilizer} · 杀虫剂 ${f.supplies.pesticide}`,`EQUIPPED: ${c?.name[1]||"NONE"} · SEED: ${seed?.name[1]||"NONE"} · FERTILIZER ${f.supplies.fertilizer} · PESTICIDE ${f.supplies.pesticide}`);const bank=document.querySelector("#farmCoinBank");if(bank)bank.textContent="🪙 "+metaSave.coins;}
 function farmPlotProgress(p){if(!p?.wateredAt)return 0;const base=120000+cropIds.indexOf(p.cropId)*30000,need=base*(p.fertilized?.7:1);return Math.max(0,Math.min(1,(Date.now()-p.wateredAt)/need));}
-function renderFarmPlots(){const f=metaSave.farm,el=document.querySelector("#farmPlots");el.innerHTML=f.plots.map((p,i)=>{if(!p)return `<button class="farm-plot empty" data-plot="${i}" data-action="plant">＋<br>${tr("播种","PLANT")}</button>`;const c=CROP_DEFS.find(c=>c.id===p.cropId),q=farmPlotProgress(p),ready=q>=1;return `<div class="farm-plot planted"><div class="farm-plot-head"><img src="assets/sprites/farm/crops/${p.cropId}.png"><b>${tr(c.name[0],c.name[1])}${p.pest&&!p.pesticide?" 🐛":""}</b></div><div class="farm-progress"><i style="width:${q*100}%"></i></div><div class="farm-plot-actions">${!p.wateredAt?`<button data-plot="${i}" data-action="water">💧${tr("浇水","WATER")}</button>`:""}${!p.fertilized?`<button data-plot="${i}" data-action="fertilize">🌱${tr("施肥","FEED")}</button>`:""}${p.pest&&!p.pesticide?`<button data-plot="${i}" data-action="pesticide">🧴${tr("除虫","TREAT")}</button>`:""}${ready?`<button data-plot="${i}" data-action="harvest">✨${tr("收获","HARVEST")}</button>`:`<small>${Math.round(q*100)}%</small>`}</div></div>`;}).join("");el.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>farmPlotAction(+b.dataset.plot,b.dataset.action));}
+function renderFarmPlots(){const f=metaSave.farm,el=document.querySelector("#farmPlots");el.innerHTML=f.plots.map((p,i)=>{if(!p)return `<button class="farm-plot empty" data-plot="${i}" data-action="plant">＋<br>${tr("播种","PLANT")}</button>`;const c=CROP_DEFS.find(c=>c.id===p.cropId),q=farmPlotProgress(p),ready=q>=1;return `<div class="farm-plot planted ${ready?"ready":""}"><div class="farm-plot-head">${cropStageMarkup(p.cropId,q,!!p.wateredAt)}<b>${tr(c.name[0],c.name[1])}${p.pest&&!p.pesticide?" 🐛":""}</b></div><div class="farm-progress"><i style="width:${q*100}%"></i></div><div class="farm-plot-actions">${!p.wateredAt?`<button data-plot="${i}" data-action="water">💧${tr("浇水","WATER")}</button>`:""}${!p.fertilized?`<button data-plot="${i}" data-action="fertilize">🌱${tr("施肥","FEED")}</button>`:""}${p.pest&&!p.pesticide?`<button data-plot="${i}" data-action="pesticide">🧴${tr("除虫","TREAT")}</button>`:""}${ready?`<button data-plot="${i}" data-action="harvest">✨${tr("收获","HARVEST")}</button>`:`<small>${Math.round(q*100)}%</small>`}</div></div>`;}).join("");el.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>farmPlotAction(+b.dataset.plot,b.dataset.action));}
 function spawnFarmFeedback(i,action){const plot=document.querySelector(`#farmPlots [data-plot="${i}"]`)?.closest(".farm-plot")||document.querySelectorAll("#farmPlots .farm-plot")[i],fx=document.querySelector("#farmFx"),world=document.querySelector(".farm-world");if(!plot||!fx||!world)return;plot.classList.remove("farm-hit");void plot.offsetWidth;plot.classList.add("farm-hit");const wr=world.getBoundingClientRect(),pr=plot.getBoundingClientRect(),x=pr.left-wr.left+pr.width/2,y=pr.top-wr.top+pr.height/2;for(let n=0;n<8;n++){const bit=document.createElement("i"),a=Math.PI*2*n/8,d=18+Math.random()*28;bit.className=`soil-particle ${action}`;bit.style.left=x+"px";bit.style.top=y+"px";bit.style.setProperty("--dx",Math.cos(a)*d+"px");bit.style.setProperty("--dy",Math.sin(a)*d-16+"px");fx.appendChild(bit);setTimeout(()=>bit.remove(),650);}}
 function farmPlotAction(i,action){spawnFarmFeedback(i,action);const f=metaSave.farm,p=f.plots[i];if(action==="plant"){const id=f.selectedSeed;if((f.seeds[id]||0)<=0)return;f.seeds[id]--;f.plots[i]={cropId:id,wateredAt:0,fertilized:false,pesticide:false,pest:Math.random()<.28};}else if(!p)return;else if(action==="water")p.wateredAt=Date.now();else if(action==="fertilize"&&f.supplies.fertilizer>0){f.supplies.fertilizer--;p.fertilized=true;}else if(action==="pesticide"&&f.supplies.pesticide>0){f.supplies.pesticide--;p.pesticide=true;}else if(action==="harvest"&&farmPlotProgress(p)>=1){const yieldCount=Math.max(1,1+(p.fertilized?1:0)-(p.pest&&!p.pesticide?1:0));f.inventory[p.cropId]=(f.inventory[p.cropId]||0)+yieldCount;f.plots[i]=null;}persistSave();renderFarm();}
 function buyFarmSupply(type,cost){if(metaSave.coins<cost)return;metaSave.coins-=cost;metaSave.farm.supplies[type]++;persistSave();renderFarm();updateCoinUI();}
@@ -818,6 +846,7 @@ addEventListener("keyup",e=>keys.delete(e.key.toLowerCase()));
 canvas.addEventListener("pointerdown",e=>{pointer.active=true;pointer.ox=pointer.x=e.clientX;pointer.oy=pointer.y=e.clientY;});
 canvas.addEventListener("pointermove",e=>{if(pointer.active){pointer.x=e.clientX;pointer.y=e.clientY;}});
 addEventListener("pointerup",()=>pointer.active=false);
+addEventListener("pointerdown",()=>{if(!running)playMenuMusic();},{passive:true});
 document.querySelector("#startBtn").onclick=openCharacterSelect;
 document.querySelector("#restartBtn").onclick=startGame;
 document.querySelector("#closeCharacterBtn").onclick=closeCharacterSelect;
@@ -850,14 +879,66 @@ document.querySelector("#rerollBtn").onclick=rerollUpgrades;
 document.querySelector("#banishBtn").onclick=()=>{if(banishesLeft>0){banishMode=!banishMode;renderUpgradeChoices();}};
 setInterval(()=>{if(ui.farm&&!ui.farm.classList.contains("hidden"))renderFarmPlots();},1000);
 
-let audioCtx=null,audioMaster=null,musicStep=0,musicTimer=null,pendingChestReward=null,chestRevealTimer=null;
+let audioCtx=null,audioMaster=null,musicStep=0,musicTimer=null,menuMusic=null,pendingChestReward=null,chestRevealTimer=null;
 const sfxLast={};
+let importedMediaReady=false;
+const importedSfxDefs={
+  pickup:{src:"assets/third_party/oga/sounds/SoundPack01/wav/Coin01.wav",volume:.36},
+  level:{src:"assets/third_party/oga/sounds/SoundPack01/wav/Rise05.wav",volume:.42},
+  chest:{src:"assets/third_party/oga/sounds/SoundPack01/wav/FX01.wav",volume:.34},
+  chestReveal:{src:"assets/third_party/oga/sounds/SoundPack01/wav/Rise07.wav",volume:.46},
+  skill:{src:"assets/third_party/oga/sounds/SoundPack01/wav/Upper01.wav",volume:.34},
+  crit:{src:"assets/third_party/oga/sounds/SoundPack01/wav/FX02.wav",volume:.32},
+  boss:{src:"assets/third_party/oga/sounds/SoundPack01/wav/Alarm.wav",volume:.22},
+  lose:{src:"assets/third_party/oga/sounds/SoundPack01/wav/Downer01.wav",volume:.32},
+  win:{src:"assets/third_party/oga/sounds/SoundPack01/wav/Rise07.wav",volume:.5},
+  start:{src:"assets/third_party/oga/sounds/SoundPack01/wav/Rise05.wav",volume:.28}
+};
+const importedSfxCache={};
+const spriteFxDefs={
+  weaponHit:{src:"assets/third_party/oga/fx/free-pixel-effects-pack/10_weaponhit_spritesheet.png",cols:6,frames:36,frameW:100,frameH:100,fps:28,blend:"screen"},
+  brightFire:{src:"assets/third_party/oga/fx/free-pixel-effects-pack/9_brightfire_spritesheet.png",cols:8,frames:64,frameW:100,frameH:100,fps:36,blend:"screen"},
+  explosion21:{src:"assets/third_party/oga/explosion/Explosion21.png",cols:8,frames:64,frameW:64,frameH:64,fps:34,blend:"screen"}
+};
+const spriteFxImages={};
+function primeImportedMedia(){
+  if(importedMediaReady)return;
+  importedMediaReady=true;
+  for(const [id,def] of Object.entries(importedSfxDefs)){
+    const audio=new Audio(def.src);
+    audio.preload="auto";
+    importedSfxCache[id]=audio;
+  }
+  for(const [id,def] of Object.entries(spriteFxDefs)){
+    const img=new Image();
+    img.src=def.src;
+    spriteFxImages[id]=img;
+  }
+  menuMusic=new Audio("assets/third_party/oga/music/main-menu-loop/main_menu_music_mastered.mp3");
+  menuMusic.loop=true;menuMusic.preload="auto";menuMusic.volume=.22;
+}
+function playMenuMusic(){primeImportedMedia();if(running||!menuMusic)return;menuMusic.play().catch(()=>{});}
+function stopMenuMusic(){if(!menuMusic)return;menuMusic.pause();menuMusic.currentTime=0;}
+function playImportedSfx(name){
+  const def=importedSfxDefs[name],base=importedSfxCache[name];
+  if(!def||!base)return false;
+  const node=base.cloneNode();
+  node.volume=def.volume ?? .35;
+  node.play().catch(()=>{});
+  return true;
+}
+function spawnSpriteFx(key,x,y,size=96,options={}){
+  const def=spriteFxDefs[key];
+  if(!def)return;
+  spriteFx.push({key,x,y,size,age:0,life:def.frames/def.fps,alpha:options.alpha ?? 1,rot:options.rot ?? 0,driftY:options.driftY ?? 0});
+}
 function initAudio(){
   if(!audioCtx){
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
     audioMaster=audioCtx.createGain();audioMaster.gain.value=.5;audioMaster.connect(audioCtx.destination);
     musicTimer=setInterval(scheduleMusic,240);
   }
+  primeImportedMedia();
   if(audioCtx.state==="suspended")audioCtx.resume();
 }
 function tone(freq,duration=.1,type="sine",volume=.08,delay=0,slide=1){
@@ -888,6 +969,7 @@ function scheduleMusic(){
 function sfx(name){
   if(!audioCtx||audioCtx.state!=="running")return;
   const now=audioCtx.currentTime;if(now-(sfxLast[name]||0)<(name==="hit"?.055:name==="pickup"?.045:.12))return;sfxLast[name]=now;
+  if(playImportedSfx(name))return;
   if(name==="shot")tone(420,.045,"triangle",.025,0,1.45);
   else if(name==="hit")tone(155,.055,"square",.022,0,.72);
   else if(name==="crit"){tone(880,.08,"square",.05,0,1.7);tone(1320,.12,"triangle",.04,.035,.72);}
@@ -906,19 +988,19 @@ function sfx(name){
 }
 
 function startGame(){
-  initAudio();musicStep=0;sfx("start");
+  initAudio();stopMenuMusic();musicStep=0;sfx("start");
   ui.hud.classList.remove("pause-visible");
   clearTimeout(chestRevealTimer);pendingChestReward=null;ui.chest.classList.add("hidden");ui.chest.classList.remove("revealed");
   const m=metaSave.upgrades,char=characterDefs.find(c=>c.id===selectedCharacter)||characterDefs[0],maxHp=Math.round((82+(m.health||0)*10)*char.hp);skillMaxCooldown=char.cd;
   metaSave.farm=normalizeFarm(metaSave.farm);const chosenCrop=metaSave.farm.equipped;equippedCrop=(metaSave.farm.inventory[chosenCrop]||0)>0?chosenCrop:null;if(equippedCrop){metaSave.farm.inventory[equippedCrop]--;persistSave();cropMaxCooldown=CROP_DEFS.find(c=>c.id===equippedCrop).cd;}else cropMaxCooldown=0;cropCooldown=0;cropEffectTimer=0;runSeedDrops=0;runSeedTarget=Math.random()<.45?2:1;
   rerollsLeft=m.reroll||0;banishesLeft=m.banish||0;banishedUpgrades=new Set();banishMode=false;currentPicks=[];
-  Object.assign(player,{x:0,y:0,r:20,hp:maxHp,maxHp,speed:200*(1+(m.speed||0)*.025)*char.speed,inv:0,damage:11*(1+(m.damage||0)*.06)*char.damage,rate:.74,projectiles:1+(m.amount||0),magnet:80+(m.magnet||0)*12,size:1,regen:(m.regen||0)*.05,facing:1,pierce:0,crit:(m.luck||0)*.1,area:1+(m.area||0)*.05,cooldown:1-(m.cooldown||0)*.02,growth:1+(m.growth||0)*.05,armor:m.armor||0,duration:1,revives:m.revival||0});
+  Object.assign(player,{x:0,y:0,r:20,hp:maxHp,maxHp,speed:200*(1+(m.speed||0)*.025)*char.speed,inv:0,damage:11*(1+(m.damage||0)*.06)*char.damage,rate:.74,projectiles:1+(m.amount||0),magnet:80+(m.magnet||0)*12,size:1,regen:(m.regen||0)*.05,facing:1,pierce:0,crit:(m.luck||0)*.1,area:1+(m.area||0)*.05,cooldown:1-(m.cooldown||0)*.02,growth:1+(m.growth||0)*.05,armor:m.armor||0,duration:1,revives:m.revival||0,walkPhase:0,moving:false});
   if(selectedCharacter==="rabbit")player.rate=1.02;else if(selectedCharacter==="chinchilla")player.rate=.84;Object.assign(playerAction,{type:"",timer:0,duration:0,dirX:0,dirY:0});
   Object.keys(weapons).forEach(id=>weapons[id]=0);weapons[char.starter]=1;
   Object.assign(passives,{speed:0,heart:0,magnet:0,regen:0,power:0,chew:0,luck:0,area:0,cooldown:0,growth:0,armor:0});
   Object.assign(evolved,{carrot:false,dandelion:false,hay:false,seed:false,laser:false,bottle:false,acorn:false,meteor:false,bubble:false,story:false,bell:false});
   elapsed=score=xp=spawnClock=shotClock=hayClock=seedClock=laserClock=bottleClock=acornClock=meteorClock=bubbleClock=storyClock=bellClock=gemMergeClock=skillCooldown=freezeTimer=playerSlowTimer=flameTimer=flameClock=snackRateTimer=snackSpeedTimer=snackHealTimer=snackXpTimer=0;runBosses=0;runRewardGranted=false;potRespawnClock=12; level=1; xpNeed=18;visitedFoodChunks=new Set();
-  enemies=[];shots=[];swings=[];lasers=[];bottles=[];zones=[];gems=[];chests=[];obstacles=[];pots=[];pickups=[];enemyBombs=[];enemyOrbs=[];bossWaves=[];bossTrails=[];weaponFx=[];particles=[];texts=[];bossWave=0;eliteWave=0;bossBags={1:[],2:[],3:[],4:[]};finalPhase=false;running=true;paused=false;last=performance.now();buildMap();
+  enemies=[];shots=[];swings=[];lasers=[];bottles=[];zones=[];gems=[];chests=[];obstacles=[];pots=[];pickups=[];enemyBombs=[];enemyOrbs=[];bossWaves=[];bossTrails=[];weaponFx=[];spriteFx=[];particles=[];texts=[];bossWave=0;eliteWave=0;bossBags={1:[],2:[],3:[],4:[]};finalPhase=false;running=true;paused=false;last=performance.now();buildMap();
   ui.start.classList.add("hidden");ui.pause.classList.add("hidden");ui.codex.classList.add("hidden");ui.shop.classList.add("hidden");ui.farm.classList.add("hidden");ui.end.classList.add("hidden");ui.level.classList.add("hidden");ui.hud.classList.remove("hidden");updateCoinUI();const skillIcon=selectedCharacter==="rabbit"?"roll":selectedCharacter==="chinchilla"?"watermelon":"squeal";ui.skillName.innerHTML=pixelIcon(skillIcon)+" "+char.skill;ui.skillBar.setAttribute("aria-label",char.skill);
   renderTray(); requestAnimationFrame(loop);
 }
@@ -927,7 +1009,7 @@ function togglePause(){
   paused=!paused;ui.pause.classList.toggle("hidden",!paused);ui.hud.classList.toggle("pause-visible",paused);keys.clear();if(!paused)initAudio();
 }
 function goHome(){
-  running=false;paused=false;keys.clear();ui.hud.classList.remove("pause-visible");ui.pause.classList.add("hidden");ui.level.classList.add("hidden");ui.end.classList.add("hidden");document.querySelector("#characterScreen").classList.add("hidden");ui.hud.classList.add("hidden");ui.start.classList.remove("hidden");draw();
+  running=false;paused=false;keys.clear();ui.hud.classList.remove("pause-visible");ui.pause.classList.add("hidden");ui.level.classList.add("hidden");ui.end.classList.add("hidden");document.querySelector("#characterScreen").classList.add("hidden");ui.hud.classList.add("hidden");ui.start.classList.remove("hidden");playMenuMusic();draw();
 }
 function closeCodex(){ui.codex.classList.add("hidden");}
 const tr=(zh,en)=>document.documentElement.lang==="en"?en:zh;
@@ -1065,7 +1147,7 @@ function update(dt){
   let dx=(keys.has("d")||keys.has("arrowright")?1:0)-(keys.has("a")||keys.has("arrowleft")?1:0);
   let dy=(keys.has("s")||keys.has("arrowdown")?1:0)-(keys.has("w")||keys.has("arrowup")?1:0);
   if(pointer.active){ dx=(pointer.x-pointer.ox)/55;dy=(pointer.y-pointer.oy)/55; const l=Math.hypot(dx,dy);if(l>1){dx/=l;dy/=l;} }
-  const len=Math.hypot(dx,dy)||1,oldPX=player.x,oldPY=player.y,moveBoost=(snackSpeedTimer>0?1.25:1)*(playerSlowTimer>0?.62:1);if(playerAction.type==="roll"){player.x+=playerAction.dirX*525*dt;player.y+=playerAction.dirY*525*dt;if(Math.abs(playerAction.dirX)>.1)player.facing=playerAction.dirX<0?-1:1;resolveWorldCollision(player,oldPX,oldPY);}else if(Math.abs(dx)+Math.abs(dy)>0){player.x+=dx/len*player.speed*moveBoost*dt;player.y+=dy/len*player.speed*moveBoost*dt;if(Math.abs(dx)>.1)player.facing=dx<0?-1:1;resolveWorldCollision(player,oldPX,oldPY);}
+  const len=Math.hypot(dx,dy)||1,oldPX=player.x,oldPY=player.y,moveBoost=(snackSpeedTimer>0?1.25:1)*(playerSlowTimer>0?.62:1);if(playerAction.type==="roll"){player.x+=playerAction.dirX*525*dt;player.y+=playerAction.dirY*525*dt;if(Math.abs(playerAction.dirX)>.1)player.facing=playerAction.dirX<0?-1:1;resolveWorldCollision(player,oldPX,oldPY);}else if(Math.abs(dx)+Math.abs(dy)>0){player.x+=dx/len*player.speed*moveBoost*dt;player.y+=dy/len*player.speed*moveBoost*dt;if(Math.abs(dx)>.1)player.facing=dx<0?-1:1;resolveWorldCollision(player,oldPX,oldPY);}const moved=Math.hypot(player.x-oldPX,player.y-oldPY);player.moving=moved>.08;if(player.moving)player.walkPhase=(player.walkPhase+moved/7)%6000;
   updateGardenChunks();
   pots.forEach(p=>{if(dist(p.x,p.y,player.x,player.y)>Math.max(W,H)/cameraZoom*1.45){const a=Math.random()*Math.PI*2,d=Math.max(W,H)/cameraZoom*.62+140;p.x=player.x+Math.cos(a)*d;p.y=player.y+Math.sin(a)*d;}});
   if(flameTimer>0&&flameClock<=0){flameClock=.3;const fireDamage=24+player.damage*.47;enemies.forEach(e=>{const dx=e.x-player.x,dy=e.y-player.y,r=145+e.r;if(dx*dx+dy*dy<r*r)hitEnemy(e,fireDamage);});pots.forEach(p=>{if(!p.dead){const dx=p.x-player.x,dy=p.y-player.y,r=145+p.r;if(dx*dx+dy*dy<r*r)hitPot(p,30);}});}
@@ -1121,10 +1203,11 @@ function update(dt){
   bossWaves.forEach(w=>{w.life-=dt;w.hitCooldown=Math.max(0,(w.hitCooldown||0)-dt);if(w.charge>0){w.charge-=dt;}else{w.angle+=w.spin*dt;const len=1050,x2=w.x+Math.cos(w.angle)*len,y2=w.y+Math.sin(w.angle)*len;if(w.hitCooldown<=0&&pointSegmentDistance(player.x,player.y,w.x,w.y,x2,y2)<25+player.r*.45){hurtPlayer(w.damage||22);w.hitCooldown=.9;}}});
   enemyBombs.forEach(b=>{b.timer-=dt;if(b.timer<=0&&!b.dead)explodeEnemyBomb(b);});
   weaponFx.forEach(f=>{f.life-=dt;f.rot=(f.rot||0)+dt*(f.spin||0);});
+  spriteFx.forEach(f=>{f.age+=dt;f.life-=dt;});
   gemMergeClock-=dt;if(gemMergeClock<=0){gemMergeClock=.8;compactGems();}
   particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.96;p.vy*=.96;if(p.kind==="splat"){p.vy+=95*dt;p.rot=(p.rot||0)+dt*7;}p.life-=dt;});
   texts.forEach(x=>{x.y-=28*dt;x.life-=dt;});
-  enemies=enemies.filter(e=>!e.dead);shots=shots.filter(s=>!s.dead&&s.life>0).slice(-180);swings=swings.filter(s=>s.life>0);lasers=lasers.filter(l=>l.life>0);bottles=bottles.filter(b=>!b.dead);zones=zones.filter(z=>z.life>0);gems=gems.filter(g=>!g.dead).slice(-500);chests=chests.filter(c=>!c.dead);pots=pots.filter(p=>!p.dead);pickups=pickups.filter(p=>!p.dead).slice(-120);enemyBombs=enemyBombs.filter(b=>!b.dead).slice(-40);enemyOrbs=enemyOrbs.filter(o=>!o.dead&&o.life>0).slice(-80);bossTrails=bossTrails.filter(t=>t.life>0).slice(-100);bossWaves=bossWaves.filter(w=>w.life>0);weaponFx=weaponFx.filter(f=>f.life>0).slice(-90);particles=particles.filter(p=>p.life>0).slice(-650);texts=texts.filter(x=>x.life>0).slice(-80);
+  enemies=enemies.filter(e=>!e.dead);shots=shots.filter(s=>!s.dead&&s.life>0).slice(-180);swings=swings.filter(s=>s.life>0);lasers=lasers.filter(l=>l.life>0);bottles=bottles.filter(b=>!b.dead);zones=zones.filter(z=>z.life>0);gems=gems.filter(g=>!g.dead).slice(-500);chests=chests.filter(c=>!c.dead);pots=pots.filter(p=>!p.dead);pickups=pickups.filter(p=>!p.dead).slice(-120);enemyBombs=enemyBombs.filter(b=>!b.dead).slice(-40);enemyOrbs=enemyOrbs.filter(o=>!o.dead&&o.life>0).slice(-80);bossTrails=bossTrails.filter(t=>t.life>0).slice(-100);bossWaves=bossWaves.filter(w=>w.life>0);weaponFx=weaponFx.filter(f=>f.life>0).slice(-90);spriteFx=spriteFx.filter(f=>f.life>0).slice(-90);particles=particles.filter(p=>p.life>0).slice(-650);texts=texts.filter(x=>x.life>0).slice(-80);
   potRespawnClock-=dt;if(potRespawnClock<=0){spawnOffscreenPot();potRespawnClock=7+Math.random()*5;}
   updateUI();
 }
@@ -1318,12 +1401,12 @@ function activateSkill(){
   texts.push({x:player.x,y:player.y-42,text:"吱——！",color:"#4f8b52",life:1});
 }
 function activateCropSkill(){if(!running||paused||!equippedCrop||cropCooldown>0)return;const def=CROP_DEFS.find(c=>c.id===equippedCrop);cropCooldown=def.cd;cropEffectTimer=0;cropTick=0;sfx("skill");const aim=player.facing>0?0:Math.PI;if(equippedCrop==="chili"){cropEffectTimer=4;texts.push({x:player.x,y:player.y-45,text:tr("辣椒火焰！","CHILI FLAME!"),color:"#ff713d",life:1});}else if(equippedCrop==="carrot"){for(let i=0;i<9;i++){const a=aim+(i-4)*.075;shots.push({kind:"carrot",x:player.x,y:player.y,vx:Math.cos(a)*570,vy:Math.sin(a)*570,r:10,damage:player.damage*2.15,life:2,rot:a,pierce:4,hitIds:new Set()});}}else if(equippedCrop==="pumpkin")cropEffectTimer=8;else if(equippedCrop==="tomato"){player.hp=Math.min(player.maxHp,player.hp+player.maxHp*.15);enemies.forEach(e=>{if(dist(e.x,e.y,player.x,player.y)<240+e.r){const a=Math.atan2(e.y-player.y,e.x-player.x);e.kx=Math.cos(a)*620;e.ky=Math.sin(a)*620;hitEnemy(e,player.damage*1.4);}});pixelExplosion(player.x,player.y,220,["#f55b45","#ffbd52","#fff0a5"]);}else if(equippedCrop==="blueberry")cropEffectTimer=12;else if(equippedCrop==="garlic")cropEffectTimer=7;else if(equippedCrop==="watermelon"){const n=player.maxHp*.25;player.hp=Math.min(player.maxHp,player.hp+n);texts.push({x:player.x,y:player.y-42,text:`❤ +${Math.round(n)}`,color:"#66af5e",life:1});}else if(equippedCrop==="corn"){for(let i=0;i<16;i++){const a=i*Math.PI/8;shots.push({kind:"seedShard",x:player.x,y:player.y,vx:Math.cos(a)*390,vy:Math.sin(a)*390,r:7,damage:player.damage*1.45,life:1.8,rot:a,pierce:2,hitIds:new Set()});}}else if(equippedCrop==="mushroom"){freezeTimer=Math.max(freezeTimer,6);pixelExplosion(player.x,player.y,280,["#9d7ad8","#74d5c5","#fff0a5"]);}else if(equippedCrop==="sunflower")cropEffectTimer=12;}
-function pixelExplosion(x,y,r,colors=["#ff704f","#ffe36d","#59423c"]){particles.push({x,y,vx:0,vy:0,life:.48,ring:true,r:8,maxR:r,color:colors[0],duration:.48});for(let i=0;i<28;i++){const a=i*Math.PI*2/28,s=80+Math.random()*210;particles.push({x:Math.round(x),y:Math.round(y),vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.4+Math.random()*.35,r:3+Math.floor(Math.random()*5),color:colors[i%colors.length],pixel:true});}}
+function pixelExplosion(x,y,r,colors=["#ff704f","#ffe36d","#59423c"]){particles.push({x,y,vx:0,vy:0,life:.48,ring:true,r:8,maxR:r,color:colors[0],duration:.48});spawnSpriteFx("explosion21",x,y,Math.max(72,r*1.2),{alpha:.95});for(let i=0;i<28;i++){const a=i*Math.PI*2/28,s=80+Math.random()*210;particles.push({x:Math.round(x),y:Math.round(y),vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.4+Math.random()*.35,r:3+Math.floor(Math.random()*5),color:colors[i%colors.length],pixel:true});}}
 function critProfile(source){
   const profiles={carrot:[.1,2],rocket:[.16,2.5],stone:[.14,2.1],carrotClub:[.18,2.25],hay:[.18,evolved.hay?2.55:2.2],seed:[.09,evolved.seed?2.7:2.35],seedShard:[.07,2],acorn:[.14,evolved.acorn?2.4:2.05],meteor:[.11,evolved.meteor?2.5:2.25],dandelionEvolved:[.07,1.75],laserEvolved:[.16,2.25],storyEvolved:[.13,2.2],bellEvolved:[.1,2]};
   if(source==="bubble"&&evolved.bubble)return [.08,1.8];return profiles[source]||null;
 }
-function hitEnemy(e,dmg,source=null){const profile=critProfile(source),blueberry=equippedCrop==="blueberry"&&cropEffectTimer>0?.25:0,chance=profile?Math.min(.75,profile[0]*(1+player.crit)+blueberry):0,crit=chance>0&&Math.random()<chance;if(crit)dmg*=profile[1];if(e.armor)dmg*=1-e.armor;e.hp-=dmg;e.hitFlash=.11;sfx(crit?"crit":"hit");burst(e.x,e.y,crit?"#ffe45c":"#fff0a8",crit?9:3);if(crit){shake=Math.max(shake,2.2);particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.3,ring:true,r:4,maxR:e.r+24,color:"#ffd84a",duration:.3});for(let i=0;i<8;i++){const a=i*Math.PI/4;particles.push({x:e.x,y:e.y,vx:Math.cos(a)*150,vy:Math.sin(a)*150,life:.28,r:3,color:i%2?"#fff6ac":"#ffbd36"});}texts.push({x:e.x,y:e.y-e.r-6,text:`✦ ${Math.round(dmg)} 暴击!`,color:"#ffc52e",life:.75,size:25,crit:true});}if(e.hp<=0&&!e.dead){e.dead=true;score++;sfx(e.boss||e.elite?"boss":"kill");shake=Math.max(shake,e.boss?7:e.elite?5:2.5);if(e.type==="bombMouse")enemyBombs.push({x:e.x,y:e.y,timer:1.35,maxTimer:1.35,dead:false,r:122,phase:Math.random()*6});if(e.type==="honeySlime")bossTrails.push({x:e.x,y:e.y,life:4.5,maxLife:4.5,r:78,color:"#e6ad3c",danger:false,slowPlayer:true});if(!e.finalBoss)gems.push({x:e.x,y:e.y,value:e.xp,dead:false,bob:Math.random()*6});if(!e.finalBoss&&runSeedDrops<runSeedTarget&&(e.boss||Math.random()<.0018)){pickups.push({x:e.x-22,y:e.y,type:"farmSeed",dead:false,bob:0});runSeedDrops++;}if((e.boss&&!e.finalBoss)||e.elite){chests.push({x:e.x,y:e.y,bob:0,dead:false});if(e.boss){runBosses++;pickups.push({x:e.x+24,y:e.y,type:"coin",value:10,dead:false,bob:0});}}splatter(e);if(e.finalBoss)endGame(true);}}
+function hitEnemy(e,dmg,source=null){const profile=critProfile(source),blueberry=equippedCrop==="blueberry"&&cropEffectTimer>0?.25:0,chance=profile?Math.min(.75,profile[0]*(1+player.crit)+blueberry):0,crit=chance>0&&Math.random()<chance;if(crit)dmg*=profile[1];if(e.armor)dmg*=1-e.armor;e.hp-=dmg;e.hitFlash=.11;sfx(crit?"crit":"hit");burst(e.x,e.y,crit?"#ffe45c":"#fff0a8",crit?9:3);spawnSpriteFx("weaponHit",e.x,e.y,Math.max(40,e.r*2.7),{alpha:crit?1:.78,rot:Math.random()*Math.PI*2,driftY:-6});if(crit){shake=Math.max(shake,2.2);particles.push({x:e.x,y:e.y,vx:0,vy:0,life:.3,ring:true,r:4,maxR:e.r+24,color:"#ffd84a",duration:.3});for(let i=0;i<8;i++){const a=i*Math.PI/4;particles.push({x:e.x,y:e.y,vx:Math.cos(a)*150,vy:Math.sin(a)*150,life:.28,r:3,color:i%2?"#fff6ac":"#ffbd36"});}texts.push({x:e.x,y:e.y-e.r-6,text:`✦ ${Math.round(dmg)} 暴击!`,color:"#ffc52e",life:.75,size:25,crit:true});}if(e.hp<=0&&!e.dead){e.dead=true;score++;sfx(e.boss||e.elite?"boss":"kill");shake=Math.max(shake,e.boss?7:e.elite?5:2.5);if(e.type==="bombMouse")enemyBombs.push({x:e.x,y:e.y,timer:1.35,maxTimer:1.35,dead:false,r:122,phase:Math.random()*6});if(e.type==="honeySlime")bossTrails.push({x:e.x,y:e.y,life:4.5,maxLife:4.5,r:78,color:"#e6ad3c",danger:false,slowPlayer:true});if(!e.finalBoss)gems.push({x:e.x,y:e.y,value:e.xp,dead:false,bob:Math.random()*6});if(!e.finalBoss&&runSeedDrops<runSeedTarget&&(e.boss||Math.random()<.0018)){pickups.push({x:e.x-22,y:e.y,type:"farmSeed",dead:false,bob:0});runSeedDrops++;}if((e.boss&&!e.finalBoss)||e.elite){chests.push({x:e.x,y:e.y,bob:0,dead:false});if(e.boss){runBosses++;pickups.push({x:e.x+24,y:e.y,type:"coin",value:10,dead:false,bob:0});}}splatter(e);if(e.finalBoss)endGame(true);}}
 function explodeEnemyBomb(b){
   b.dead=true;sfx("boss");shake=Math.max(shake,5);pixelExplosion(b.x,b.y,b.r);
   particles.push({x:b.x,y:b.y,vx:0,vy:0,life:.5,ring:true,r:8,maxR:b.r,color:"#ff704f",duration:.5});
@@ -1414,7 +1497,7 @@ function endGame(win){
 function updateUI(){
   ui.timer.textContent=formatTime(elapsed);ui.levelText.textContent=level;ui.score.textContent=score;ui.coinText.textContent=metaSave.coins;ui.hp.textContent=Math.ceil(player.hp);ui.hpFill.style.width=(player.hp/player.maxHp*100)+"%";ui.xpFill.style.width=(xp/xpNeed*100)+"%";
   const ready=skillCooldown<=0;ui.skillFill.style.width=((skillMaxCooldown-skillCooldown)/skillMaxCooldown*100)+"%";ui.skillCd.textContent=ready?"SPACE":skillCooldown.toFixed(1)+"s";ui.skillBar.classList.toggle("ready",ready);
-  const cropReady=!!equippedCrop&&cropCooldown<=0,cropProgress=equippedCrop&&cropMaxCooldown?Math.max(0,Math.min(1,(cropMaxCooldown-cropCooldown)/cropMaxCooldown)):0,cropDef=equippedCrop?CROP_DEFS.find(c=>c.id===equippedCrop):null,cropSrc=equippedCrop?`assets/sprites/farm/crops/${equippedCrop}.png`:"";ui.cropSkillDim.src=cropSrc;ui.cropSkillBright.src=cropSrc;ui.cropSkillFill.style.height=(cropProgress*24)+"px";ui.cropCdFill.style.width=(cropProgress*100)+"%";ui.cropCdName.textContent=cropDef?tr(cropDef.name[0],cropDef.name[1]):tr("未携带蔬菜","NO CROP");ui.cropCdText.textContent=cropReady?"E":equippedCrop?cropCooldown.toFixed(1)+"s":"—";ui.cropSkill.classList.toggle("ready",cropReady);ui.cropSkill.classList.toggle("empty",!equippedCrop);ui.cropSkillBar.classList.toggle("ready",cropReady);ui.cropSkillBar.classList.toggle("empty",!equippedCrop);ui.cropSkill.title=equippedCrop?`${tr(cropDef.name[0],cropDef.name[1])} · ${cropReady?tr("可使用","READY"):cropCooldown.toFixed(1)+"s"}`:tr("未携带蔬菜","NO CROP EQUIPPED");
+  const cropReady=!!equippedCrop&&cropCooldown<=0,cropProgress=equippedCrop&&cropMaxCooldown?Math.max(0,Math.min(1,(cropMaxCooldown-cropCooldown)/cropMaxCooldown)):0,cropDef=equippedCrop?CROP_DEFS.find(c=>c.id===equippedCrop):null,cropSrc=equippedCrop?pixelIconSrc(`crop-${equippedCrop}`):"";ui.cropSkillDim.src=cropSrc;ui.cropSkillBright.src=cropSrc;ui.cropSkillFill.style.height=(cropProgress*24)+"px";ui.cropCdFill.style.width=(cropProgress*100)+"%";ui.cropCdName.textContent=cropDef?tr(cropDef.name[0],cropDef.name[1]):tr("未携带蔬菜","NO CROP");ui.cropCdText.textContent=cropReady?"E":equippedCrop?cropCooldown.toFixed(1)+"s":"—";ui.cropSkill.classList.toggle("ready",cropReady);ui.cropSkill.classList.toggle("empty",!equippedCrop);ui.cropSkillBar.classList.toggle("ready",cropReady);ui.cropSkillBar.classList.toggle("empty",!equippedCrop);ui.cropSkill.title=equippedCrop?`${tr(cropDef.name[0],cropDef.name[1])} · ${cropReady?tr("可使用","READY"):cropCooldown.toFixed(1)+"s"}`:tr("未携带蔬菜","NO CROP EQUIPPED");
   const boss=enemies.find(e=>e.boss&&!e.dead);ui.bossHud.classList.toggle("hidden",!boss);if(boss){ui.bossName.textContent=boss.name;ui.bossFill.style.width=Math.max(0,boss.hp/boss.maxHp*100)+"%";}
   const buffs=[["snack-carrot",snackRateTimer],["snack-pea",snackSpeedTimer],["snack-apple",snackHealTimer],["snack-cookie",snackXpTimer]].filter(x=>x[1]>0);ui.snackBuffs.innerHTML=buffs.map(x=>`<span><img src="assets/sprites/garden/${x[0]}.png"><b>${x[1].toFixed(1)}</b></span>`).join("");
 }
@@ -1434,7 +1517,7 @@ function isOnScreen(x,y,pad=0){return Math.abs(x-player.x)<=W/(2*cameraZoom)+pad
 function draw(){
   ctx.save();ctx.clearRect(0,0,W,H);const sx=shake?(Math.random()-.5)*shake:0,sy=shake?(Math.random()-.5)*shake:0;
   ctx.translate(W/2+sx,H/2+sy);ctx.scale(cameraZoom,cameraZoom);ctx.translate(-player.x,-player.y);
-  drawGround();drawGardenFeatures();obstacles.forEach(drawObstacle);zones.forEach(drawZone);gems.forEach(drawGem);pickups.forEach(drawPickup);pots.forEach(drawPot);chests.forEach(drawChest);bottles.forEach(drawBottle);lasers.forEach(drawLaser);bossTrails.forEach(drawBossTrail);enemyBombs.forEach(drawEnemyBomb);weaponFx.forEach(safeDrawWeaponFx);particles.forEach(drawParticle);shots.forEach(drawCarrot);swings.forEach(drawSwing);enemies.forEach(drawEnemy);enemyOrbs.forEach(drawEnemyOrb);bossWaves.forEach(drawBossWave);
+  drawGround();drawGardenFeatures();obstacles.forEach(drawObstacle);zones.forEach(drawZone);gems.forEach(drawGem);pickups.forEach(drawPickup);pots.forEach(drawPot);chests.forEach(drawChest);bottles.forEach(drawBottle);lasers.forEach(drawLaser);bossTrails.forEach(drawBossTrail);enemyBombs.forEach(drawEnemyBomb);weaponFx.forEach(safeDrawWeaponFx);spriteFx.forEach(drawSpriteFx);particles.forEach(drawParticle);shots.forEach(drawCarrot);swings.forEach(drawSwing);enemies.forEach(drawEnemy);enemyOrbs.forEach(drawEnemyOrb);bossWaves.forEach(drawBossWave);
   if(weapons.dandelion)drawOrbit();if(flameTimer>0)drawFlameAura();drawPlayer();texts.forEach(drawText);ctx.restore();
   if(flash){ctx.fillStyle=`rgba(255,239,159,${flash})`;ctx.fillRect(0,0,W,H);}
   drawChestIndicators();drawEliteIndicators();
@@ -1443,6 +1526,22 @@ function drawBossTrail(t){
   ctx.save();ctx.globalAlpha=Math.max(0,t.life/t.maxLife)*.55;ctx.shadowBlur=24;ctx.shadowColor=t.color;ctx.fillStyle=t.color;ctx.beginPath();ctx.arc(t.x,t.y,t.r*(.6+t.life/t.maxLife*.4),0,Math.PI*2);ctx.fill();ctx.restore();
 }
 function safeDrawWeaponFx(f){try{drawWeaponFx(f);}catch(error){f.life=0;console.error("Weapon FX disabled after draw error",f.kind,error);}}
+function drawSpriteFx(f){
+  const def=spriteFxDefs[f.key],img=spriteFxImages[f.key];
+  if(!def||!img||!img.complete||!img.naturalWidth)return;
+  const progress=Math.max(0,Math.min(.999,f.age/(def.life||Math.max(.001,f.life+f.age))));
+  const frame=Math.min(def.frames-1,Math.floor(progress*def.frames));
+  const sx=(frame%def.cols)*def.frameW,sy=Math.floor(frame/def.cols)*def.frameH;
+  const y=f.y-(f.driftY||0)*progress;
+  ctx.save();
+  ctx.translate(f.x,y);
+  if(f.rot)ctx.rotate(f.rot);
+  ctx.globalAlpha=(f.alpha??1)*(1-progress*.18);
+  ctx.imageSmoothingEnabled=false;
+  if(def.blend)ctx.globalCompositeOperation=def.blend;
+  ctx.drawImage(img,sx,sy,def.frameW,def.frameH,-f.size/2,-f.size/2,f.size,f.size);
+  ctx.restore();
+}
 function drawWeaponFx(f){const p=1-f.life/f.maxLife,a=Math.max(0,1-p),r=f.r*(.34+p*.72);ctx.save();try{ctx.translate(f.x,f.y);ctx.rotate(f.angle+(f.rot||0));ctx.globalAlpha=a;ctx.lineCap="round";ctx.lineJoin="round";if(f.evo){ctx.globalCompositeOperation="lighter";ctx.shadowBlur=22;}
   if(f.kind==="carrot"){ctx.shadowColor="#ff9b3d";for(let i=0;i<(f.evo?7:4);i++){const q=(i-(f.evo?3:1.5))*.16;ctx.strokeStyle=i%2?"#ffcf55":"#74bd62";ctx.lineWidth=f.evo?7:4;ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(18+r*.55,Math.sin(q)*r*.5);ctx.stroke();}}
   else if(f.kind==="hay"){ctx.strokeStyle=f.evo?"#fff3a0":"#bfe17c";ctx.lineWidth=f.evo?8:4;ctx.setLineDash(f.evo?[20,9]:[9,7]);ctx.beginPath();ctx.arc(0,0,r,-1.7,1.7);ctx.stroke();ctx.setLineDash([]);}
@@ -1510,8 +1609,7 @@ function drawPlayer(){
   ctx.restore();
 }
 function drawEnemy(e){
-  ctx.save();ctx.translate(e.x,e.y);const phase=elapsed*(e.type==="mouse"?9:6)+e.seed,wob=Math.sin(phase)*3;
-  ctx.translate(0,wob);ctx.rotate(Math.sin(phase*.5)*.07);
+  ctx.save();ctx.translate(e.x,e.y);const lastX=Number.isFinite(e.lastDrawX)?e.lastDrawX:e.x,lastY=Number.isFinite(e.lastDrawY)?e.lastDrawY:e.y,stepDist=Math.hypot(e.x-lastX,e.y-lastY);e.walkPhase=((e.walkPhase||0)+stepDist/Math.max(5,e.boss?13:7))%6000;e.lastDrawY=e.y;const gait=Math.sin(e.walkPhase*Math.PI/3)*(e.boss?2:1.5);ctx.translate(0,Math.round(gait));
   ctx.fillStyle="rgba(67,74,52,.14)";ctx.beginPath();ctx.ellipse(0,e.r*.8,e.r*.85,e.r*.3,0,0,Math.PI*2);ctx.fill();
   const moveDx=e.x-(Number.isFinite(e.lastDrawX)?e.lastDrawX:e.x);if(Math.abs(moveDx)>.16)e.moveFacing=moveDx<0?-1:1;e.lastDrawX=e.x;
   const facing=e.boss?(player.x<e.x?-1:1):e.type==="bat"?(e.flyVx<0?-1:1):(e.moveFacing||(player.x<e.x?-1:1));
@@ -1549,8 +1647,9 @@ function drawObstacle(o){
   ctx.restore();
 }
 function drawPot(p){if(drawPixelProp("pot",p.x,p.y+24,52))return;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle="#d98958";ctx.fillRect(-16,-10,32,28);ctx.restore();}
-function drawPickup(p){const cropId=cropIds.includes(p.cropId)?p.cropId:"carrot",key=p.type==="farmSeed"?`crop${cropId[0].toUpperCase()+cropId.slice(1)}`:({snackCarrot:"snackCarrot",snackPea:"snackPea",snackApple:"snackApple",snackCookie:"snackCookie"}[p.type]||p.type);if(drawPixelProp(key,p.x,p.y+22,(p.type.startsWith("snack")?48:p.type==="farmSeed"?44:42),Math.round(Math.sin(elapsed*6+p.bob)*3)))return;}
-function drawFlameAura(){ctx.save();ctx.globalAlpha=.24;ctx.fillStyle="#ff681f";ctx.beginPath();ctx.arc(player.x,player.y,60+Math.sin(elapsed*8)*4,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.92;for(let i=0;i<10;i++){const a=i*Math.PI/5+elapsed*(2.05+(i%2)*.18),r=70+(i%3)*28,x=player.x+Math.cos(a)*r,y=player.y+Math.sin(a)*r,h=22+(i%3)*6,w=9+(i%2)*3,tip=Math.sin(elapsed*10+i)*4;ctx.fillStyle=i%2?"#ffb52e":"#ff6326";ctx.beginPath();ctx.moveTo(x,y+h*.55);ctx.quadraticCurveTo(x+w,y,x+tip,y-h);ctx.quadraticCurveTo(x-w,y,x,y+h*.55);ctx.fill();ctx.fillStyle="#fff0a0";ctx.beginPath();ctx.ellipse(x,y+h*.08,w*.28,h*.2,0,0,Math.PI*2);ctx.fill();}ctx.restore();}
+function drawRotatingCoin(x,y,size=42,bob=0){const img=pixelArt.coinSpin;if(!img||!img.complete||!img.naturalWidth)return false;const frame=Math.floor(elapsed*12)%8,sx=frame*16,sw=frame===7?15:16;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(img,sx,0,sw,16,Math.round(x-size/2),Math.round(y-size+bob),size,size);ctx.restore();return true;}
+function drawPickup(p){const bob=Math.round(Math.sin(elapsed*6+p.bob)*3);if(p.type==="coin"&&drawRotatingCoin(p.x,p.y+22,42,bob))return;const cropId=cropIds.includes(p.cropId)?p.cropId:"carrot",key=p.type==="farmSeed"?`crop${cropId[0].toUpperCase()+cropId.slice(1)}`:({snackCarrot:"snackCarrot",snackPea:"snackPea",snackApple:"snackApple",snackCookie:"snackCookie"}[p.type]||p.type);if(drawPixelProp(key,p.x,p.y+22,(p.type.startsWith("snack")?48:p.type==="farmSeed"?44:42),bob))return;}
+function drawFlameAura(){ctx.save();ctx.globalAlpha=.2;ctx.fillStyle="#ff681f";ctx.beginPath();ctx.arc(player.x,player.y,60+Math.sin(elapsed*8)*4,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.92;for(let i=0;i<10;i++){const a=i*Math.PI/5+elapsed*(2.05+(i%2)*.18),r=70+(i%3)*28,x=player.x+Math.cos(a)*r,y=player.y+Math.sin(a)*r,h=22+(i%3)*6,w=9+(i%2)*3,tip=Math.sin(elapsed*10+i)*4;ctx.fillStyle=i%2?"#ffb52e":"#ff6326";ctx.beginPath();ctx.moveTo(x,y+h*.55);ctx.quadraticCurveTo(x+w,y,x+tip,y-h);ctx.quadraticCurveTo(x-w,y,x,y+h*.55);ctx.fill();ctx.fillStyle="#fff0a0";ctx.beginPath();ctx.ellipse(x,y+h*.08,w*.28,h*.2,0,0,Math.PI*2);ctx.fill();}const def=spriteFxDefs.brightFire,img=spriteFxImages.brightFire;if(def&&img&&img.complete&&img.naturalWidth){const orbit=8;for(let i=0;i<orbit;i++){const a=elapsed*2.3+i*Math.PI*2/orbit,x=player.x+Math.cos(a)*(76+(i%2)*18),y=player.y+Math.sin(a)*(62+(i%3)*10);const frame=Math.floor((elapsed*def.fps+i*1.4)%def.frames),sx=(frame%def.cols)*def.frameW,sy=Math.floor(frame/def.cols)*def.frameH,size=42+(i%3)*8;ctx.save();ctx.translate(x,y);ctx.globalCompositeOperation=def.blend||"screen";ctx.globalAlpha=.42+(i%2)*.08;ctx.drawImage(img,sx,sy,def.frameW,def.frameH,-size/2,-size/2,size,size);ctx.restore();}}ctx.restore();}
 function drawGem(g){const tier=g.rainbow?3:g.value>=30?2:g.value>=12?1:0;if(g.vacuum&&g.vacuumDelay<=0){ctx.strokeStyle="rgba(91,224,255,.55)";ctx.lineWidth=3+tier;ctx.beginPath();ctx.moveTo(g.x-(g.vx||0)*.06,g.y-(g.vy||0)*.06);ctx.lineTo(g.x,g.y);ctx.stroke();}drawPixelProp("xp",g.x,g.y+14+tier*2,24+tier*8,Math.round(Math.sin(elapsed*5+g.bob)*2));}
 function drawSwing(s){
   const k=s.life/s.maxLife;ctx.save();ctx.translate(s.x,s.y);
