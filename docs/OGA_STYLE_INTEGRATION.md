@@ -96,3 +96,20 @@
   - License: CC0; credit requested by the author.
   - Local reference: `assets/third_party/oga/crazy-critters/Crazy-Critters-OGA.png`
   - Usage: movement timing and silhouette-change reference only. Tuntun characters keep their original designs and custom sprite sheets.
+
+- Weapon Slash Effect: `https://opengameart.org/content/weapon-slash-effect`
+  - Author: Cethiel
+  - License: CC0
+  - Local files used: six selected Classic frames under `assets/third_party/oga/weapon-slash-effect/classic/Classic/1/`
+  - Usage: readable pixel slash overlay for the bread-blade melee weapon.
+
+## Reviewed itch.io candidates
+
+- Explosion Animations Pack: `https://ansimuz.itch.io/explosion-animations-pack`
+  - Author: ansimuz
+  - License shown on the asset page: CC0 1.0
+  - Status: approved candidate for a later curated explosion pass; not copied into the repository by this change.
+- Treasure Asset Pack [16x16]: `https://mischeal.itch.io/treasure-asset-pack`
+  - Author: Mischeal
+  - License: CC BY 4.0
+  - Status: approved candidate for treasure/relic rewards after attribution UI is added; not copied into the repository by this change.
