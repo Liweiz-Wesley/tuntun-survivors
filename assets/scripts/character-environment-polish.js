@@ -21,6 +21,8 @@ renderCharacterSelect=function(){legacyRenderCharacterSelectClean();const portra
 // Food projectiles were overpowering the small 32px characters; halve only projectile art, not hitboxes.
 const legacyDrawPixelProjectile=drawPixelProjectile;
 drawPixelProjectile=function(key,x,y,size,rot=0,alpha=1){return legacyDrawPixelProjectile(key,x,y,String(key).startsWith("proj")?size*.5:size,rot,alpha);};
+const legacyDrawRotatingCoinPolish=drawRotatingCoin;
+drawRotatingCoin=function(x,y,size=42,bob=0){return legacyDrawRotatingCoinPolish(x,y,Math.min(30,size),bob);};
 
 // Give low-level food weapons a readable identity and a gentle one-projectile start.
 for(const [id,patch] of Object.entries({
@@ -43,7 +45,7 @@ drawPixelPlayer=function(){
   if(selectedCharacter==="rabbit"){
     if(playerAction.type){
       const rolling=playerAction.type==="roll";
-      return drawPixelFrameAt(rolling?"archerRollClean":"archerAttackClean",6,actionFrame,player.x,player.y+42,116,player.facing);
+      return drawPixelFrameAt(rolling?"archerRollClean":"archerClean",rolling?6:4,rolling?actionFrame:actionFrame%4,player.x,player.y+42,116,player.facing);
     }
     const idleFrame=Math.floor(elapsed*3.15)%4;
     return drawPixelFrameAt("archerClean",4,idleFrame,player.x,player.y+42,116,player.facing);
@@ -57,6 +59,20 @@ drawPixelPlayer=function(){
   return drawPixelFrameAt("nugget",4,walkFrame,player.x,player.y+43,108,player.facing);
 };
 
+const legacyDrawCarrotBubbleGuard=drawCarrot;
+drawCarrot=function(s){
+  if(s&&typeof s.kind==="string"&&s.kind.startsWith("shakeBubble")){
+    s.r=Math.min(54,s.r||20);const evo=s.kind.endsWith("Evolved"),key=evo?"projShakeBubbleEvolved":"projShakeBubble";
+    ctx.save();ctx.globalAlpha=evo?.72:.58;ctx.strokeStyle=evo?"#9cfff2":"#b9f4ff";ctx.lineWidth=evo?3:2;ctx.shadowBlur=evo?12:8;ctx.shadowColor="#64e7ff";ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.stroke();ctx.restore();
+    drawPixelProjectile(key,s.x,s.y,Math.min(58,Math.max(30,s.r*1.25)),s.rot,.92);return;
+  }
+  legacyDrawCarrotBubbleGuard(s);
+};
+const legacyActivateSkillPolish=activateSkill;
+activateSkill=function(){
+  if(selectedCharacter==="tuntun"&&skillCooldown<=0){skillMaxCooldown=(characterDefs.find(c=>c.id==="tuntun")?.cd||10)+5;legacyActivateSkillPolish();for(const e of enemies){if(e.dead||e.boss)continue;const a=Math.atan2(e.y-player.y,e.x-player.x),force=2400;e.kx=Math.cos(a)*force;e.ky=Math.sin(a)*force;hitEnemy(e,12,"squeal");}return;}
+  legacyActivateSkillPolish();
+};
 const legacyDrawSwing=drawSwing;
 drawSwing=function(s){
   if(!s.silverWave)return legacyDrawSwing(s);
