@@ -16,7 +16,7 @@ drawChest=function(c){const tier=chestTierFor(c),img=pixelArt[`chestTier${tier}`
 const legacyOpenChestPolish=openChest;
 openChest=function(c){const tier=chestTierFor(c),result=legacyOpenChestPolish(c),stage=document.querySelector('.chest-stage img');if(stage){stage.src=`assets/generated/chests/chest-tier-${tier}.gif`;stage.style.imageRendering="pixelated";}return result;};
 const legacyClaimChestRewardPolish=claimChestReward;
-claimChestReward=function(){const stage=document.querySelector('.chest-stage img');legacyClaimChestRewardPolish();if(stage){stage.removeAttribute("src");stage.style.backgroundImage="none";}};
+claimChestReward=function(){const stage=document.querySelector('.chest-stage img');legacyClaimChestRewardPolish();if(stage){stage.removeAttribute("src");stage.style.backgroundImage="none";}ui.chest?.classList.remove("evolution-reward");};
 
 // Keep the archer portrait and in-run sprite on the same cleaned, slingshot-themed source.
 const legacyRenderCharacterSelect=renderCharacterSelect;
