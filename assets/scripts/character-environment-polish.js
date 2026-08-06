@@ -8,6 +8,13 @@ addPixel("archerRollClean","assets/generated/characters/archer-roll-normalized.p
 addPixel("melonAttackClean","assets/generated/characters/melon-attack-normalized.png");
 addPixel("melonEatClean","assets/generated/characters/melon-eat-normalized.png");
 addPixel("carrotGreatsword","assets/generated/weapons/carrot-greatsword-64.png");
+for(let i=1;i<=5;i++)addPixel(`chestTier${i}`,`assets/generated/chests/chest-tier-${i}.png`);
+
+function chestTierFor(c){if(c?.kind==="final")return 5;if(c?.kind==="boss")return Math.max(2,Math.min(4,c.tier||2));return 1;}
+const legacyDrawChestPolish=drawChest;
+drawChest=function(c){const tier=chestTierFor(c),img=pixelArt[`chestTier${tier}`];if(!img||!img.complete||!img.naturalWidth)return legacyDrawChestPolish(c);const frame=Math.floor(elapsed*7.7)%8;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(img,frame*96,0,96,96,Math.round(c.x-48),Math.round(c.y-48),96,96);ctx.restore();};
+const legacyOpenChestPolish=openChest;
+openChest=function(c){const tier=chestTierFor(c),result=legacyOpenChestPolish(c),stage=document.querySelector('.chest-stage img');if(stage){stage.src=`assets/generated/chests/chest-tier-${tier}.gif`;stage.style.imageRendering="pixelated";}return result;};
 
 // Keep the archer portrait and in-run sprite on the same cleaned, slingshot-themed source.
 const legacyRenderCharacterSelect=renderCharacterSelect;
@@ -97,6 +104,8 @@ hitEnemy=function(e,dmg,source=null){
   for(let i=0;i<10;i++){const a=i*Math.PI/5+(Math.random()-.5)*.2;particles.push({x:e.x,y:e.y,vx:Math.cos(a)*(100+Math.random()*120),vy:Math.sin(a)*(100+Math.random()*120),life:.28,r:3+(i%3),color:i%2?"#eef6ff":"#ffb347",pixel:true});}
 };
 
+const legacyHitEnemyChestPolish=hitEnemy;
+hitEnemy=function(e,dmg,source=null){const before=chests.length,result=legacyHitEnemyChestPolish(e,dmg,source);if(chests.length>before){const c=chests[chests.length-1];c.kind=e.finalBoss?"final":e.boss?"boss":"elite";c.tier=e.bossTier||1;}return result;};
 function rareShot(s){
   if(!s)return false;
   if(typeof s.kind==="string"&&s.kind.endsWith("Evolved"))return true;
