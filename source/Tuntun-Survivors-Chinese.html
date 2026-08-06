@@ -443,7 +443,7 @@ button.primary,button.secondary,.menu-button{border-radius:3px!important;border:
         <div class="codex-head"><div><span class="eyebrow">GARDEN ARCHIVE</span><h2>豚豚图鉴</h2></div><button id="closeCodexBtn" class="icon-btn">✕</button></div>
         <div class="codex-scroll">
           <h3>武器与进化路线</h3>
-          <p class="evo-note">武器升至 LV.8，并持有对应被动道具后，可从 Boss 宝箱中进化。</p>
+          <p class="evo-note">组合融合：武器与对应被动均达到 LV.4；单武器融合：武器达到 LV.5。满足后即可从宝箱中进化。</p>
           <div class="evo-grid">
             <article><b><i data-pixel-icon="carrot">🥕</i> 旋转胡萝卜</b><span>＋ <i data-pixel-icon="chew">🪵</i> 磨牙棒</span><strong><i data-pixel-icon="carrotEvolved">🚀</i> 火焰胡萝卜火箭</strong><p>巨型胡萝卜高速旋转，进化后爆炸穿透。</p></article>
             <article><b><i data-pixel-icon="dandelion">🍒</i> 樱桃护卫</b><span>＋ <i data-pixel-icon="power">🎀</i> 勇气蝴蝶结</span><strong><i data-pixel-icon="dandelionEvolved">🍇</i> 葡萄风暴</strong><p>水果护卫环绕豚豚并持续撞击敌人。</p></article>
@@ -649,8 +649,8 @@ function drawPixelPlayer(){
   ctx.save();ctx.fillStyle="rgba(52,61,40,.22)";ctx.fillRect(Math.round(player.x-21),Math.round(player.y+17),42,7);ctx.restore();
   if(player.inv>0&&playerAction.type!=="roll"&&Math.floor(player.inv*14)%2)return true;
   const progress=playerAction.duration?1-playerAction.timer/playerAction.duration:0,frame=Math.min(5,Math.max(0,Math.floor(progress*6)));
-  if(selectedCharacter==="rabbit")return playerAction.type?drawPixelFrameAt(playerAction.type==="roll"?"archerRoll":"archerAttack",6,frame,player.x,player.y+40,96,player.facing):drawPixelFrameAt("archer",4,player.moving?critterWalkFrame(player.walkPhase,4):0,player.x,player.y+42,124,player.facing);
-  if(selectedCharacter==="chinchilla")return playerAction.type?drawPixelFrameAt(playerAction.type==="eat"?"melonEat":"melonAttack",6,frame,player.x,player.y+42,106,player.facing):drawPixelFrameAt("melonAttack",6,player.moving?([5,0,5,4][Math.floor(player.walkPhase)%4]):5,player.x,player.y+42,106,player.facing);
+  if(selectedCharacter==="rabbit")return playerAction.type?drawPixelFrameAt(playerAction.type==="roll"?"archerRoll":"archerAttack",6,frame,player.x,player.y+42,116,player.facing):drawPixelFrameAt("archer",4,player.moving?critterWalkFrame(player.walkPhase,4):0,player.x,player.y+42,116,player.facing);
+  if(selectedCharacter==="chinchilla")return playerAction.type?drawPixelFrameAt(playerAction.type==="eat"?"melonEat":"melonAttack",6,frame,player.x,player.y+42,112,player.facing):drawPixelFrameAt("melonAttack",6,player.moving?([5,0,5,4][Math.floor(player.walkPhase)%4]):5,player.x,player.y+42,112,player.facing);
   const walkFrame=player.moving?critterWalkFrame(player.walkPhase,4):0;
   return drawPixelFrameAt("nugget",4,walkFrame,player.x,player.y+39,94,player.facing);
 }
@@ -752,8 +752,8 @@ const cropSheetSlots={
 function farmGrowthStage(progress,watered=true){if(!watered)return 0;if(progress>=1)return 4;return Math.min(3,1+Math.floor(Math.max(0,progress)*3));}
 function cropStageMarkup(cropId,progress=0,watered=true){const slot=cropSheetSlots[cropId]||cropSheetSlots.carrot,stage=farmGrowthStage(progress,watered),col=slot.col,row=slot.rows[stage];return `<span class="crop-stage farm-growth-stage" role="img" aria-label="${cropId}" style="background-position:${-col*64}px ${-row*64}px"></span>`;}
 function normalizeFarm(f){const base=freshFarm();return {runCount:Math.max(0,Number(f?.runCount)||0),seeds:{...base.seeds,...(f?.seeds||{})},mysterySeeds:Math.max(0,Number(f?.mysterySeeds)||0),inventory:{...base.inventory,...(f?.inventory||{})},equipped:cropIds.includes(f?.equipped)?f.equipped:base.equipped,selectedSeed:cropIds.includes(f?.selectedSeed)?f.selectedSeed:base.selectedSeed,supplies:{...base.supplies,...(f?.supplies||{})},plots:Array.from({length:6},(_,i)=>f?.plots?.[i]||null)};}
-function freshSave(){return {coins:0,earned:0,characters:{tuntun:true,rabbit:false,chinchilla:false},upgrades:{health:0,damage:0,armor:0,cooldown:0,area:0,growth:0,amount:0,luck:0,revival:0,speed:0,magnet:0,regen:0,fortune:0,reroll:0,banish:0},farm:freshFarm()};}
-function loadSave(){try{const raw=localStorage.getItem(SAVE_KEY),data=raw?JSON.parse(raw):freshSave();return {coins:+data.coins||0,earned:+data.earned||0,characters:{...freshSave().characters,...(data.characters||{})},upgrades:{...freshSave().upgrades,...(data.upgrades||{})},farm:normalizeFarm(data.farm)};}catch(e){return freshSave();}}
+function freshSave(){return {coins:0,earned:0,characters:{tuntun:true,rabbit:false,chinchilla:false},upgrades:{health:0,damage:0,armor:0,cooldown:0,area:0,growth:0,amount:0,luck:0,revival:0,speed:0,magnet:0,regen:0,fortune:0,reroll:0,banish:0},discoveries:{weapons:{carrot:true},passives:{},evolutions:{},relics:{},enemies:{}},farm:freshFarm()};}
+function loadSave(){try{const raw=localStorage.getItem(SAVE_KEY),data=raw?JSON.parse(raw):freshSave();return {coins:+data.coins||0,earned:+data.earned||0,characters:{...freshSave().characters,...(data.characters||{})},upgrades:{...freshSave().upgrades,...(data.upgrades||{})},discoveries:data.discoveries||freshSave().discoveries,farm:normalizeFarm(data.farm)};}catch(e){return freshSave();}}
 let metaSave=loadSave();
 function persistSave(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(metaSave));}catch(e){}}
 function metaCost(d,l){return d.costs?d.costs[Math.min(l,d.costs.length-1)]:Math.floor(d.base*Math.pow(1.58,l));}
@@ -765,7 +765,7 @@ function renderShop(){
 }
 function buyMeta(id){const d=metaDefs.find(x=>x.id===id),lv=metaSave.upgrades[id]||0,cost=metaCost(d,lv);if(!d||lv>=d.max||metaSave.coins<cost)return;metaSave.coins-=cost;metaSave.upgrades[id]=lv+1;persistSave();sfx("chest");renderShop();}
 function exportSave(){prompt("复制下面的存档代码并妥善保存：",btoa(unescape(encodeURIComponent(JSON.stringify(metaSave)))));}
-function importSave(){const code=prompt("粘贴存档代码：");if(!code)return;try{const data=JSON.parse(decodeURIComponent(escape(atob(code.trim()))));metaSave={coins:+data.coins||0,earned:+data.earned||0,characters:{...freshSave().characters,...(data.characters||{})},upgrades:{...freshSave().upgrades,...(data.upgrades||{})},farm:normalizeFarm(data.farm)};persistSave();renderShop();alert("存档导入成功！");}catch(e){alert("存档代码无效。");}}
+function importSave(){const code=prompt("粘贴存档代码：");if(!code)return;try{const data=JSON.parse(decodeURIComponent(escape(atob(code.trim()))));metaSave={coins:+data.coins||0,earned:+data.earned||0,characters:{...freshSave().characters,...(data.characters||{})},upgrades:{...freshSave().upgrades,...(data.upgrades||{})},discoveries:data.discoveries||freshSave().discoveries,farm:normalizeFarm(data.farm)};persistSave();renderShop();alert("存档导入成功！");}catch(e){alert("存档代码无效。");}}
 function resetSave(){if(confirm("确定要清空金币和全部永久升级吗？")){metaSave=freshSave();persistSave();renderShop();}}
 function renderFarm(){const f=metaSave.farm=normalizeFarm(metaSave.farm),grid=document.querySelector("#cropGrid");grid.innerHTML=CROP_DEFS.map(c=>{const stock=f.inventory[c.id]||0;return `<button class="crop-card ${f.equipped===c.id?"selected":""} ${stock?"":"locked"}" data-crop="${c.id}">${pixelIcon(`crop-${c.id}`,"", "pixel-ui-icon crop-inventory-icon")}<span><h4>${tr(c.name[0],c.name[1])} · ${c.cd}s</h4><p>${tr(c.desc[0],c.desc[1])}</p><small>${tr("库存","STOCK")} ${stock} · ${tr("种子","SEEDS")} ${f.seeds[c.id]||0}</small></span></button>`;}).join("");grid.querySelectorAll(".crop-card").forEach(b=>b.onclick=()=>{f.selectedSeed=b.dataset.crop;if((f.inventory[b.dataset.crop]||0)>0)f.equipped=b.dataset.crop;persistSave();renderFarm();});renderFarmPlots();const c=CROP_DEFS.find(c=>c.id===f.equipped),seed=CROP_DEFS.find(c=>c.id===f.selectedSeed);const current=document.querySelector("#currentCropLoadout");if(current)current.innerHTML=`${pixelIcon(`crop-${c.id}`,"", "pixel-ui-icon crop-loadout-icon")}<div><b>${tr("当前出战技能","EQUIPPED CROP SKILL")}：${tr(c.name[0],c.name[1])}</b><p>${tr(c.desc[0],c.desc[1])} · CD ${c.cd}s · ${tr("库存","STOCK")} ${f.inventory[c.id]||0}</p></div>`;const status=document.querySelector("#farmStatus");if(status)status.textContent=tr(`携带：${c?.name[0]||"无"} · 选种：${seed?.name[0]||"无"} · 肥料 ${f.supplies.fertilizer} · 杀虫剂 ${f.supplies.pesticide}`,`EQUIPPED: ${c?.name[1]||"NONE"} · SEED: ${seed?.name[1]||"NONE"} · FERTILIZER ${f.supplies.fertilizer} · PESTICIDE ${f.supplies.pesticide}`);const bank=document.querySelector("#farmCoinBank");if(bank)bank.textContent="🪙 "+metaSave.coins;}
 function farmPlotProgress(p){if(!p?.wateredAt)return 0;if(!Number.isFinite(p.plantedRun)){p.plantedRun=metaSave.farm.runCount;persistSave();}const need=p.fertilized?1:2;return Math.max(0,Math.min(1,(metaSave.farm.runCount-p.plantedRun)/need));}
@@ -812,6 +812,7 @@ const evolutionRecipes = [
   ,{weapon:"bell",passive:"armor",name:"纸杯蛋糕震荡",icon:"bellEvolved"}
   ,...EXTRA_FOOD_DEFS.map(w=>({weapon:w.id,passive:w.passive,name:w.evoName,icon:`${w.id}Evolved`}))
 ];
+function evolutionReady(recipe){return recipe.passive?weapons[recipe.weapon]>=4&&passives[recipe.passive]>=4:weapons[recipe.weapon]>=5;}
 
 const upgrades = [
   {
@@ -1350,11 +1351,11 @@ function fireCarrots(){
 }
 function firePebbles(){
   const targets=enemies.filter(e=>isOnScreen(e.x,e.y,30)).sort((a,b)=>dist(a.x,a.y,player.x,player.y)-dist(b.x,b.y,player.x,player.y));if(!targets.length)return;const base=Math.atan2(targets[0].y-player.y,targets[0].x-player.x);player.facing=Math.cos(base)<0?-1:1;Object.assign(playerAction,{type:"shoot",timer:.46,duration:.46});sfx("shot");
-  for(let i=0;i<player.projectiles;i++){const a=base+(i-(player.projectiles-1)/2)*.1;shots.push({kind:"stone",x:player.x,y:player.y,vx:Math.cos(a)*535,vy:Math.sin(a)*535,r:8*player.size*player.area,damage:player.damage*(1.65+weapons.carrot*.12),life:2.4,rot:a,pierce:2+Math.floor(weapons.carrot/3)+player.pierce,hitIds:new Set()});}
+  for(let i=0;i<player.projectiles;i++){const a=base+(i-(player.projectiles-1)/2)*.1;shots.push({kind:"carrotArrow",x:player.x,y:player.y,vx:Math.cos(a)*535,vy:Math.sin(a)*535,r:9*player.size*player.area,damage:player.damage*(1.65+weapons.carrot*.12),life:2.4,rot:a,pierce:2+Math.floor(weapons.carrot/3)+player.pierce,hitIds:new Set()});}
 }
 function swingCarrotClub(){
-  const angle=player.facing>0?0:Math.PI,radius=(100+weapons.carrot*7)*player.area,damage=player.damage*(1.75+weapons.carrot*.15);Object.assign(playerAction,{type:"melee",timer:.52,duration:.52});swings.push({x:player.x,y:player.y,angle,radius,life:.42,maxLife:.42,carrotClub:true});sfx("shot");
-  enemies.forEach(e=>{const dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),a=Math.atan2(dy,dx),delta=Math.atan2(Math.sin(a-angle),Math.cos(a-angle));if(d<radius+e.r&&Math.abs(delta)<=Math.PI/2)hitEnemy(e,damage,"carrotClub");});pots.forEach(p=>{if(p.dead)return;const dx=p.x-player.x,dy=p.y-player.y,d=Math.hypot(dx,dy),a=Math.atan2(dy,dx),delta=Math.atan2(Math.sin(a-angle),Math.cos(a-angle));if(d<radius+p.r&&Math.abs(delta)<=Math.PI/2)hitPot(p,damage);});
+  const angle=player.facing>0?0:Math.PI,radius=(125+weapons.carrot*12)*1.5*player.area,damage=player.damage*(1.75+weapons.carrot*.15);Object.assign(playerAction,{type:"melee",timer:.58,duration:.58});swings.push({x:player.x,y:player.y,angle,radius,life:.5,maxLife:.5,carrotClub:true,silverWave:true});sfx("shot");
+  enemies.forEach(e=>{const dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),a=Math.atan2(dy,dx),delta=Math.atan2(Math.sin(a-angle),Math.cos(a-angle));if(d<radius+e.r&&Math.abs(delta)<=Math.PI/2){hitEnemy(e,damage,"carrotClub");const push=e.boss?44:e.elite?72:108;e.kx=(e.kx||0)+dx/(d||1)*push;e.ky=(e.ky||0)+dy/(d||1)*push;}});pots.forEach(p=>{if(p.dead)return;const dx=p.x-player.x,dy=p.y-player.y,d=Math.hypot(dx,dy),a=Math.atan2(dy,dx),delta=Math.atan2(Math.sin(a-angle),Math.cos(a-angle));if(d<radius+p.r&&Math.abs(delta)<=Math.PI/2)hitPot(p,damage);});
 }
 function fireHay(){
   const angle=player.facing>0?0:Math.PI,radius=(125+weapons.hay*12)*player.area,damage=20+weapons.hay*7.5,arc=1.65;
@@ -1463,7 +1464,7 @@ function chestRewardWithGold(reward,extra=0){
 function openChest(c){
   sfx("chest");
   document.querySelector(".chest-stage img").src=pixelArtSources[chestVisualKey(c)];
-  const possibleEvolutions=elapsed>=300?evolutionRecipes.filter(r=>weapons[r.weapon]>=8&&passives[r.passive]>0&&!evolved[r.weapon]):[];
+  const possibleEvolutions=evolutionRecipes.filter(r=>evolutionReady(r)&&!evolved[r.weapon]);
   if(possibleEvolutions.length){
     const recipe=possibleEvolutions[Math.floor(Math.random()*possibleEvolutions.length)];
     return showChestReward(chestRewardWithGold({icon:recipe.icon,name:recipe.name,desc:"武器进化成功！",apply(){evolved[recipe.weapon]=true;}}));
@@ -1518,8 +1519,8 @@ function renderUpgradeChoices(){
 function renderLevelBuild(){
   const weaponIcons={carrot:"🥕",dandelion:"🍒",hay:"🍉",seed:"🍿",laser:"🍋",bottle:"🥤",acorn:"🍌",meteor:"🍍",bubble:"🫐",story:"🍣",bell:"🍩"},passiveIcons={speed:"👟",heart:"🍎",magnet:"🎒",regen:"🏠",power:"🎀",chew:"🪵",luck:"🍀",area:"🔭",cooldown:"🧣",growth:"👑",armor:"🛡️"};
   const chip=(id,icon,lv,ready=false)=>`<span class="level-build-chip${ready?" ready":""}">${pixelIcon(id,icon)}<small>${lv}</small></span>`;
-  const ws=Object.keys(weaponIcons).filter(id=>weapons[id]>0).map(id=>{const recipe=evolutionRecipes.find(r=>r.weapon===id),ready=weapons[id]>=8&&passives[recipe.passive]>0&&!evolved[id],displayId=evolved[id]?recipe.icon:id;return chip(displayId,evolved[id]?"★":weaponIcons[id],evolved[id]?"★":weapons[id],ready);}).join("");
-  const ps=Object.keys(passiveIcons).filter(id=>passives[id]>0).map(id=>chip(id,passiveIcons[id],passives[id],evolutionRecipes.some(r=>r.passive===id&&weapons[r.weapon]>=8&&!evolved[r.weapon]))).join("");
+  const ws=Object.keys(weaponIcons).filter(id=>weapons[id]>0).map(id=>{const recipe=evolutionRecipes.find(r=>r.weapon===id),ready=recipe&&evolutionReady(recipe)&&!evolved[id],displayId=evolved[id]?recipe.icon:id;return chip(displayId,evolved[id]?"★":weaponIcons[id],evolved[id]?"★":weapons[id],ready);}).join("");
+  const ps=Object.keys(passiveIcons).filter(id=>passives[id]>0).map(id=>chip(id,passiveIcons[id],passives[id],evolutionRecipes.some(r=>r.passive===id&&evolutionReady(r)&&!evolved[r.weapon]))).join("");
   document.querySelector("#levelBuild").innerHTML=`<div class="level-build-group"><b>${tr("已有武器","WEAPONS")}</b><div class="level-build-row">${ws}</div></div><div class="level-build-group"><b>${tr("已有道具","ITEMS")}</b><div class="level-build-row">${ps||tr("暂无","NONE")}</div></div>`;
 }
 function rerollUpgrades(){
@@ -1702,9 +1703,18 @@ function drawPickup(p){const bob=Math.round(Math.sin(elapsed*6+p.bob)*3);if(p.ty
 function drawFlameAura(){ctx.save();ctx.globalAlpha=.2;ctx.fillStyle="#ff681f";ctx.beginPath();ctx.arc(player.x,player.y,60+Math.sin(elapsed*8)*4,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.92;for(let i=0;i<10;i++){const a=i*Math.PI/5+elapsed*(2.05+(i%2)*.18),r=70+(i%3)*28,x=player.x+Math.cos(a)*r,y=player.y+Math.sin(a)*r,h=22+(i%3)*6,w=9+(i%2)*3,tip=Math.sin(elapsed*10+i)*4;ctx.fillStyle=i%2?"#ffb52e":"#ff6326";ctx.beginPath();ctx.moveTo(x,y+h*.55);ctx.quadraticCurveTo(x+w,y,x+tip,y-h);ctx.quadraticCurveTo(x-w,y,x,y+h*.55);ctx.fill();ctx.fillStyle="#fff0a0";ctx.beginPath();ctx.ellipse(x,y+h*.08,w*.28,h*.2,0,0,Math.PI*2);ctx.fill();}const def=spriteFxDefs.brightFire,img=spriteFxImages.brightFire;if(def&&img&&img.complete&&img.naturalWidth){const orbit=8;for(let i=0;i<orbit;i++){const a=elapsed*2.3+i*Math.PI*2/orbit,x=player.x+Math.cos(a)*(76+(i%2)*18),y=player.y+Math.sin(a)*(62+(i%3)*10);const frame=Math.floor((elapsed*def.fps+i*1.4)%def.frames),sx=(frame%def.cols)*def.frameW,sy=Math.floor(frame/def.cols)*def.frameH,size=42+(i%3)*8;ctx.save();ctx.translate(x,y);ctx.globalCompositeOperation=def.blend||"screen";ctx.globalAlpha=.42+(i%2)*.08;ctx.drawImage(img,sx,sy,def.frameW,def.frameH,-size/2,-size/2,size,size);ctx.restore();}}ctx.restore();}
 function drawGem(g){const tier=g.rainbow?3:g.value>=30?2:g.value>=12?1:0;if(g.vacuum&&g.vacuumDelay<=0){ctx.strokeStyle="rgba(91,224,255,.55)";ctx.lineWidth=3+tier;ctx.beginPath();ctx.moveTo(g.x-(g.vx||0)*.06,g.y-(g.vy||0)*.06);ctx.lineTo(g.x,g.y);ctx.stroke();}drawPixelProp("xp",g.x,g.y+14+tier*2,24+tier*8,Math.round(Math.sin(elapsed*5+g.bob)*2));}
 function drawSlashSprite(angle,radius,progress){const frame=Math.min(6,Math.max(1,1+Math.floor(progress*6))),img=pixelArt[`slash${frame}`];if(!img||!img.complete||!img.naturalWidth)return;const size=Math.max(132,radius*1.75);ctx.save();ctx.rotate(angle);ctx.translate(radius*.42,0);ctx.globalCompositeOperation="screen";ctx.globalAlpha=.92;ctx.imageSmoothingEnabled=false;ctx.drawImage(img,-size/2,-size/2,size,size);ctx.restore();}
+function drawSilverSlashWave(angle,radius,progress){
+  const frame=Math.min(6,Math.max(1,1+Math.floor(progress*6))),img=pixelArt[`slash${frame}`],size=Math.max(185,radius*1.08),rear=radius*(.08+progress*.12),front=radius*(.68+progress*.22),wide=radius*(.35-progress*.05);ctx.save();ctx.rotate(angle);ctx.globalCompositeOperation="screen";ctx.imageSmoothingEnabled=false;
+  const wave=ctx.createLinearGradient(rear,0,front,0);wave.addColorStop(0,"rgba(116,139,164,.08)");wave.addColorStop(.38,"rgba(207,222,237,.72)");wave.addColorStop(.72,"rgba(255,255,255,.96)");wave.addColorStop(1,"rgba(157,180,204,0)");ctx.fillStyle=wave;ctx.beginPath();ctx.moveTo(rear,-wide*.18);ctx.lineTo(rear+radius*.12,-wide*.64);ctx.lineTo(rear+radius*.28,-wide*.48);ctx.lineTo(front-radius*.18,-wide*.86);ctx.lineTo(front,-wide*.08);ctx.lineTo(front-radius*.12,wide*.34);ctx.lineTo(front-radius*.3,wide*.7);ctx.lineTo(rear+radius*.18,wide*.47);ctx.lineTo(rear,wide*.18);ctx.closePath();ctx.fill();
+  ctx.strokeStyle=`rgba(245,250,255,${.92-progress*.22})`;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(rear+radius*.12,-wide*.5);ctx.lineTo(front-radius*.08,-wide*.12);ctx.lineTo(front-radius*.24,wide*.45);ctx.stroke();
+  if(img&&img.complete&&img.naturalWidth){ctx.save();ctx.translate(radius*(.47+progress*.15),0);ctx.filter="grayscale(1) brightness(2.35) contrast(1.2)";for(const pass of [[1,.62,0],[.76,.28,-8]]){ctx.globalAlpha=pass[1]*(1-progress*.3);const s=size*pass[0];ctx.drawImage(img,-s/2,-s/2+pass[2],s,s);}ctx.restore();ctx.filter="none";}
+  for(let i=0;i<14;i++){const phase=(i*.618+progress*.72)%1,x=rear+phase*(front-rear),y=Math.sin(i*2.17+progress*10)*wide*(.34+i%3*.08),q=3+(i%3)*2;ctx.globalAlpha=(1-phase)*(.78-progress*.18);ctx.fillStyle=i%3===0?"#ffffff":i%2?"#d8e3ef":"#9fb2c8";ctx.fillRect(Math.round(x-q/2),Math.round(y-q/2),q,q);}
+  ctx.restore();
+}
 function drawSwing(s){
   const k=s.life/s.maxLife;ctx.save();ctx.translate(s.x,s.y);
   if(s.full){ctx.shadowBlur=24;ctx.shadowColor="#ffe86b";for(let q=0;q<3;q++){ctx.strokeStyle=q===0?`rgba(255,181,54,${k*.72})`:q===1?`rgba(255,238,111,${k*.9})`:`rgba(255,255,225,${k})`;ctx.lineWidth=(22-q*8)*k+3;ctx.beginPath();ctx.arc(0,0,s.radius+q*9+Math.sin(elapsed*12+q)*4,0,Math.PI*2);ctx.stroke();}for(let i=0;i<10;i++){const a=i*Math.PI/5+elapsed*5;ctx.fillStyle=i%2?"#fff3a0":"#f3ad39";ctx.beginPath();ctx.arc(Math.cos(a)*(s.radius+18),Math.sin(a)*(s.radius+18),3+4*k,0,Math.PI*2);ctx.fill();}}
+  else if(s.silverWave){const progress=1-k,bladeAngle=s.angle-1.18+progress*2.36;drawSilverSlashWave(s.angle,s.radius,progress);drawPixelProjectile("projCarrot",Math.cos(bladeAngle)*Math.min(82,s.radius*.3),Math.sin(bladeAngle)*Math.min(82,s.radius*.3),76,bladeAngle+Math.PI*.5,k);}
   else if(s.scythe){const sweep=1.65,lead=(1-k)*.22,bladeAngle=s.angle-sweep+(1-k)*sweep*2+lead;ctx.lineCap="round";for(const [r,w,c] of [[s.radius-8,28*k+5,`rgba(87,122,57,${k*.28})`],[s.radius,15*k+4,`rgba(255,190,65,${k*.9})`],[s.radius+7,5,`rgba(255,255,225,${k})`]]){ctx.strokeStyle=c;ctx.lineWidth=w;ctx.beginPath();ctx.arc(0,0,r,s.angle-sweep+lead,s.angle+sweep+lead);ctx.stroke();}drawPixelProjectile("projHay",Math.cos(bladeAngle)*s.radius,Math.sin(bladeAngle)*s.radius,Math.max(58,s.radius*.54),bladeAngle+Math.PI*.5,k);drawSlashSprite(bladeAngle,s.radius,1-k);}
   else{ctx.strokeStyle=`rgba(238,223,124,${k})`;ctx.lineWidth=12*k+3;ctx.beginPath();ctx.arc(0,0,s.radius,s.angle-1.35,s.angle+1.35);ctx.stroke();ctx.strokeStyle=`rgba(255,251,207,${k})`;ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,s.radius+6,s.angle-1.25,s.angle+1.25);ctx.stroke();const tip=s.angle-1.35+(1-k)*2.7;drawPixelProjectile("projCarrot",Math.cos(tip)*s.radius,Math.sin(tip)*s.radius,62,tip+Math.PI*.5,k);}ctx.restore();
 }
@@ -1756,5 +1766,6 @@ function installTestBridge(){
 installTestBridge();draw();
 </script>
 <script src="assets/scripts/boss-farm-expansion.js"></script>
+<script src="assets/scripts/arsenal-codex-relics.js"></script>
 </body>
 </html>
