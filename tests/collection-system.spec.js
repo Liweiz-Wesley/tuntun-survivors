@@ -9,4 +9,5 @@ test("collection hides undiscovered entries and exposes the expanded arsenal",as
   await expect(frame.locator(".codex-scroll h3").filter({hasText:"18"})).toHaveCount(1);
   await expect(frame.locator(".collection-card")).toHaveCount(160);
   await expect(frame.locator(".collection-card.locked").first()).toContainText("???");
+  await expect(frame.locator('.collection-card img[src*="assets/generated/food-vivid/"]').first()).toBeVisible();
 });

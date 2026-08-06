@@ -371,7 +371,7 @@ kbd { padding: 3px 6px; border: 1px solid #cbbca1; border-radius: 5px; backgroun
 .status-box,.skill-bar,.crop-skill-bar,#bossHud,.weapon-card,.upgrade-card,.shop-item,.crop-card,.farm-merchant-panel{border:3px solid #fff3c4!important;box-shadow:0 0 0 3px #493327,0 0 0 6px #d28b45,0 7px 0 rgba(67,45,32,.35)!important;background:linear-gradient(180deg,rgba(64,47,43,.96),rgba(38,34,39,.96))!important;border-radius:5px!important;image-rendering:pixelated}
 .hp-track,.xp-track,.skill-track,.crop-cd-track,.boss-track{border:2px solid #fff2c0!important;box-shadow:0 0 0 2px #422e2b,inset 0 2px 0 rgba(255,255,255,.16)!important;border-radius:2px!important;background:#241f2c!important}
 #hpFill{background:linear-gradient(#ff7183,#d8325b)!important}.xp-fill{background:linear-gradient(#7ee9ff,#4b8fe7)!important}.skill-fill,.crop-cd-fill{background:linear-gradient(#fff07a,#e9a83b)!important}
-.pixel-ui-icon,.weapon-icon img,.crop-card img{image-rendering:pixelated;filter:drop-shadow(2px 2px 0 #3a2a27)}
+.pixel-ui-icon,.weapon-icon img,.crop-card img{image-rendering:pixelated;image-rendering:crisp-edges;filter:saturate(1.08) contrast(1.06) drop-shadow(2px 2px 0 #3a2a27)}
 button.primary,button.secondary,.menu-button{border-radius:3px!important;border:3px solid #fff0b1!important;box-shadow:0 0 0 3px #4a3028,0 5px 0 #7d4a31!important}
 </style>
 <link rel="stylesheet" href="assets/styles/farm-world.css">
@@ -593,6 +593,8 @@ for(const id of animatedBossIds){
   for(let skill=0;skill<4;skill++)pixelArtSources[`bossAnim-${id}-skill-${skill}`]=root+`skill-${skill}-strip.png`;
 }
 Object.assign(pixelArtSources,{"bossAnim-mantis-skill-0":"assets/sprites/bosses/mantis-animation/dual-slash-strip.png","bossAnim-mantis-skill-1":"assets/sprites/bosses/mantis-animation/leaf-dash-strip.png","bossAnim-mantis-skill-2":"assets/sprites/bosses/mantis-animation/hide-leaves-strip.png","bossAnim-mantis-skill-3":"assets/sprites/bosses/mantis-animation/blade-spin-strip.png"});
+const legacyFoodArtRoot="assets/third_party/oga/food/food-ocal/32x32/",vividFoodArtRoot="assets/generated/food-vivid/";
+for(const key of Object.keys(pixelArtSources))if(pixelArtSources[key].startsWith(legacyFoodArtRoot))pixelArtSources[key]=pixelArtSources[key].replace(legacyFoodArtRoot,vividFoodArtRoot);
 for(const [key,src] of Object.entries(pixelArtSources)){const image=new Image();image.src=src;pixelArt[key]=image;}
 const pixelIconNames={
   carrot:"carrot",dandelion:"dandelion",hay:"hay",seed:"seed",laser:"laser",bottle:"bottle",acorn:"acorn",meteor:"meteor",bubble:"bubble",story:"story",bell:"bell",
@@ -625,6 +627,7 @@ const pixelIconSources={
   "crop-sunflower":"assets/sprites/farm/crops/sunflower.png"
 };
 Object.assign(pixelIconSources,{tomato:"assets/third_party/oga/food/food-ocal/32x32/misc/french_fries.png",tomatoEvolved:"assets/third_party/oga/food/food-ocal/32x32/misc/ketchup.png",corn:"assets/third_party/oga/food/food-ocal/32x32/misc/sandwich_01.png",cornEvolved:"assets/third_party/oga/food/food-ocal/32x32/misc/sandwich_sub.png",broccoli:"assets/third_party/oga/food/food-ocal/32x32/misc/sandwich_burger.png",broccoliEvolved:"assets/third_party/oga/food/food-ocal/32x32/misc/shish_kabob.png"});
+for(const key of Object.keys(pixelIconSources))if(pixelIconSources[key].startsWith(legacyFoodArtRoot))pixelIconSources[key]=pixelIconSources[key].replace(legacyFoodArtRoot,vividFoodArtRoot);
 function pixelIconSrc(id){const direct=pixelIconSources[id];if(direct)return direct;const name=pixelIconNames[id];return name?`assets/sprites/icons/${name}.png`:"";}
 function pixelIcon(id,fallback="",className="pixel-ui-icon"){
   const src=pixelIconSrc(id);return src?`<img class="${className}" src="${src}" alt="">`:fallback;
