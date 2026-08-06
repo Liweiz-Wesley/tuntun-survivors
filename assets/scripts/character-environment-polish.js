@@ -9,6 +9,30 @@ addPixel("melonAttackClean","assets/generated/characters/melon-attack-normalized
 addPixel("melonEatClean","assets/generated/characters/melon-eat-normalized.png");
 addPixel("carrotGreatsword","assets/generated/weapons/carrot-greatsword-64.png");
 
+// Keep the archer portrait and in-run sprite on the same cleaned, slingshot-themed source.
+const legacyRenderCharacterSelect=renderCharacterSelect;
+renderCharacterSelect=function(){legacyRenderCharacterSelect();const portrait=document.querySelector('.character-card [aria-label="弹弓豚鼠"],.character-card [aria-label="Archer Guinea Pig"]');if(portrait)portrait.style.backgroundImage="url('assets/generated/characters/archer-idle-clean.png')";};
+
+// Character cards are rebuilt from the bilingual source; select the legacy archer image by its URL
+// so the cleaned portrait is used regardless of localized aria-label encoding.
+const legacyRenderCharacterSelectClean=renderCharacterSelect;
+renderCharacterSelect=function(){legacyRenderCharacterSelectClean();const portrait=[...document.querySelectorAll('.character-portrait')].find(p=>p.style.backgroundImage.includes('archer-guinea.png'));if(portrait)portrait.style.backgroundImage="url('assets/generated/characters/archer-idle-clean.png')";};
+
+// Food projectiles were overpowering the small 32px characters; halve only projectile art, not hitboxes.
+const legacyDrawPixelProjectile=drawPixelProjectile;
+drawPixelProjectile=function(key,x,y,size,rot=0,alpha=1){return legacyDrawPixelProjectile(key,x,y,String(key).startsWith("proj")?size*.5:size,rot,alpha);};
+
+// Give low-level food weapons a readable identity and a gentle one-projectile start.
+for(const [id,patch] of Object.entries({
+  tomato:{count:1,damage:14,pattern:"radial",motion:"spiral"},
+  milkWave:{count:1,damage:15,pattern:"single",motion:"wave"},
+  tacoCyclone:{count:1,damage:14,pattern:"single",motion:"boomerang"},
+  burgerGuard:{count:1,damage:16,pattern:"orbit",motion:"orbit"},
+  broccoli:{count:1,damage:16,pattern:"single",motion:"boomerang"}
+})){
+  const def=EXTRA_FOOD_DEFS.find(w=>w.id===id);if(def)Object.assign(def,patch);
+}
+
 const legacyDrawPixelPlayer=drawPixelPlayer;
 drawPixelPlayer=function(){
   if(selectedCharacter!=="rabbit"&&selectedCharacter!=="chinchilla"&&selectedCharacter!=="tuntun")return legacyDrawPixelPlayer();
@@ -41,7 +65,7 @@ drawSwing=function(s){
   drawSilverSlashWave(s.angle,s.radius,progress);
   const reach=Math.min(128,s.radius*.42);
   drawPixelProjectile("carrotGreatsword",Math.cos(bladeAngle)*reach,Math.sin(bladeAngle)*reach,168,bladeAngle,k);
-  for(let i=0;i<18;i++){
+  for(let i=0;i<5;i++){
     const a=s.angle-1.4+(i/17)*2.8,r=s.radius*(.45+.5*((i*7)%17)/17);
     ctx.globalAlpha=k*.82;ctx.fillStyle=i%3?"#dce8f2":"#ffffff";
     const q=3+(i%3)*2;ctx.fillRect(Math.round(Math.cos(a)*r),Math.round(Math.sin(a)*r),q,q);
@@ -74,6 +98,24 @@ drawCarrot=function(s){legacyDrawCarrotPolish(s);if(rareShot(s))drawRareWeaponAu
 
 const legacySafeDrawWeaponFxPolish=safeDrawWeaponFx;
 safeDrawWeaponFx=function(f){legacySafeDrawWeaponFxPolish(f);if(f&&f.evo)drawRareWeaponAura(f.x,f.y,Math.max(30,(f.r||f.radius||42)*.62));};
+
+// Boss projectiles are deliberately larger and shape-coded instead of being recolored copies.
+const legacyDrawEnemyOrbPolish=drawEnemyOrb;
+drawEnemyOrb=function(o){
+  if(!o.style||o.silk)return legacyDrawEnemyOrbPolish(o);
+  const a=Math.atan2(o.vy,o.vx),r=Math.max(18,o.r*1.55),style=o.style;ctx.save();ctx.translate(o.x,o.y);ctx.rotate(a);ctx.imageSmoothingEnabled=false;ctx.shadowBlur=16;
+  const colors={owl:["#fff1ad","#d18b3d"],mole:["#d7b174","#69432d"],mantis:["#e4ff82","#4e9c3f"],snake:["#b8ff74","#4c8c35"],spider:["#f0ddff","#8b57ac"],wildcat:["#ff8059","#ffd66b"],fox:["#ff9f42","#fff0a0"],toyBot:["#73e7ff","#7554ee"]}[style]||["#9deaff","#5366cf"];
+  ctx.shadowColor=colors[0];ctx.strokeStyle=colors[0];ctx.fillStyle=colors[1];ctx.lineWidth=3;
+  if(style==="owl"){ctx.beginPath();ctx.moveTo(r*1.5,0);ctx.lineTo(r*.35,-r*.82);ctx.lineTo(-r*.8,-r*.35);ctx.lineTo(-r*.35,0);ctx.lineTo(-r*.8,r*.35);ctx.lineTo(r*.35,r*.82);ctx.closePath();ctx.fill();ctx.stroke();ctx.strokeStyle="#fff";ctx.beginPath();ctx.moveTo(-r*.5,-r*.35);ctx.lineTo(r*.7,0);ctx.lineTo(-r*.5,r*.35);ctx.stroke();}
+  else if(style==="mole"){for(const q of [[-.35,-.35,.7],[.4,.22,.48],[-.55,.48,.36]]){ctx.beginPath();ctx.arc(q[0]*r,q[1]*r,r*q[2],0,Math.PI*2);ctx.fill();ctx.stroke();}}
+  else if(style==="mantis"){ctx.beginPath();ctx.arc(0,0,r*.72,-1.4,1.1);ctx.stroke();ctx.beginPath();ctx.arc(r*.2,0,r*.52,-1.05,1.5);ctx.stroke();}
+  else if(style==="snake"){ctx.beginPath();ctx.arc(0,0,r*.72,0,Math.PI*1.7);ctx.stroke();ctx.beginPath();ctx.arc(0,0,r*.32,Math.PI,Math.PI*2);ctx.stroke();}
+  else if(style==="spider"){ctx.beginPath();ctx.arc(0,0,r*.62,0,Math.PI*2);ctx.stroke();for(let i=0;i<8;i++){const q=i*Math.PI/4;ctx.beginPath();ctx.moveTo(Math.cos(q)*r*.4,Math.sin(q)*r*.4);ctx.lineTo(Math.cos(q)*r*1.35,Math.sin(q)*r*1.35);ctx.stroke();}}
+  else if(style==="wildcat"){for(const q of [-.4,0,.4]){ctx.beginPath();ctx.moveTo(-r*.5,q*r);ctx.lineTo(r*1.2,(q-.35)*r);ctx.stroke();}}
+  else if(style==="fox"){ctx.beginPath();ctx.moveTo(r*1.4,0);ctx.lineTo(r*.25,-r*.7);ctx.lineTo(-r*.75,-r*.25);ctx.lineTo(-r*.35,0);ctx.lineTo(-r*.75,r*.25);ctx.lineTo(r*.25,r*.7);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle="#fff7ba";ctx.fillRect(-r*.1,-3,r*.6,6);}
+  else{ctx.fillRect(-r*.55,-r*.55,r*1.1,r*1.1);ctx.strokeRect(-r*.55,-r*.55,r*1.1,r*1.1);ctx.fillStyle="#fff";ctx.fillRect(r*.05,-3,r*.65,6);}
+  ctx.restore();
+};
 
 const heavy=characterDefs.find(c=>c.id==="chinchilla");
 if(heavy){heavy.starterName=tr("🥕 萝卜巨剑","🥕 CARROT GREATSWORD");heavy.desc=tr("挥舞厚重萝卜巨剑释放银白剑气，造成前方180度重击与击退；吃西瓜恢复最大生命的10%。","Swing a massive carrot greatsword, releasing a silver shockwave with a 180-degree heavy strike and knockback; watermelon restores 10% maximum health.");}
