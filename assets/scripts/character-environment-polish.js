@@ -77,7 +77,7 @@ drawCarrot=function(s){
 };
 const legacyActivateSkillPolish=activateSkill;
 activateSkill=function(){
-  if(selectedCharacter==="tuntun"&&skillCooldown<=0){skillMaxCooldown=(characterDefs.find(c=>c.id==="tuntun")?.cd||10)+5;legacyActivateSkillPolish();for(const e of enemies){if(e.dead||e.boss)continue;const a=Math.atan2(e.y-player.y,e.x-player.x),force=2400;e.kx=Math.cos(a)*force;e.ky=Math.sin(a)*force;hitEnemy(e,12,"squeal");}return;}
+  if(selectedCharacter==="tuntun"&&skillCooldown<=0&&typeof relicOwned==="function"&&relicOwned("vacuumCry")){skillMaxCooldown=(characterDefs.find(c=>c.id==="tuntun")?.cd||10)+5;legacyActivateSkillPolish();for(const e of enemies){if(e.dead||e.boss)continue;const a=Math.atan2(e.y-player.y,e.x-player.x),force=2400;e.kx=Math.cos(a)*force;e.ky=Math.sin(a)*force;hitEnemy(e,12,"squeal");}return;}
   legacyActivateSkillPolish();
 };
 const legacyDrawSwing=drawSwing;
