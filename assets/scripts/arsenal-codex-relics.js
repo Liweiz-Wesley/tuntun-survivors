@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 
-const foodRoot="assets/third_party/oga/food/food-ocal/32x32/";
+const foodRoot="assets/generated/food-vivid/";
 const A=(id,zh,en,art,evoArt,passive,pattern,rate,damage,speed,count,visual,pierce,motion="")=>({id,name:tr(zh,en),evoName:tr(`究极${zh}`,`Ultimate ${en}`),desc:tr(`独特的${zh}攻击路线。`,`A distinct ${en} attack pattern.`),icon:"🍽️",art:foodRoot+art,evoArt:foodRoot+(evoArt||art),passive,pattern,rate,damage,speed,count,visual,pierce,motion});
 const V2_WEAPONS=[
  A("ramenVortex","拉面漩涡","Ramen Vortex","misc/ramen_bowl.png","pasta/noodle_fusili.png","magnet","orbit",3.8,17,0,3,58,9,"orbit"),
