@@ -90,6 +90,23 @@ hitEnemy=function(e,dmg,source=null){
   for(let i=0;i<10;i++){const a=i*Math.PI/5+(Math.random()-.5)*.2;particles.push({x:e.x,y:e.y,vx:Math.cos(a)*(100+Math.random()*120),vy:Math.sin(a)*(100+Math.random()*120),life:.28,r:3+(i%3),color:i%2?"#eef6ff":"#ffb347",pixel:true});}
 };
 
+function rareShot(s){
+  if(!s)return false;
+  if(typeof s.kind==="string"&&s.kind.endsWith("Evolved"))return true;
+  return s.kind==="rocket"||(s.kind==="seed"&&evolved.seed)||(s.kind==="acorn"&&evolved.acorn)||(s.kind==="bubble"&&evolved.bubble);
+}
+function drawRareWeaponAura(x,y,r=32){
+  ctx.save();ctx.translate(x,y);ctx.globalCompositeOperation="screen";
+  const pulse=1+Math.sin(elapsed*10)*.1;ctx.strokeStyle="rgba(226,242,255,.86)";ctx.lineWidth=3;ctx.shadowBlur=12;ctx.shadowColor="#c7e7ff";ctx.beginPath();ctx.arc(0,0,r*pulse,0,Math.PI*2);ctx.stroke();
+  for(let i=0;i<4;i++){const a=elapsed*2.6+i*Math.PI/2,rr=r*(.88+(i%2)*.22),q=i%2?3:5;ctx.fillStyle=i%2?"#a9d4f3":"#ffffff";ctx.fillRect(Math.round(Math.cos(a)*rr-q/2),Math.round(Math.sin(a)*rr-q/2),q,q);}
+  ctx.restore();
+}
+const legacyDrawCarrotPolish=drawCarrot;
+drawCarrot=function(s){legacyDrawCarrotPolish(s);if(rareShot(s))drawRareWeaponAura(s.x,s.y,Math.max(25,(s.r||9)*2.45));};
+
+const legacySafeDrawWeaponFxPolish=safeDrawWeaponFx;
+safeDrawWeaponFx=function(f){legacySafeDrawWeaponFxPolish(f);if(f&&f.evo)drawRareWeaponAura(f.x,f.y,Math.max(30,(f.r||f.radius||42)*.62));};
+
 const heavy=characterDefs.find(c=>c.id==="chinchilla");
 if(heavy){heavy.starterName=tr("🥕 萝卜巨剑","🥕 CARROT GREATSWORD");heavy.desc=tr("挥舞厚重萝卜巨剑释放银白剑气，造成前方180度重击与击退；吃西瓜恢复最大生命的10%。","Swing a massive carrot greatsword, releasing a silver shockwave with a 180-degree heavy strike and knockback; watermelon restores 10% maximum health.");}
 })();
