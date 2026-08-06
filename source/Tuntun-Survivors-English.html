@@ -1712,7 +1712,6 @@ function drawSilverSlashWave(angle,radius,progress){
   const wave=ctx.createLinearGradient(rear,0,front,0);wave.addColorStop(0,"rgba(116,139,164,.08)");wave.addColorStop(.38,"rgba(207,222,237,.72)");wave.addColorStop(.72,"rgba(255,255,255,.96)");wave.addColorStop(1,"rgba(157,180,204,0)");ctx.fillStyle=wave;ctx.beginPath();ctx.moveTo(rear,-wide*.18);ctx.lineTo(rear+radius*.12,-wide*.64);ctx.lineTo(rear+radius*.28,-wide*.48);ctx.lineTo(front-radius*.18,-wide*.86);ctx.lineTo(front,-wide*.08);ctx.lineTo(front-radius*.12,wide*.34);ctx.lineTo(front-radius*.3,wide*.7);ctx.lineTo(rear+radius*.18,wide*.47);ctx.lineTo(rear,wide*.18);ctx.closePath();ctx.fill();
   ctx.strokeStyle=`rgba(245,250,255,${.92-progress*.22})`;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(rear+radius*.12,-wide*.5);ctx.lineTo(front-radius*.08,-wide*.12);ctx.lineTo(front-radius*.24,wide*.45);ctx.stroke();
   if(img&&img.complete&&img.naturalWidth){ctx.save();ctx.translate(radius*(.47+progress*.15),0);ctx.filter="grayscale(1) brightness(2.35) contrast(1.2)";for(const pass of [[1,.62,0],[.76,.28,-8]]){ctx.globalAlpha=pass[1]*(1-progress*.3);const s=size*pass[0];ctx.drawImage(img,-s/2,-s/2+pass[2],s,s);}ctx.restore();ctx.filter="none";}
-  for(let i=0;i<14;i++){const phase=(i*.618+progress*.72)%1,x=rear+phase*(front-rear),y=Math.sin(i*2.17+progress*10)*wide*(.34+i%3*.08),q=3+(i%3)*2;ctx.globalAlpha=(1-phase)*(.78-progress*.18);ctx.fillStyle=i%3===0?"#ffffff":i%2?"#d8e3ef":"#9fb2c8";ctx.fillRect(Math.round(x-q/2),Math.round(y-q/2),q,q);}
   ctx.restore();
 }
 function drawSwing(s){

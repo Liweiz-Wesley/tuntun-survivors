@@ -108,7 +108,7 @@ function addFoodShot(def,a,x=player.x,y=player.y){
 }
 fireExtraFoodWeapon=function(def){
  if(!v2Ids.has(def.id))return legacyFireExtraFoodWeapon(def);
- const target=nearestTarget();if(!target)return;const lv=weapons[def.id],evo=evolved[def.id],base=Math.atan2(target.y-player.y,target.x-player.x),count=def.count+Math.floor((lv-1)/3)+(evo?2:0);
+ const target=nearestTarget();if(!target)return;const lv=weapons[def.id],evo=evolved[def.id],base=Math.atan2(target.y-player.y,target.x-player.x),count=Math.min(8,def.count===1?lv:def.count+Math.floor((lv-1)/3))+(evo?2:0);
  emitWeaponFx("carrot",player.x,player.y,def.visual,evo,base);sfx("shot");
  if(def.pattern==="rain"){for(let i=0;i<count;i++){const t=enemies[(Math.random()*enemies.length)|0]||target;addFoodShot(def,Math.PI/2,t.x+(Math.random()-.5)*180,t.y-260-Math.random()*160);}return;}
  if(def.pattern==="mine"){for(let i=0;i<count;i++){const a=i*Math.PI*2/count+elapsed,rr=55+i*20;addFoodShot(def,0,player.x+Math.cos(a)*rr,player.y+Math.sin(a)*rr);const s=shots[shots.length-1];s.vx=s.vy=0;}return;}
