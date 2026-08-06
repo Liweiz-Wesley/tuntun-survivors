@@ -62,7 +62,6 @@ drawSwing=function(s){
   if(!s.silverWave)return legacyDrawSwing(s);
   const k=s.life/s.maxLife,progress=1-k,bladeAngle=s.angle-1.22+progress*2.44;
   ctx.save();ctx.translate(s.x,s.y);
-  drawSilverSlashWave(s.angle,s.radius,progress);
   const reach=Math.min(128,s.radius*.42);
   drawPixelProjectile("carrotGreatsword",Math.cos(bladeAngle)*reach,Math.sin(bladeAngle)*reach,168,bladeAngle,k);
   for(let i=0;i<5;i++){

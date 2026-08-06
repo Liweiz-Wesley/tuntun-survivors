@@ -815,7 +815,7 @@ const evolutionRecipes = [
   {weapon:"bell",passive:"armor",name:"Cupcake Quake",icon:"bellEvolved"}
   ,...EXTRA_FOOD_DEFS.map(w=>({weapon:w.id,passive:w.passive,name:w.evoName,icon:`${w.id}Evolved`}))
 ];
-function evolutionReady(recipe){return recipe.passive?weapons[recipe.weapon]>=4&&passives[recipe.passive]>=4:weapons[recipe.weapon]>=5;}
+function evolutionReady(recipe){return recipe.passive?weapons[recipe.weapon]>=5&&passives[recipe.passive]>=1:weapons[recipe.weapon]>=5;}
 
 const upgrades = [
   {
