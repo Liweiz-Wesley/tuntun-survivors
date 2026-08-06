@@ -15,6 +15,8 @@ const legacyDrawChestPolish=drawChest;
 drawChest=function(c){const tier=chestTierFor(c),img=pixelArt[`chestTier${tier}`];if(!img||!img.complete||!img.naturalWidth)return legacyDrawChestPolish(c);const frame=Math.floor(elapsed*7.7)%8;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(img,frame*96,0,96,96,Math.round(c.x-48),Math.round(c.y-48),96,96);ctx.restore();};
 const legacyOpenChestPolish=openChest;
 openChest=function(c){const tier=chestTierFor(c),result=legacyOpenChestPolish(c),stage=document.querySelector('.chest-stage img');if(stage){stage.src=`assets/generated/chests/chest-tier-${tier}.gif`;stage.style.imageRendering="pixelated";}return result;};
+const legacyClaimChestRewardPolish=claimChestReward;
+claimChestReward=function(){const stage=document.querySelector('.chest-stage img');legacyClaimChestRewardPolish();if(stage){stage.removeAttribute("src");stage.style.backgroundImage="none";}};
 
 // Keep the archer portrait and in-run sprite on the same cleaned, slingshot-themed source.
 const legacyRenderCharacterSelect=renderCharacterSelect;
@@ -24,6 +26,20 @@ renderCharacterSelect=function(){legacyRenderCharacterSelect();const portrait=do
 // so the cleaned portrait is used regardless of localized aria-label encoding.
 const legacyRenderCharacterSelectClean=renderCharacterSelect;
 renderCharacterSelect=function(){legacyRenderCharacterSelectClean();const portrait=[...document.querySelectorAll('.character-portrait')].find(p=>p.style.backgroundImage.includes('archer-guinea.png'));if(portrait)portrait.style.backgroundImage="url('assets/generated/characters/archer-idle-clean.png')";};
+
+// The shared internal id is still `carrot`, but its upgrade card must describe
+// the selected guinea pig's actual starter weapon.
+const starterUpgrade=upgrades.find(u=>u.id==="carrot");
+const legacyRenderUpgradeChoicesCharacter=renderUpgradeChoices;
+renderUpgradeChoices=function(){
+  if(starterUpgrade){
+    const rabbit=selectedCharacter==="rabbit",heavy=selectedCharacter==="chinchilla";
+    starterUpgrade.name=tr(rabbit?"胡萝卜箭强化":heavy?"萝卜巨剑强化":"旋转胡萝卜",rabbit?"Carrot Arrow Upgrade":heavy?"Carrot Greatsword Upgrade":"Spinning Carrot");
+    starterUpgrade.icon=rabbit?"🏹":heavy?"🗡️":"🥕";
+    starterUpgrade.desc=tr(rabbit?"提升胡萝卜箭的伤害、穿透和数量。":heavy?"提升萝卜巨剑的范围、伤害和击退。":"提升旋转胡萝卜的伤害、数量和穿透。",rabbit?"Improves carrot arrow damage, pierce and count.":heavy?"Improves carrot greatsword range, damage and knockback.":"Improves spinning carrot damage, count and pierce.");
+  }
+  legacyRenderUpgradeChoicesCharacter();
+};
 
 // Food projectiles were overpowering the small 32px characters; halve only projectile art, not hitboxes.
 const legacyDrawPixelProjectile=drawPixelProjectile;
