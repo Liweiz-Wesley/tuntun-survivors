@@ -92,9 +92,31 @@ def carrot_greatsword():
     save(img, "assets/generated/weapons/carrot-greatsword-64.png")
 
 
+def normalize_action(src_rel, out_rel, frames, target_w, target_h):
+    src = Image.open(ROOT / src_rel).convert("RGBA")
+    fw = src.width // frames
+    out = Image.new("RGBA", (frames * 64, 64))
+    for i in range(frames):
+        frame = src.crop((i * fw, 0, (i + 1) * fw, src.height))
+        bbox = frame.getbbox()
+        if not bbox:
+            continue
+        crop = frame.crop(bbox)
+        scale = min(target_w / crop.width, target_h / crop.height)
+        w = max(1, round(crop.width * scale))
+        h = max(1, round(crop.height * scale))
+        crop = crop.resize((w, h), Image.Resampling.NEAREST)
+        out.alpha_composite(crop, (i * 64 + 32 - w // 2, 62 - h))
+    save(out, out_rel)
+
+
 if __name__ == "__main__":
     clean_archer()
     melon_idle()
     ground_tile()
     tree_tile()
     carrot_greatsword()
+    normalize_action("assets/sprites/idle/archer-attack.png", "assets/generated/characters/archer-attack-normalized.png", 6, 44, 34)
+    normalize_action("assets/sprites/idle/archer-roll.png", "assets/generated/characters/archer-roll-normalized.png", 6, 44, 34)
+    normalize_action("assets/sprites/idle/melon-attack.png", "assets/generated/characters/melon-attack-normalized.png", 6, 46, 46)
+    normalize_action("assets/sprites/idle/melon-eat.png", "assets/generated/characters/melon-eat-normalized.png", 6, 46, 46)
