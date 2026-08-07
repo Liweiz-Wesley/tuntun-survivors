@@ -34,8 +34,7 @@ const images={};
 const assets={
   nugget:"../assets/sprites/idle/nugget.png",fork:"../assets/sprites/idle/mouse-fork.png",bomb:"../assets/sprites/idle/bomb-mouse.png",
   bully:"../assets/sprites/idle/bully-mouse.png",bat:"../assets/sprites/idle/bat.png",frog:"../assets/sprites/idle/frog.png",
-  snail:"../assets/sprites/idle/fortress-snail.png",mantis:"../assets/sprites/bosses/mantis.png",ground:"../assets/retro32/backgrounds/battle-meadow-256.png",
-  carrot:"../assets/sprites/projectiles/carrot.png"
+  snail:"../assets/sprites/idle/fortress-snail.png",mantis:"../assets/sprites/bosses/mantis.png",ground:"../assets/retro32/backgrounds/battle-meadow-256.png"
 };
 for(const [k,src] of Object.entries(assets)){const im=new Image();im.src=src;images[k]=im;}
 function resize(){W=Math.max(640,Math.floor(innerWidth*DPR));H=Math.max(360,Math.floor(innerHeight*DPR));canvas.width=W;canvas.height=H;ctx.imageSmoothingEnabled=false;}
